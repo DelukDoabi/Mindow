@@ -31,4 +31,82 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get onboardingSkip => 'Passer';
+
+  @override
+  String get onboardingContinue => 'Continuer';
+
+  @override
+  String get onboardingContextTitle => 'Parle-nous un peu de toi';
+
+  @override
+  String get onboardingContextSubtitle =>
+      'Tout est optionnel — ça nous aide juste à personnaliser.';
+
+  @override
+  String get onboardingAgeRangeLabel => 'Ta tranche d\'âge';
+
+  @override
+  String get onboardingAgeUnder25 => 'Moins de 25 ans';
+
+  @override
+  String get onboardingAge25to34 => '25–34 ans';
+
+  @override
+  String get onboardingAge35to44 => '35–44 ans';
+
+  @override
+  String get onboardingAge45to54 => '45–54 ans';
+
+  @override
+  String get onboardingAgeOver55 => '55 ans et plus';
+
+  @override
+  String get onboardingFamilyLabel => 'Ta situation familiale';
+
+  @override
+  String get onboardingFamilySingle => 'Célibataire';
+
+  @override
+  String get onboardingFamilyCouple => 'En couple';
+
+  @override
+  String get onboardingFamilyWithChildren => 'Avec enfants';
+
+  @override
+  String get onboardingFamilySingleParent => 'Parent solo';
+
+  @override
+  String get onboardingStressLabel => 'Ton niveau de stress en ce moment';
+
+  @override
+  String get onboardingStressLow => 'Léger';
+
+  @override
+  String get onboardingStressModerate => 'Modéré';
+
+  @override
+  String get onboardingStressHigh => 'Élevé';
+
+  @override
+  String get onboardingStressVeryHigh => 'Très élevé';
+
+  @override
+  String get onboardingMindVolumeTitle =>
+      'Combien de sujets occupent ton esprit ?';
+
+  @override
+  String get onboardingMindVolumeSubtitle =>
+      'Une estimation suffit. Aucune mauvaise réponse.';
+
+  @override
+  String get onboardingMindVolumeUpTo10 => '0 à 10';
+
+  @override
+  String get onboardingMindVolume10to20 => '10 à 20';
+
+  @override
+  String get onboardingMindVolume20to50 => '20 à 50';
+
+  @override
+  String get onboardingMindVolumeOver50 => 'Plus de 50';
 }

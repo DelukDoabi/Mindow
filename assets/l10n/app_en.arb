@@ -27,5 +27,105 @@
   "onboardingSkip": "Skip",
   "@onboardingSkip": {
     "description": "Secondary action that lets the user skip onboarding"
+  },
+  "onboardingContinue": "Continue",
+  "@onboardingContinue": {
+    "description": "Primary action that advances to the next onboarding step"
+  },
+  "onboardingContextTitle": "Tell us a little about you",
+  "@onboardingContextTitle": {
+    "description": "Title of the onboarding context screen"
+  },
+  "onboardingContextSubtitle": "Everything is optional — it just helps us personalize things.",
+  "@onboardingContextSubtitle": {
+    "description": "Subtitle reassuring the user that context questions are optional"
+  },
+  "onboardingAgeRangeLabel": "Your age range",
+  "@onboardingAgeRangeLabel": {
+    "description": "Label for the age range question"
+  },
+  "onboardingAgeUnder25": "Under 25",
+  "@onboardingAgeUnder25": {
+    "description": "Age range option: under 25"
+  },
+  "onboardingAge25to34": "25–34",
+  "@onboardingAge25to34": {
+    "description": "Age range option: 25 to 34"
+  },
+  "onboardingAge35to44": "35–44",
+  "@onboardingAge35to44": {
+    "description": "Age range option: 35 to 44"
+  },
+  "onboardingAge45to54": "45–54",
+  "@onboardingAge45to54": {
+    "description": "Age range option: 45 to 54"
+  },
+  "onboardingAgeOver55": "55 and over",
+  "@onboardingAgeOver55": {
+    "description": "Age range option: 55 and over"
+  },
+  "onboardingFamilyLabel": "Your family situation",
+  "@onboardingFamilyLabel": {
+    "description": "Label for the family situation question"
+  },
+  "onboardingFamilySingle": "Single",
+  "@onboardingFamilySingle": {
+    "description": "Family situation option: single"
+  },
+  "onboardingFamilyCouple": "In a relationship",
+  "@onboardingFamilyCouple": {
+    "description": "Family situation option: in a couple"
+  },
+  "onboardingFamilyWithChildren": "With children",
+  "@onboardingFamilyWithChildren": {
+    "description": "Family situation option: with children"
+  },
+  "onboardingFamilySingleParent": "Single parent",
+  "@onboardingFamilySingleParent": {
+    "description": "Family situation option: single parent"
+  },
+  "onboardingStressLabel": "Your stress level right now",
+  "@onboardingStressLabel": {
+    "description": "Label for the stress level question"
+  },
+  "onboardingStressLow": "Light",
+  "@onboardingStressLow": {
+    "description": "Stress level option: low"
+  },
+  "onboardingStressModerate": "Moderate",
+  "@onboardingStressModerate": {
+    "description": "Stress level option: moderate"
+  },
+  "onboardingStressHigh": "High",
+  "@onboardingStressHigh": {
+    "description": "Stress level option: high"
+  },
+  "onboardingStressVeryHigh": "Very high",
+  "@onboardingStressVeryHigh": {
+    "description": "Stress level option: very high"
+  },
+  "onboardingMindVolumeTitle": "How many things are on your mind?",
+  "@onboardingMindVolumeTitle": {
+    "description": "Title of the mind-volume onboarding screen"
+  },
+  "onboardingMindVolumeSubtitle": "A rough guess is plenty. There's no wrong answer.",
+  "@onboardingMindVolumeSubtitle": {
+    "description": "Subtitle reassuring the user about the mind-volume estimate"
+  },
+  "onboardingMindVolumeUpTo10": "0 to 10",
+  "@onboardingMindVolumeUpTo10": {
+    "description": "Mind-volume bucket: up to 10"
+  },
+  "onboardingMindVolume10to20": "10 to 20",
+  "@onboardingMindVolume10to20": {
+    "description": "Mind-volume bucket: 10 to 20"
+  },
+  "onboardingMindVolume20to50": "20 to 50",
+  "@onboardingMindVolume20to50": {
+    "description": "Mind-volume bucket: 20 to 50"
+  },
+  "onboardingMindVolumeOver50": "More than 50",
+  "@onboardingMindVolumeOver50": {
+    "description": "Mind-volume bucket: over 50"
   }
 }

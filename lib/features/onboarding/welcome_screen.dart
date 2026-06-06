@@ -21,9 +21,9 @@ class WelcomeScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
 
-    // Until later onboarding stories exist, advancing routes to the placeholder
-    // home. Story 1.3 replaces this with the context-capture destination.
-    void advance() => context.go(Routes.home);
+    // "Passer" skips the whole onboarding; "Commencer" enters the context step.
+    void skip() => context.go(Routes.home);
+    void start() => context.go(Routes.onboardingContext);
 
     return AuroreCanvas(
       child: SafeArea(
@@ -34,7 +34,7 @@ class WelcomeScreen extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: advance,
+                  onPressed: skip,
                   style: TextButton.styleFrom(
                     foregroundColor: AuroreColors.inkMuted,
                   ),
@@ -62,7 +62,7 @@ class WelcomeScreen extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: advance,
+                  onPressed: start,
                   child: Text(l10n.onboardingWelcomeCta),
                 ),
               ),

@@ -139,6 +139,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip'**
   String get onboardingSkip;
+
+  /// Primary action that advances to the next onboarding step
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get onboardingContinue;
+
+  /// Title of the onboarding context screen
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us a little about you'**
+  String get onboardingContextTitle;
+
+  /// Subtitle reassuring the user that context questions are optional
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is optional — it just helps us personalize things.'**
+  String get onboardingContextSubtitle;
+
+  /// Label for the age range question
+  ///
+  /// In en, this message translates to:
+  /// **'Your age range'**
+  String get onboardingAgeRangeLabel;
+
+  /// Age range option: under 25
+  ///
+  /// In en, this message translates to:
+  /// **'Under 25'**
+  String get onboardingAgeUnder25;
+
+  /// Age range option: 25 to 34
+  ///
+  /// In en, this message translates to:
+  /// **'25–34'**
+  String get onboardingAge25to34;
+
+  /// Age range option: 35 to 44
+  ///
+  /// In en, this message translates to:
+  /// **'35–44'**
+  String get onboardingAge35to44;
+
+  /// Age range option: 45 to 54
+  ///
+  /// In en, this message translates to:
+  /// **'45–54'**
+  String get onboardingAge45to54;
+
+  /// Age range option: 55 and over
+  ///
+  /// In en, this message translates to:
+  /// **'55 and over'**
+  String get onboardingAgeOver55;
+
+  /// Label for the family situation question
+  ///
+  /// In en, this message translates to:
+  /// **'Your family situation'**
+  String get onboardingFamilyLabel;
+
+  /// Family situation option: single
+  ///
+  /// In en, this message translates to:
+  /// **'Single'**
+  String get onboardingFamilySingle;
+
+  /// Family situation option: in a couple
+  ///
+  /// In en, this message translates to:
+  /// **'In a relationship'**
+  String get onboardingFamilyCouple;
+
+  /// Family situation option: with children
+  ///
+  /// In en, this message translates to:
+  /// **'With children'**
+  String get onboardingFamilyWithChildren;
+
+  /// Family situation option: single parent
+  ///
+  /// In en, this message translates to:
+  /// **'Single parent'**
+  String get onboardingFamilySingleParent;
+
+  /// Label for the stress level question
+  ///
+  /// In en, this message translates to:
+  /// **'Your stress level right now'**
+  String get onboardingStressLabel;
+
+  /// Stress level option: low
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get onboardingStressLow;
+
+  /// Stress level option: moderate
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get onboardingStressModerate;
+
+  /// Stress level option: high
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get onboardingStressHigh;
+
+  /// Stress level option: very high
+  ///
+  /// In en, this message translates to:
+  /// **'Very high'**
+  String get onboardingStressVeryHigh;
+
+  /// Title of the mind-volume onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'How many things are on your mind?'**
+  String get onboardingMindVolumeTitle;
+
+  /// Subtitle reassuring the user about the mind-volume estimate
+  ///
+  /// In en, this message translates to:
+  /// **'A rough guess is plenty. There\'s no wrong answer.'**
+  String get onboardingMindVolumeSubtitle;
+
+  /// Mind-volume bucket: up to 10
+  ///
+  /// In en, this message translates to:
+  /// **'0 to 10'**
+  String get onboardingMindVolumeUpTo10;
+
+  /// Mind-volume bucket: 10 to 20
+  ///
+  /// In en, this message translates to:
+  /// **'10 to 20'**
+  String get onboardingMindVolume10to20;
+
+  /// Mind-volume bucket: 20 to 50
+  ///
+  /// In en, this message translates to:
+  /// **'20 to 50'**
+  String get onboardingMindVolume20to50;
+
+  /// Mind-volume bucket: over 50
+  ///
+  /// In en, this message translates to:
+  /// **'More than 50'**
+  String get onboardingMindVolumeOver50;
 }
 
 class _AppLocalizationsDelegate

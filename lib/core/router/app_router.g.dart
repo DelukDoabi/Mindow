@@ -10,27 +10,27 @@ part of 'app_router.dart';
 // ignore_for_file: type=lint, type=warning
 /// The app's [GoRouter].
 ///
-/// Minimal during the scaffold phase: a single placeholder home route. Auth
-/// and onboarding redirects (Epic 1) and the premium guard (Epic 6) hook into
-/// the `redirect` callback added here later.
+/// Onboarding begins at the welcome step. Auth and first-launch vs
+/// returning-user redirects (Stories 1.4/1.5) and the premium guard (Epic 6)
+/// hook into the `redirect` callback added here later.
 
 @ProviderFor(appRouter)
 final appRouterProvider = AppRouterProvider._();
 
 /// The app's [GoRouter].
 ///
-/// Minimal during the scaffold phase: a single placeholder home route. Auth
-/// and onboarding redirects (Epic 1) and the premium guard (Epic 6) hook into
-/// the `redirect` callback added here later.
+/// Onboarding begins at the welcome step. Auth and first-launch vs
+/// returning-user redirects (Stories 1.4/1.5) and the premium guard (Epic 6)
+/// hook into the `redirect` callback added here later.
 
 final class AppRouterProvider
     extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
     with $Provider<GoRouter> {
   /// The app's [GoRouter].
   ///
-  /// Minimal during the scaffold phase: a single placeholder home route. Auth
-  /// and onboarding redirects (Epic 1) and the premium guard (Epic 6) hook into
-  /// the `redirect` callback added here later.
+  /// Onboarding begins at the welcome step. Auth and first-launch vs
+  /// returning-user redirects (Stories 1.4/1.5) and the premium guard (Epic 6)
+  /// hook into the `redirect` callback added here later.
   AppRouterProvider._()
     : super(
         from: null,
@@ -64,4 +64,4 @@ final class AppRouterProvider
   }
 }
 
-String _$appRouterHash() => r'6a6868dc30a1db76afe4bd6661bbbc5547e0312a';
+String _$appRouterHash() => r'2621273dc753b5b65b6f993a9a35f39358dd553b';
