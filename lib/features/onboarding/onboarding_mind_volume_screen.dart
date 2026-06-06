@@ -13,7 +13,7 @@ import 'package:mindow/features/onboarding/onboarding_controller.dart';
 
 /// Third onboarding step: how many subjects occupy the user's mind (FR-3
 /// buckets). Skippable; persists via [OnboardingDraft]. "Continuer" advances
-/// to account creation (Story 1.4); "Passer" skips straight to home.
+/// to the AI-consent step (Story 1.6); "Passer" skips straight to home.
 class OnboardingMindVolumeScreen extends ConsumerWidget {
   const OnboardingMindVolumeScreen({super.key});
 
@@ -25,7 +25,7 @@ class OnboardingMindVolumeScreen extends ConsumerWidget {
     final controller = ref.read(onboardingDraftProvider.notifier);
 
     void skip() => context.go(Routes.home);
-    void next() => context.go(Routes.account);
+    void next() => context.go(Routes.onboardingConsent);
 
     return AuroreCanvas(
       child: SafeArea(

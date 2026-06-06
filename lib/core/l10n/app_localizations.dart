@@ -343,6 +343,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Small hiccup connecting. Shall we try again?'**
   String get accountAuthError;
+
+  /// Title of the AI-processing consent screen
+  ///
+  /// In en, this message translates to:
+  /// **'Your words stay yours'**
+  String get consentTitle;
+
+  /// Plain-language privacy notice on the AI-processing consent screen (NFR-9)
+  ///
+  /// In en, this message translates to:
+  /// **'To help you carry less, what you write is sent to our AI partner to be analyzed, then comes back to you. Nothing is shared anywhere else, and you can export or delete everything whenever you want.'**
+  String get consentBody;
+
+  /// Explicit affirmative consent button label
+  ///
+  /// In en, this message translates to:
+  /// **'Got it, I agree'**
+  String get consentAccept;
 }
 
 class _AppLocalizationsDelegate

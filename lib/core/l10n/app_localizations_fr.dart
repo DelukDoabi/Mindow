@@ -137,4 +137,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountAuthError => 'Petit souci de connexion. On réessaie ?';
+
+  @override
+  String get consentTitle => 'Tes mots restent à toi';
+
+  @override
+  String get consentBody =>
+      'Pour t\'aider à porter moins, ce que tu écris est envoyé à notre partenaire d\'IA pour être analysé, puis te revient. Rien n\'est partagé ailleurs, et tu peux tout exporter ou supprimer quand tu veux.';
+
+  @override
+  String get consentAccept => 'J\'ai compris, j\'accepte';
 }

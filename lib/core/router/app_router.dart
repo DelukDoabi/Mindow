@@ -7,6 +7,7 @@ import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/features/auth/account_screen.dart';
 import 'package:mindow/features/auth/auth_controller.dart';
 import 'package:mindow/features/auth/auth_repository.dart';
+import 'package:mindow/features/onboarding/onboarding_consent_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_context_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_mind_volume_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';
@@ -22,6 +23,7 @@ abstract final class Routes {
   static const String welcome = '/welcome';
   static const String onboardingContext = '/onboarding/context';
   static const String onboardingMindVolume = '/onboarding/mind-volume';
+  static const String onboardingConsent = '/onboarding/consent';
   static const String account = '/onboarding/account';
   static const String home = '/';
 }
@@ -75,6 +77,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: Routes.onboardingMindVolume,
         builder: (context, state) => const OnboardingMindVolumeScreen(),
+      ),
+      GoRoute(
+        path: Routes.onboardingConsent,
+        builder: (context, state) => const OnboardingConsentScreen(),
       ),
       GoRoute(
         path: Routes.account,

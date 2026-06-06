@@ -136,4 +136,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountAuthError => 'Small hiccup connecting. Shall we try again?';
+
+  @override
+  String get consentTitle => 'Your words stay yours';
+
+  @override
+  String get consentBody =>
+      'To help you carry less, what you write is sent to our AI partner to be analyzed, then comes back to you. Nothing is shared anywhere else, and you can export or delete everything whenever you want.';
+
+  @override
+  String get consentAccept => 'Got it, I agree';
 }

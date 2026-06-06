@@ -163,5 +163,17 @@
   "accountAuthError": "Small hiccup connecting. Shall we try again?",
   "@accountAuthError": {
     "description": "Calm, reassuring error shown when authentication fails"
+  },
+  "consentTitle": "Your words stay yours",
+  "@consentTitle": {
+    "description": "Title of the AI-processing consent screen"
+  },
+  "consentBody": "To help you carry less, what you write is sent to our AI partner to be analyzed, then comes back to you. Nothing is shared anywhere else, and you can export or delete everything whenever you want.",
+  "@consentBody": {
+    "description": "Plain-language privacy notice on the AI-processing consent screen (NFR-9)"
+  },
+  "consentAccept": "Got it, I agree",
+  "@consentAccept": {
+    "description": "Explicit affirmative consent button label"
   }
 }

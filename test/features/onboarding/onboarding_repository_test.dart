@@ -64,4 +64,23 @@ void main() {
 
     expect(await repo.isComplete(), isTrue);
   });
+
+  test('isAiConsentGranted is false until consent is granted', () async {
+    final repo = OnboardingRepository();
+
+    expect(await repo.isAiConsentGranted(), isFalse);
+
+    await repo.setAiConsent(granted: true);
+
+    expect(await repo.isAiConsentGranted(), isTrue);
+  });
+
+  test('setAiConsent can revoke a previously granted consent', () async {
+    final repo = OnboardingRepository();
+
+    await repo.setAiConsent(granted: true);
+    await repo.setAiConsent(granted: false);
+
+    expect(await repo.isAiConsentGranted(), isFalse);
+  });
 }

@@ -16,6 +16,7 @@ class OnboardingRepository {
   static const String _boxName = 'onboarding';
   static const String _key = 'answers';
   static const String _completeKey = 'complete';
+  static const String _aiConsentKey = 'ai_consent';
 
   Box<dynamic>? _box;
 
@@ -47,6 +48,23 @@ class OnboardingRepository {
   Future<bool> isComplete() async {
     final box = await _openBox();
     return box.get(_completeKey) == true;
+  }
+
+  /// Records the user's explicit choice on third-party AI processing (NFR-9).
+  ///
+  /// Only an explicit affirmative action sets `granted: true`; the value is
+  /// persisted locally and read back by the Epic 2 AI-Analysis gate before any
+  /// Preoccupation is sent to the AI. Server-profile sync rides the Epic 2
+  /// sync engine.
+  Future<void> setAiConsent({required bool granted}) async {
+    final box = await _openBox();
+    await box.put(_aiConsentKey, granted);
+  }
+
+  /// Whether the user has explicitly consented to AI processing on this device.
+  Future<bool> isAiConsentGranted() async {
+    final box = await _openBox();
+    return box.get(_aiConsentKey) == true;
   }
 }
 
