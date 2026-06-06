@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+  "appTitle": "Mindow",
+  "@appTitle": {
+    "description": "The application name shown to users"
+  },
+  "homeWelcomeTitle": "Welcome to Mindow",
+  "@homeWelcomeTitle": {
+    "description": "Placeholder home screen title used by the scaffold"
+  },
+  "homeWelcomeBody": "Your backpack is ready. Soon you'll lighten your mental load here.",
+  "@homeWelcomeBody": {
+    "description": "Placeholder home screen body copy used by the scaffold"
+  }
+}

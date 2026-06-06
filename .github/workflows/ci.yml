@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  FLUTTER_VERSION: "3.44.1"
+
+jobs:
+  analyze-and-test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        run: flutter analyze
+
+      # The Hive typeId registry collision gate — protects offline data integrity.
+      - name: Hive registry gate
+        run: flutter test test/core/sync/hive_registry_test.dart
+
+      - name: Test
+        run: flutter test
+
+  build:
+    name: Build (${{ matrix.flavor }})
+    needs: analyze-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flavor: [dev, staging, prod]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Android APK (${{ matrix.flavor }})
+        run: >-
+          flutter build apk
+          --flavor ${{ matrix.flavor }}
+          -t lib/main_${{ matrix.flavor }}.dart
+          --debug

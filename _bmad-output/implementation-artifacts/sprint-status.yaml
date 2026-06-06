@@ -44,7 +44,7 @@ story_location: _bmad-output/implementation-artifacts
 development_status:
   # Epic 1: Foundation, Onboarding & Account
   epic-1: in-progress
-  1-1-project-scaffold-technical-foundation: ready-for-dev
+  1-1-project-scaffold-technical-foundation: review
   1-2-welcome-promise-screen: backlog
   1-3-onboarding-context-mind-volume-capture: backlog
   1-4-account-creation-authentication: backlog

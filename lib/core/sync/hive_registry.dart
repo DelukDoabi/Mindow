@@ -1,0 +1,34 @@
+/// A single Hive `typeId` reservation.
+class HiveTypeRegistration {
+  const HiveTypeRegistration(this.typeId, this.name);
+
+  /// The integer passed to a `TypeAdapter`'s `typeId`. Must be unique and
+  /// stable forever once shipped — Hive stores it inside every persisted box.
+  final int typeId;
+
+  /// Human-readable adapter/model name (for the collision report).
+  final String name;
+}
+
+/// Append-only registry of Hive `typeId`s.
+///
+/// RULES (enforced by `test/core/sync/hive_registry_test.dart`, the CI gate):
+///   * typeIds 0–9 are RESERVED (Hive internals / future core types).
+///   * Every `TypeAdapter` Mindow registers MUST have an entry here.
+///   * NEVER reuse, renumber, or remove an entry — only append new ones.
+///
+/// Reusing a typeId corrupts existing user data on upgrade, which the test
+/// prevents from ever reaching `main`.
+abstract final class HiveRegistry {
+  HiveRegistry._();
+
+  /// Lowest typeId available to application models (0–9 reserved).
+  static const int firstAvailableTypeId = 10;
+
+  static const List<HiveTypeRegistration> registrations =
+      <HiveTypeRegistration>[
+        // Append below. Example (added in Epic 2):
+        // HiveTypeRegistration(10, 'PreoccupationModel'),
+        // HiveTypeRegistration(11, 'DomainEventRecord'),
+      ];
+}
