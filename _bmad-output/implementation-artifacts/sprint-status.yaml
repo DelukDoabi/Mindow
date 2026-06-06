@@ -45,7 +45,7 @@ development_status:
   # Epic 1: Foundation, Onboarding & Account
   epic-1: in-progress
   1-1-project-scaffold-technical-foundation: review
-  1-2-welcome-promise-screen: backlog
+  1-2-welcome-promise-screen: review
   1-3-onboarding-context-mind-volume-capture: backlog
   1-4-account-creation-authentication: backlog
   1-5-returning-user-routing: backlog

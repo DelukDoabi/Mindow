@@ -17,4 +17,18 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get homeWelcomeBody =>
       'Ton sac à dos est prêt. Bientôt, tu allégeras ta charge mentale ici.';
+
+  @override
+  String get onboardingWelcomeHeadline =>
+      'Décharge ton esprit. On s\'occupe du reste.';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'Dépose tout ce qui occupe ton esprit. Mindow t\'aide à porter moins, un objet à la fois.';
+
+  @override
+  String get onboardingWelcomeCta => 'Commencer';
+
+  @override
+  String get onboardingSkip => 'Passer';
 }

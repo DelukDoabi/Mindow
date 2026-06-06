@@ -34,4 +34,10 @@ abstract final class AuroreColors {
     end: Alignment.bottomRight,
     colors: [canvasWarm, canvasMid, canvasCool],
   );
+
+  /// The warm-to-cool accent gradient used for active emphasis, such as the
+  /// active progress dot and gradient fills.
+  static const LinearGradient accentGradient = LinearGradient(
+    colors: [warm, cool],
+  );
 }

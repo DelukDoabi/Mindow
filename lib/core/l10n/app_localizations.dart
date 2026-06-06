@@ -115,6 +115,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your backpack is ready. Soon you\'ll lighten your mental load here.'**
   String get homeWelcomeBody;
+
+  /// Promise headline on the first onboarding (welcome) screen
+  ///
+  /// In en, this message translates to:
+  /// **'Set your mind down. We\'ll carry the rest.'**
+  String get onboardingWelcomeHeadline;
+
+  /// Reassuring body copy under the welcome headline
+  ///
+  /// In en, this message translates to:
+  /// **'Put down everything on your mind. Mindow helps you carry less, one thing at a time.'**
+  String get onboardingWelcomeBody;
+
+  /// Primary call-to-action on the welcome screen
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingWelcomeCta;
+
+  /// Secondary action that lets the user skip onboarding
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
 }
 
 class _AppLocalizationsDelegate

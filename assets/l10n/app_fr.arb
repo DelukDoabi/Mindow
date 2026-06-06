@@ -2,5 +2,9 @@
   "@@locale": "fr",
   "appTitle": "Mindow",
   "homeWelcomeTitle": "Bienvenue sur Mindow",
-  "homeWelcomeBody": "Ton sac à dos est prêt. Bientôt, tu allégeras ta charge mentale ici."
+  "homeWelcomeBody": "Ton sac à dos est prêt. Bientôt, tu allégeras ta charge mentale ici.",
+  "onboardingWelcomeHeadline": "Décharge ton esprit. On s'occupe du reste.",
+  "onboardingWelcomeBody": "Dépose tout ce qui occupe ton esprit. Mindow t'aide à porter moins, un objet à la fois.",
+  "onboardingWelcomeCta": "Commencer",
+  "onboardingSkip": "Passer"
 }

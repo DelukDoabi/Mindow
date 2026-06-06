@@ -11,5 +11,21 @@
   "homeWelcomeBody": "Your backpack is ready. Soon you'll lighten your mental load here.",
   "@homeWelcomeBody": {
     "description": "Placeholder home screen body copy used by the scaffold"
+  },
+  "onboardingWelcomeHeadline": "Set your mind down. We'll carry the rest.",
+  "@onboardingWelcomeHeadline": {
+    "description": "Promise headline on the first onboarding (welcome) screen"
+  },
+  "onboardingWelcomeBody": "Put down everything on your mind. Mindow helps you carry less, one thing at a time.",
+  "@onboardingWelcomeBody": {
+    "description": "Reassuring body copy under the welcome headline"
+  },
+  "onboardingWelcomeCta": "Get started",
+  "@onboardingWelcomeCta": {
+    "description": "Primary call-to-action on the welcome screen"
+  },
+  "onboardingSkip": "Skip",
+  "@onboardingSkip": {
+    "description": "Secondary action that lets the user skip onboarding"
   }
 }
