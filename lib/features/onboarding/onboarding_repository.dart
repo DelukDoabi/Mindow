@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:mindow/features/onboarding/onboarding_answers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

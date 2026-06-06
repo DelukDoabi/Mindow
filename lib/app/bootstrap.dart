@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:mindow/app/app.dart';
 import 'package:mindow/app/env.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';

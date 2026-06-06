@@ -10,27 +10,33 @@ part of 'app_router.dart';
 // ignore_for_file: type=lint, type=warning
 /// The app's [GoRouter].
 ///
-/// Onboarding begins at the welcome step. Auth and first-launch vs
-/// returning-user redirects (Stories 1.4/1.5) and the premium guard (Epic 6)
-/// hook into the `redirect` callback added here later.
+/// Onboarding begins at the welcome step. A returning, authenticated user who
+/// has already completed onboarding is redirected straight to the Mental
+/// Backpack (Home) by the `redirect` guard below (Story 1.5); the redirect is
+/// re-evaluated reactively whenever the auth state changes. The premium guard
+/// (Epic 6) hooks into the same `redirect` later.
 
 @ProviderFor(appRouter)
 final appRouterProvider = AppRouterProvider._();
 
 /// The app's [GoRouter].
 ///
-/// Onboarding begins at the welcome step. Auth and first-launch vs
-/// returning-user redirects (Stories 1.4/1.5) and the premium guard (Epic 6)
-/// hook into the `redirect` callback added here later.
+/// Onboarding begins at the welcome step. A returning, authenticated user who
+/// has already completed onboarding is redirected straight to the Mental
+/// Backpack (Home) by the `redirect` guard below (Story 1.5); the redirect is
+/// re-evaluated reactively whenever the auth state changes. The premium guard
+/// (Epic 6) hooks into the same `redirect` later.
 
 final class AppRouterProvider
     extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
     with $Provider<GoRouter> {
   /// The app's [GoRouter].
   ///
-  /// Onboarding begins at the welcome step. Auth and first-launch vs
-  /// returning-user redirects (Stories 1.4/1.5) and the premium guard (Epic 6)
-  /// hook into the `redirect` callback added here later.
+  /// Onboarding begins at the welcome step. A returning, authenticated user who
+  /// has already completed onboarding is redirected straight to the Mental
+  /// Backpack (Home) by the `redirect` guard below (Story 1.5); the redirect is
+  /// re-evaluated reactively whenever the auth state changes. The premium guard
+  /// (Epic 6) hooks into the same `redirect` later.
   AppRouterProvider._()
     : super(
         from: null,
@@ -64,4 +70,4 @@ final class AppRouterProvider
   }
 }
 
-String _$appRouterHash() => r'652c53aeebc6cc558d5a0a4336ebf53fa24401a9';
+String _$appRouterHash() => r'a7f9e6190e1489222d1fbdf44bd44a3b5e0830d5';
