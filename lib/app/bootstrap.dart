@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mindow/app/app.dart';
 import 'package:mindow/app/env.dart';
+import 'package:mindow/features/onboarding/onboarding_repository.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,6 +27,10 @@ Future<void> bootstrap(Flavor flavor) async {
       // Local-first persistence is always available.
       await Hive.initFlutter();
 
+      // Read persisted routing state before the first frame so the router's
+      // redirect resolves synchronously (no welcome flash / blocking spinner).
+      final onboardingComplete = await OnboardingRepository().isComplete();
+
       if (env.hasSupabase) {
         await Supabase.initialize(
           url: env.supabaseUrl,
@@ -44,7 +49,10 @@ Future<void> bootstrap(Flavor flavor) async {
       }
 
       final app = ProviderScope(
-        overrides: [envProvider.overrideWithValue(env)],
+        overrides: [
+          envProvider.overrideWithValue(env),
+          onboardingCompleteProvider.overrideWithValue(onboardingComplete),
+        ],
         child: const MindowApp(),
       );
 

@@ -5,8 +5,11 @@ import 'package:mindow/core/design_system/aurore_spacing.dart';
 import 'package:mindow/core/design_system/widgets/aurore_canvas.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/features/auth/account_screen.dart';
+import 'package:mindow/features/auth/auth_controller.dart';
+import 'package:mindow/features/auth/auth_repository.dart';
 import 'package:mindow/features/onboarding/onboarding_context_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_mind_volume_screen.dart';
+import 'package:mindow/features/onboarding/onboarding_repository.dart';
 import 'package:mindow/features/onboarding/welcome_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -23,15 +26,43 @@ abstract final class Routes {
   static const String home = '/';
 }
 
+/// Whether [location] belongs to the welcome/onboarding flow that a returning,
+/// onboarded user should be redirected away from.
+bool _isOnboardingRoute(String location) =>
+    location == Routes.welcome || location.startsWith('/onboarding');
+
 /// The app's [GoRouter].
 ///
-/// Onboarding begins at the welcome step. Auth and first-launch vs
-/// returning-user redirects (Stories 1.4/1.5) and the premium guard (Epic 6)
-/// hook into the `redirect` callback added here later.
+/// Onboarding begins at the welcome step. A returning, authenticated user who
+/// has already completed onboarding is redirected straight to the Mental
+/// Backpack (Home) by the `redirect` guard below (Story 1.5); the redirect is
+/// re-evaluated reactively whenever the auth state changes. The premium guard
+/// (Epic 6) hooks into the same `redirect` later.
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
+  // Re-run `redirect` on auth changes without rebuilding the router (which
+  // would drop the navigation stack): a side-effect listen bumps a notifier.
+  final refresh = ValueNotifier<int>(0);
+  ref
+    ..onDispose(refresh.dispose)
+    ..listen(authStateProvider, (_, _) => refresh.value++);
+
   return GoRouter(
     initialLocation: Routes.welcome,
+    refreshListenable: refresh,
+    redirect: (context, state) {
+      final signedIn = ref
+          .read(authRepositoryProvider)
+          .currentSnapshot
+          .isSignedIn;
+      final onboardingComplete = ref.read(onboardingCompleteProvider);
+      if (signedIn &&
+          onboardingComplete &&
+          _isOnboardingRoute(state.matchedLocation)) {
+        return Routes.home;
+      }
+      return null;
+    },
     routes: [
       GoRoute(
         path: Routes.welcome,

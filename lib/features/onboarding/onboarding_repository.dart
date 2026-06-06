@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:mindow/features/onboarding/onboarding_answers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -52,3 +53,16 @@ class OnboardingRepository {
 /// Provides the shared [OnboardingRepository].
 @Riverpod(keepAlive: true)
 OnboardingRepository onboardingRepository(Ref ref) => OnboardingRepository();
+
+/// Whether onboarding was completed, seeded synchronously at bootstrap.
+///
+/// The router `redirect` is synchronous and must resolve before the first
+/// frame (no blocking spinner / no welcome flash, UX-DR17 cold open), but
+/// [OnboardingRepository.isComplete] is async (Hive). This hand-written
+/// `Provider` exists only to be overridden in `bootstrap.dart` with the value
+/// read once after `Hive.initFlutter()` — mirroring the `envProvider` seed.
+final onboardingCompleteProvider = Provider<bool>(
+  (ref) => throw UnimplementedError(
+    'onboardingCompleteProvider seeded in bootstrap',
+  ),
+);
