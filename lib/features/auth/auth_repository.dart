@@ -1,0 +1,98 @@
+import 'package:mindow/app/env.dart';
+import 'package:mindow/core/data/supabase_client.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+part 'auth_repository.g.dart';
+
+/// A minimal, backend-agnostic snapshot of the current authentication state.
+///
+/// Deliberately does NOT expose any `supabase_flutter` type so that screens
+/// and controllers never depend on the backend SDK — [AuthRepository] is the
+/// single boundary.
+class AuthSnapshot {
+  const AuthSnapshot({this.userId});
+
+  /// The authenticated user's id, or `null` when signed out.
+  final String? userId;
+
+  /// Whether a user is currently authenticated.
+  bool get isSignedIn => userId != null;
+}
+
+/// Thrown when an authentication action is attempted but no backend is
+/// configured for the current flavor (UI-only scaffold builds).
+class AuthUnavailableException implements Exception {
+  const AuthUnavailableException();
+}
+
+/// The single boundary to Supabase Auth.
+///
+/// Every authentication action funnels through here so the rest of the app
+/// depends on this abstraction (mirrors the offline-first repository pattern).
+/// When no backend is configured ([SupabaseClient] is `null`), reads degrade
+/// to a signed-out snapshot and actions throw [AuthUnavailableException] only
+/// when actually invoked — construction and screen build never throw.
+class AuthRepository {
+  const AuthRepository(this._client);
+
+  final SupabaseClient? _client;
+
+  SupabaseClient _requireClient() {
+    final client = _client;
+    if (client == null) throw const AuthUnavailableException();
+    return client;
+  }
+
+  /// The current snapshot, derived from the persisted Supabase session.
+  AuthSnapshot get currentSnapshot =>
+      AuthSnapshot(userId: _client?.auth.currentSession?.user.id);
+
+  /// Emits a new snapshot whenever the auth state changes (sign-in, sign-out,
+  /// token refresh, session restore on relaunch).
+  Stream<AuthSnapshot> authStateChanges() {
+    final client = _client;
+    if (client == null) {
+      return const Stream<AuthSnapshot>.empty();
+    }
+    return client.auth.onAuthStateChange.map(
+      (state) => AuthSnapshot(userId: state.session?.user.id),
+    );
+  }
+
+  /// Starts the Apple OAuth sign-in flow.
+  Future<void> signInWithApple() =>
+      _requireClient().auth.signInWithOAuth(OAuthProvider.apple);
+
+  /// Starts the Google OAuth sign-in flow.
+  Future<void> signInWithGoogle() =>
+      _requireClient().auth.signInWithOAuth(OAuthProvider.google);
+
+  /// Signs in with email + password, creating the account if it does not yet
+  /// exist. Sign-in is attempted first; on failure a sign-up is performed.
+  Future<void> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    final client = _requireClient();
+    try {
+      await client.auth.signInWithPassword(email: email, password: password);
+    } on AuthException {
+      await client.auth.signUp(email: email, password: password);
+    }
+  }
+
+  /// Signs the current user out.
+  Future<void> signOut() => _requireClient().auth.signOut();
+}
+
+/// Provides the shared [AuthRepository].
+///
+/// Passes a `null` client when the active flavor has no Supabase backend so
+/// the scaffold still boots; otherwise reuses [supabaseClientProvider].
+@Riverpod(keepAlive: true)
+AuthRepository authRepository(Ref ref) {
+  final env = ref.watch(envProvider);
+  final client = env.hasSupabase ? ref.watch(supabaseClientProvider) : null;
+  return AuthRepository(client);
+}

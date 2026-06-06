@@ -31,5 +31,14 @@
   "onboardingMindVolumeUpTo10": "0 à 10",
   "onboardingMindVolume10to20": "10 à 20",
   "onboardingMindVolume20to50": "20 à 50",
-  "onboardingMindVolumeOver50": "Plus de 50"
+  "onboardingMindVolumeOver50": "Plus de 50",
+  "accountTitle": "Garde tes progrès",
+  "accountSubtitle": "Crée ton compte pour garder ton sac à dos avec toi, sur tous tes appareils.",
+  "accountContinueWithApple": "Continuer avec Apple",
+  "accountContinueWithGoogle": "Continuer avec Google",
+  "accountContinueWithEmail": "Continuer avec un e-mail",
+  "accountEmailLabel": "E-mail",
+  "accountEmailHint": "toi@exemple.com",
+  "accountPasswordLabel": "Mot de passe",
+  "accountAuthError": "Petit souci de connexion. On réessaie ?"
 }

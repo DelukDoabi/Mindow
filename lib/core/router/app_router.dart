@@ -4,6 +4,7 @@ import 'package:mindow/core/design_system/aurore_colors.dart';
 import 'package:mindow/core/design_system/aurore_spacing.dart';
 import 'package:mindow/core/design_system/widgets/aurore_canvas.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
+import 'package:mindow/features/auth/account_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_context_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_mind_volume_screen.dart';
 import 'package:mindow/features/onboarding/welcome_screen.dart';
@@ -18,6 +19,7 @@ abstract final class Routes {
   static const String welcome = '/welcome';
   static const String onboardingContext = '/onboarding/context';
   static const String onboardingMindVolume = '/onboarding/mind-volume';
+  static const String account = '/onboarding/account';
   static const String home = '/';
 }
 
@@ -42,6 +44,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: Routes.onboardingMindVolume,
         builder: (context, state) => const OnboardingMindVolumeScreen(),
+      ),
+      GoRoute(
+        path: Routes.account,
+        builder: (context, state) => const AccountScreen(),
       ),
       GoRoute(
         path: Routes.home,

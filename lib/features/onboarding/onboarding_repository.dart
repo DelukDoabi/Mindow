@@ -14,6 +14,7 @@ part 'onboarding_repository.g.dart';
 class OnboardingRepository {
   static const String _boxName = 'onboarding';
   static const String _key = 'answers';
+  static const String _completeKey = 'complete';
 
   Box<dynamic>? _box;
 
@@ -32,6 +33,19 @@ class OnboardingRepository {
   Future<void> save(OnboardingAnswers answers) async {
     final box = await _openBox();
     await box.put(_key, answers.toJson());
+  }
+
+  /// Records that onboarding has been completed (after account creation) so a
+  /// returning user never sees onboarding again on this device (FR-1).
+  Future<void> markComplete() async {
+    final box = await _openBox();
+    await box.put(_completeKey, true);
+  }
+
+  /// Whether onboarding has been completed on this device.
+  Future<bool> isComplete() async {
+    final box = await _openBox();
+    return box.get(_completeKey) == true;
   }
 }
 

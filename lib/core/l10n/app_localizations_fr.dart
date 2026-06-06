@@ -109,4 +109,32 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get onboardingMindVolumeOver50 => 'Plus de 50';
+
+  @override
+  String get accountTitle => 'Garde tes progrès';
+
+  @override
+  String get accountSubtitle =>
+      'Crée ton compte pour garder ton sac à dos avec toi, sur tous tes appareils.';
+
+  @override
+  String get accountContinueWithApple => 'Continuer avec Apple';
+
+  @override
+  String get accountContinueWithGoogle => 'Continuer avec Google';
+
+  @override
+  String get accountContinueWithEmail => 'Continuer avec un e-mail';
+
+  @override
+  String get accountEmailLabel => 'E-mail';
+
+  @override
+  String get accountEmailHint => 'toi@exemple.com';
+
+  @override
+  String get accountPasswordLabel => 'Mot de passe';
+
+  @override
+  String get accountAuthError => 'Petit souci de connexion. On réessaie ?';
 }

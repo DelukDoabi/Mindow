@@ -127,5 +127,41 @@
   "onboardingMindVolumeOver50": "More than 50",
   "@onboardingMindVolumeOver50": {
     "description": "Mind-volume bucket: over 50"
+  },
+  "accountTitle": "Save your progress",
+  "@accountTitle": {
+    "description": "Title of the account creation screen"
+  },
+  "accountSubtitle": "Create your account so your backpack is always with you, on every device.",
+  "@accountSubtitle": {
+    "description": "Reassuring subtitle on the account creation screen"
+  },
+  "accountContinueWithApple": "Continue with Apple",
+  "@accountContinueWithApple": {
+    "description": "Apple sign-in button label"
+  },
+  "accountContinueWithGoogle": "Continue with Google",
+  "@accountContinueWithGoogle": {
+    "description": "Google sign-in button label"
+  },
+  "accountContinueWithEmail": "Continue with email",
+  "@accountContinueWithEmail": {
+    "description": "Email sign-in button label"
+  },
+  "accountEmailLabel": "Email",
+  "@accountEmailLabel": {
+    "description": "Label for the email field"
+  },
+  "accountEmailHint": "you@example.com",
+  "@accountEmailHint": {
+    "description": "Placeholder hint for the email field"
+  },
+  "accountPasswordLabel": "Password",
+  "@accountPasswordLabel": {
+    "description": "Label for the password field"
+  },
+  "accountAuthError": "Small hiccup connecting. Shall we try again?",
+  "@accountAuthError": {
+    "description": "Calm, reassuring error shown when authentication fails"
   }
 }

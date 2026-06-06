@@ -54,4 +54,14 @@ void main() {
     expect(loaded.familySituation, isNull);
     expect(loaded.stressLevel, isNull);
   });
+
+  test('isComplete is false until markComplete is called', () async {
+    final repo = OnboardingRepository();
+
+    expect(await repo.isComplete(), isFalse);
+
+    await repo.markComplete();
+
+    expect(await repo.isComplete(), isTrue);
+  });
 }

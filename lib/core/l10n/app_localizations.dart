@@ -289,6 +289,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More than 50'**
   String get onboardingMindVolumeOver50;
+
+  /// Title of the account creation screen
+  ///
+  /// In en, this message translates to:
+  /// **'Save your progress'**
+  String get accountTitle;
+
+  /// Reassuring subtitle on the account creation screen
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account so your backpack is always with you, on every device.'**
+  String get accountSubtitle;
+
+  /// Apple sign-in button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get accountContinueWithApple;
+
+  /// Google sign-in button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get accountContinueWithGoogle;
+
+  /// Email sign-in button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with email'**
+  String get accountContinueWithEmail;
+
+  /// Label for the email field
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get accountEmailLabel;
+
+  /// Placeholder hint for the email field
+  ///
+  /// In en, this message translates to:
+  /// **'you@example.com'**
+  String get accountEmailHint;
+
+  /// Label for the password field
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get accountPasswordLabel;
+
+  /// Calm, reassuring error shown when authentication fails
+  ///
+  /// In en, this message translates to:
+  /// **'Small hiccup connecting. Shall we try again?'**
+  String get accountAuthError;
 }
 
 class _AppLocalizationsDelegate

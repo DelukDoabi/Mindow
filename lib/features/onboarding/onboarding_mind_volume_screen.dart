@@ -12,8 +12,8 @@ import 'package:mindow/features/onboarding/onboarding_answers.dart';
 import 'package:mindow/features/onboarding/onboarding_controller.dart';
 
 /// Third onboarding step: how many subjects occupy the user's mind (FR-3
-/// buckets). Skippable; persists via [OnboardingDraft]. Both "Passer" and
-/// "Continuer" leave onboarding (account creation arrives in Story 1.4).
+/// buckets). Skippable; persists via [OnboardingDraft]. "Continuer" advances
+/// to account creation (Story 1.4); "Passer" skips straight to home.
 class OnboardingMindVolumeScreen extends ConsumerWidget {
   const OnboardingMindVolumeScreen({super.key});
 
@@ -24,7 +24,8 @@ class OnboardingMindVolumeScreen extends ConsumerWidget {
     final answers = ref.watch(onboardingDraftProvider);
     final controller = ref.read(onboardingDraftProvider.notifier);
 
-    void finish() => context.go(Routes.home);
+    void skip() => context.go(Routes.home);
+    void next() => context.go(Routes.account);
 
     return AuroreCanvas(
       child: SafeArea(
@@ -36,7 +37,7 @@ class OnboardingMindVolumeScreen extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: finish,
+                  onPressed: skip,
                   style: TextButton.styleFrom(
                     foregroundColor: AuroreColors.inkMuted,
                   ),
@@ -74,7 +75,7 @@ class OnboardingMindVolumeScreen extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: finish,
+                  onPressed: next,
                   child: Text(l10n.onboardingContinue),
                 ),
               ),
