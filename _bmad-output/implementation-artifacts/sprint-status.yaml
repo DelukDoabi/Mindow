@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-06
+last_updated: 2026-06-07
 project: Mindow
 project_key: NOKEY
 tracking_system: file-system
@@ -51,7 +51,7 @@ development_status:
   1-5-returning-user-routing: review
   1-6-ai-processing-consent-privacy-notice: review
   1-7-gdpr-data-export-account-deletion: review
-  epic-1-retrospective: optional
+  epic-1-retrospective: done
 
   # Epic 2: Brain Dump & Mental Backpack
   epic-2: backlog
