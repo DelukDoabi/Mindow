@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mindow · Écrans clés — Direction Aurore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg1:#FDF4F0; --bg2:#F6ECF2; --bg3:#EDE9F4;
+    --warm:#E8A87C; --cool:#B98BB0; --peach:#F6C9A8; --peachL:#FBD8BD;
+    --ink:#5B5470; --muted:#9B91AC;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-font-smoothing:antialiased; }
+  body {
+    font-family:'Inter',system-ui,sans-serif;
+    background:radial-gradient(1200px 800px at 30% 10%, #efe7f3, #e3dced 60%, #ddd5e8);
+    min-height:100vh; padding:48px 24px 80px; color:var(--ink);
+  }
+  .page-title { text-align:center; margin-bottom:8px; font-weight:800; font-size:26px; letter-spacing:-.5px; }
+  .page-sub { text-align:center; color:var(--muted); font-weight:500; margin-bottom:44px; font-size:14px; }
+  .stage {
+    display:flex; gap:40px; justify-content:center; flex-wrap:wrap; align-items:flex-start;
+  }
+  .label { text-align:center; font-weight:600; color:var(--ink); margin-top:18px; font-size:14px; }
+  .label span { display:block; color:var(--muted); font-weight:500; font-size:12px; margin-top:2px; }
+
+  .phone {
+    width:340px; height:736px; border-radius:46px; position:relative; overflow:hidden;
+    background:linear-gradient(150deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
+    box-shadow:0 40px 90px -30px rgba(91,84,112,.45), 0 0 0 10px #fff, 0 0 0 12px rgba(0,0,0,.04);
+    display:flex; flex-direction:column; padding:0 22px 10px;
+  }
+  /* status bar */
+  .status { display:flex; justify-content:space-between; align-items:center; padding:14px 6px 6px; font-size:14px; font-weight:600; }
+  .sys { display:flex; align-items:center; gap:6px; }
+  .bars { display:flex; align-items:flex-end; gap:2px; height:11px; }
+  .bars i { width:3px; background:var(--ink); border-radius:1px; display:block; }
+  .bars i:nth-child(1){height:4px} .bars i:nth-child(2){height:6px} .bars i:nth-child(3){height:8px} .bars i:nth-child(4){height:11px}
+  .wifi { width:15px; height:11px; background:var(--ink);
+    -webkit-mask:radial-gradient(circle at 50% 100%, #000 30%, transparent 31%) bottom/100% 100% no-repeat; }
+  .batt { width:24px; height:12px; border:1.3px solid rgba(91,84,112,.45); border-radius:3px; position:relative; padding:1.5px; }
+  .batt::after { content:''; position:absolute; right:-3px; top:3.5px; width:2px; height:5px; background:rgba(91,84,112,.45); border-radius:1px; }
+  .batt i { display:block; height:100%; width:75%; background:var(--ink); border-radius:1.5px; }
+
+  .home { width:134px; height:5px; border-radius:3px; background:rgba(91,84,112,.5); margin:8px auto 6px; }
+  .grow { flex:1 1 auto; }
+
+  /* typography helpers */
+  .h-hero { text-align:center; font-weight:600; font-size:25px; letter-spacing:-.3px; }
+  .h-big { text-align:center; font-weight:800; font-size:27px; letter-spacing:-.5px; line-height:1.2; }
+  .h-sec { text-align:center; font-weight:600; font-size:23px; }
+  .cap { text-align:center; color:var(--muted); font-weight:500; font-size:14px; letter-spacing:.4px; }
+  .muted { color:var(--muted); }
+  .grad-text { background:linear-gradient(120deg, var(--warm), var(--cool)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  .cta {
+    width:100%; border:none; padding:18px; border-radius:24px; cursor:pointer;
+    background:linear-gradient(90deg, var(--warm), var(--cool));
+    color:#fff; font-family:inherit; font-weight:600; font-size:16px;
+    box-shadow:0 12px 26px -4px rgba(232,168,124,.5);
+  }
+  .link-btn { width:100%; background:none; border:none; color:var(--muted); font-family:inherit; font-weight:600; font-size:15px; padding:10px; cursor:pointer; }
+
+  .glass {
+    background:rgba(255,255,255,.58); border:1px solid rgba(255,255,255,.7); border-radius:24px;
+    box-shadow:0 8px 20px -6px rgba(91,84,112,.14); backdrop-filter:blur(6px);
+  }
+
+  /* ===== Screen 1: Hero ===== */
+  .kgwrap { display:flex; justify-content:center; align-items:flex-end; gap:4px; margin-top:6px; }
+  .kgnum { font-weight:800; font-size:88px; line-height:.95;
+    background:linear-gradient(120deg, var(--warm), var(--cool)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .kgunit { font-weight:600; font-size:26px; color:var(--cool); margin-bottom:14px; }
+  .backpack { width:200px; height:210px; margin:8px auto 0; position:relative; }
+  .bp-glow { position:absolute; inset:-20px -10px auto; width:240px; height:240px; left:50%; transform:translateX(-50%);
+    background:radial-gradient(circle, rgba(246,201,168,.6), rgba(246,201,168,.1) 60%, transparent 72%); }
+  .bp-handle { position:absolute; left:50%; top:22px; transform:translateX(-50%); width:42px; height:28px; border:7px solid var(--peachL);
+    border-radius:16px 16px 4px 4px; border-bottom:none; }
+  .bp-strap { position:absolute; top:38px; width:18px; height:96px; background:var(--peachL); border-radius:9px; }
+  .bp-strap.l { left:54px } .bp-strap.r { right:54px }
+  .bp-side { position:absolute; top:96px; width:34px; height:90px; border-radius:18px; background:linear-gradient(180deg,#f0bd99,#e09e74); }
+  .bp-side.l { left:14px } .bp-side.r { right:14px }
+  .bp-body { position:absolute; left:50%; top:62px; transform:translateX(-50%); width:140px; height:150px; border-radius:46px;
+    background:linear-gradient(180deg, var(--peach), var(--warm));
+    box-shadow:inset 0 4px 12px rgba(255,255,255,.5), 0 20px 34px -6px rgba(232,168,124,.45); }
+  .bp-lid { position:absolute; left:50%; top:50px; transform:translateX(-50%); width:150px; height:84px; border-radius:44px; background:var(--peachL);
+    box-shadow:0 6px 10px rgba(217,148,107,.18); }
+  .bp-pocket { position:absolute; left:50%; bottom:6px; transform:translateX(-50%); width:86px; height:62px; border-radius:22px;
+    background:rgba(255,255,255,.26); border:1px solid rgba(255,255,255,.4); }
+  .bp-buck { position:absolute; left:50%; bottom:14px; transform:translateX(-50%); width:14px; height:38px; background:rgba(251,216,189,.95); border-radius:5px; }
+  .bp-buck::after { content:''; position:absolute; left:-3px; bottom:-2px; width:20px; height:15px; background:#c8855f; border-radius:5px; }
+  .pills { display:flex; gap:10px; justify-content:center; margin-top:4px; }
+  .pill { text-align:center; padding:12px 16px; border-radius:20px; background:rgba(255,255,255,.5);
+    border:1px solid rgba(255,255,255,.7); box-shadow:0 6px 14px rgba(91,84,112,.08); }
+  .pill b { display:block; font-size:17px; font-weight:700; }
+  .pill span { font-size:11px; color:var(--muted); font-weight:500; }
+  .input { width:100%; padding:16px 20px; border-radius:22px; background:rgba(255,255,255,.65);
+    border:1px solid rgba(255,255,255,.8); color:var(--muted); font-weight:500; font-size:15px; }
+
+  /* ===== Screen 2: Onboarding ===== */
+  .illo { width:280px; height:280px; margin:0 auto; position:relative; }
+  .illo .aglow { position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle, rgba(246,201,168,.55), rgba(217,184,209,.25) 60%, transparent 72%); }
+  .illo .orb { position:absolute; left:50%; top:60px; transform:translateX(-50%); width:150px; height:150px; border-radius:50%;
+    background:linear-gradient(135deg, var(--warm), var(--cool)); box-shadow:0 16px 30px -4px rgba(217,153,128,.35);
+    display:flex; align-items:center; justify-content:center; font-size:44px; }
+  .bubble { position:absolute; border-radius:50%; background:rgba(255,255,255,.88); border:1px solid rgba(255,255,255,.9);
+    box-shadow:0 6px 12px rgba(91,84,112,.12); display:flex; align-items:center; justify-content:center; }
+  .skip { text-align:right; color:var(--muted); font-weight:500; font-size:14px; padding:4px 4px 0; }
+  .dots { display:flex; gap:8px; justify-content:center; align-items:center; margin-bottom:18px; }
+  .dots i { width:7px; height:7px; border-radius:50%; background:rgba(155,145,172,.4); }
+  .dots i.on { width:22px; border-radius:4px; background:linear-gradient(90deg,var(--warm),var(--cool)); }
+
+  /* ===== Screen 3: Mission ===== */
+  .m-card { padding:24px; }
+  .m-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .iconbox { width:48px; height:48px; border-radius:16px; background:rgba(251,216,189,.6); display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .tag { padding:6px 12px; border-radius:14px; font-weight:600; font-size:12px; }
+  .tag.cool { background:rgba(185,139,176,.16); color:var(--cool); }
+  .m-title { font-weight:600; font-size:19px; line-height:1.3; margin-bottom:8px; }
+  .m-desc { color:var(--muted); font-weight:500; font-size:14px; line-height:1.5; }
+
+  /* ===== Screen 4: Decomposition ===== */
+  .premium { padding:6px 12px; border-radius:14px; background:linear-gradient(90deg,var(--warm),var(--cool)); color:#fff; font-weight:600; font-size:12px; }
+  .nav { display:flex; justify-content:space-between; align-items:center; }
+  .nav .back { font-size:26px; font-weight:600; line-height:1; }
+  .steps { display:flex; flex-direction:column; gap:12px; }
+  .step { display:flex; align-items:center; gap:14px; padding:16px; border-radius:20px; }
+  .step.done { opacity:.62; }
+  .step .num { width:30px; height:30px; border-radius:50%; flex:0 0 auto; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px;
+    background:rgba(255,255,255,.7); border:1.5px solid rgba(185,139,176,.5); color:var(--cool); }
+  .step.done .num { background:linear-gradient(135deg,var(--warm),var(--cool)); color:#fff; border:none; }
+  .step .lbl { flex:1; font-weight:600; font-size:15px; }
+  .step .kg { font-weight:600; font-size:13px; color:var(--cool); }
+  .step.done .lbl, .step.done .kg { color:var(--muted); }
+</style>
+</head>
+<body>
+  <div class="page-title">Mindow · Écrans clés</div>
+  <div class="page-sub">Direction C — Aurore · maquettes HTML (miroir des frames Figma)</div>
+
+  <div class="stage">
+
+    <!-- ============ SCREEN 1 : HERO ============ -->
+    <div>
+    <div class="phone">
+      <div class="status">
+        <span>9:41</span>
+        <div class="sys"><div class="bars"><i></i><i></i><i></i><i></i></div><div class="wifi"></div><div class="batt"><i></i></div></div>
+      </div>
+      <div style="height:18px"></div>
+      <div class="h-hero">Respire, Camille&nbsp;&nbsp;✨</div>
+      <div class="cap" style="margin-top:6px">Charge mentale actuelle</div>
+      <div class="kgwrap"><span class="kgnum">63</span><span class="kgunit">kg</span></div>
+      <div class="cap" style="margin-top:2px">sur tes épaules</div>
+      <div class="backpack">
+        <div class="bp-glow"></div>
+        <div class="bp-handle"></div>
+        <div class="bp-strap l"></div><div class="bp-strap r"></div>
+        <div class="bp-side l"></div><div class="bp-side r"></div>
+        <div class="bp-body"></div>
+        <div class="bp-lid"></div>
+        <div class="bp-pocket"></div>
+        <div class="bp-buck"></div>
+      </div>
+      <div style="height:18px"></div>
+      <div class="pills">
+        <div class="pill"><b>12</b><span>ouvertes</span></div>
+        <div class="pill"><b>−6 kg</b><span>cette semaine</span></div>
+        <div class="pill"><b>5 j</b><span>série</span></div>
+      </div>
+      <div class="grow"></div>
+      <div class="input">Qu'est-ce qui occupe ton esprit ?</div>
+      <div style="height:12px"></div>
+      <button class="cta">Déposer dans mon sac à dos</button>
+      <div class="home"></div>
+    </div>
+    <div class="label">Sac à Dos Mental<span>Écran d'accueil · Camille</span></div>
+    </div>
+
+    <!-- ============ SCREEN 2 : ONBOARDING ============ -->
+    <div>
+    <div class="phone">
+      <div class="status">
+        <span>9:41</span>
+        <div class="sys"><div class="bars"><i></i><i></i><i></i><i></i></div><div class="wifi"></div><div class="batt"><i></i></div></div>
+      </div>
+      <div class="skip">Passer</div>
+      <div style="height:24px"></div>
+      <div class="illo">
+        <div class="aglow"></div>
+        <div class="orb">✨</div>
+        <div class="bubble" style="left:8px;top:40px;width:52px;height:52px;font-size:22px">🛒</div>
+        <div class="bubble" style="left:220px;top:28px;width:46px;height:46px;font-size:19px">📅</div>
+        <div class="bubble" style="left:232px;top:178px;width:50px;height:50px;font-size:21px">🎁</div>
+        <div class="bubble" style="left:18px;top:196px;width:44px;height:44px;font-size:18px">💊</div>
+      </div>
+      <div style="height:30px"></div>
+      <div class="h-big">Allège ta charge mentale</div>
+      <div style="height:14px"></div>
+      <div class="cap" style="line-height:1.5; padding:0 18px">Dépose tout ce qui occupe ton esprit. Mindow t'aide à porter moins, un objet à la fois.</div>
+      <div class="grow"></div>
+      <div class="dots"><i class="on"></i><i></i><i></i></div>
+      <button class="cta">Commencer</button>
+      <div class="home"></div>
+    </div>
+    <div class="label">Onboarding<span>Accueil &amp; promesse · Camille</span></div>
+    </div>
+
+    <!-- ============ SCREEN 3 : MISSION DU JOUR ============ -->
+    <div>
+    <div class="phone">
+      <div class="status">
+        <span>9:41</span>
+        <div class="sys"><div class="bars"><i></i><i></i><i></i><i></i></div><div class="wifi"></div><div class="batt"><i></i></div></div>
+      </div>
+      <div style="height:14px"></div>
+      <div class="h-sec">Ta mission du jour</div>
+      <div class="cap" style="margin-top:6px">Un seul geste. Léger.</div>
+      <div style="height:24px"></div>
+      <div class="glass m-card">
+        <div class="m-top">
+          <div class="iconbox">📞</div>
+          <div class="tag cool">≈ 4 kg</div>
+        </div>
+        <div class="m-title">Prendre le rendez-vous chez le pédiatre</div>
+        <div class="m-desc">Tu repousses depuis 9 jours. 5 minutes suffisent — et ton sac s'allège d'autant.</div>
+      </div>
+      <div style="height:16px"></div>
+      <div class="cap">🌱&nbsp;&nbsp;Pas le moment ? Aucun souci.</div>
+      <div class="grow"></div>
+      <button class="cta">C'est fait&nbsp;&nbsp;✓</button>
+      <div style="height:8px"></div>
+      <button class="link-btn">Plus tard</button>
+      <div class="home"></div>
+    </div>
+    <div class="label">Mission du jour<span>Une action portable · Lucas</span></div>
+    </div>
+
+    <!-- ============ SCREEN 4 : DECOMPOSITION ============ -->
+    <div>
+    <div class="phone">
+      <div class="status">
+        <span>9:41</span>
+        <div class="sys"><div class="bars"><i></i><i></i><i></i><i></i></div><div class="wifi"></div><div class="batt"><i></i></div></div>
+      </div>
+      <div style="height:10px"></div>
+      <div class="nav">
+        <span class="back">‹</span>
+        <span class="premium">✦ Premium</span>
+      </div>
+      <div style="height:18px"></div>
+      <div class="h-big" style="font-size:23px">Organiser l'anniversaire de Léa</div>
+      <div style="height:10px"></div>
+      <div class="cap"><span class="grad-text" style="font-weight:700;font-size:16px">18 kg</span> · un gros morceau</div>
+      <div style="height:14px"></div>
+      <div class="cap">Mindow l'a découpé en petits pas portables :</div>
+      <div style="height:16px"></div>
+      <div class="steps">
+        <div class="glass step done"><div class="num">✓</div><div class="lbl">Choisir la date</div><div class="kg">3 kg</div></div>
+        <div class="glass step"><div class="num">2</div><div class="lbl">Faire la liste des invités</div><div class="kg">4 kg</div></div>
+        <div class="glass step"><div class="num">3</div><div class="lbl">Commander le gâteau</div><div class="kg">5 kg</div></div>
+        <div class="glass step"><div class="num">4</div><div class="lbl">Préparer les pochettes-cadeaux</div><div class="kg">6 kg</div></div>
+      </div>
+      <div class="grow"></div>
+      <button class="cta">Commencer le 1er pas</button>
+      <div class="home"></div>
+    </div>
+    <div class="label">Décomposition<span>Découper un gros morceau · Sofia · Premium</span></div>
+    </div>
+
+  </div>
+</body>
+</html>

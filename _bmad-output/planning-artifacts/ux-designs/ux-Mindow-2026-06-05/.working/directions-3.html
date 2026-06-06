@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mindow — Directions visuelles</title>
+<!--
+  3 directions visuelles pour l'écran héros (Sac à Dos Mental).
+  Déduites du PRD : calme, léger, rassurant ; métaphores sac à dos + jardin ;
+  ton tutoiement, anti-culpabilisant.
+
+  A. "Souffle"  — pastel aérien, beaucoup de blanc, rondeur, zen.        #FAF8F4 / #6B9C8A / #2E3A36
+  B. "Jardin"   — nature, verts organiques, la métaphore jardin mène.    #F3F6EE / #4E7C59 / #283A2C
+  C. "Aurore"   — dégradé d'aube doux, onirique, moderne, légèreté.      #FDF4F0 / #E8A87C / #5B5470
+-->
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #e9e9ec; color:#222; padding:32px 16px; -webkit-font-smoothing:antialiased;
+  }
+  h1 { text-align:center; font-weight:600; font-size:22px; margin-bottom:4px; color:#2c2c33; }
+  .sub { text-align:center; color:#777; font-size:13px; margin-bottom:28px; }
+  .row { display:flex; gap:28px; justify-content:center; flex-wrap:wrap; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .name { font-weight:600; font-size:15px; }
+  .why { font-size:12px; color:#666; max-width:300px; text-align:center; line-height:1.45; min-height:52px; }
+  /* phone frame */
+  .phone {
+    width:300px; height:640px; border-radius:38px; padding:12px;
+    background:#1c1c1e; box-shadow:0 18px 50px rgba(0,0,0,.22); position:relative;
+  }
+  .screen { width:100%; height:100%; border-radius:28px; overflow:hidden; position:relative; }
+  .notch { position:absolute; top:12px; left:50%; transform:translateX(-50%); width:96px; height:22px; background:#1c1c1e; border-radius:0 0 14px 14px; z-index:5; }
+  .status { display:flex; justify-content:space-between; padding:14px 20px 4px; font-size:12px; font-weight:600; }
+
+  /* ---------- A. Souffle ---------- */
+  .A { background:#FAF8F4; color:#2E3A36; }
+  .A .status { color:#2E3A36; }
+  .A .pad { padding:22px 22px 0; }
+  .A .greet { font-size:13px; color:#8a9690; }
+  .A .load { font-size:13px; color:#8a9690; margin-top:18px; letter-spacing:.04em; }
+  .A .kg { font-size:62px; font-weight:300; letter-spacing:-.02em; line-height:1; margin-top:2px; }
+  .A .kg small { font-size:24px; font-weight:400; color:#6B9C8A; }
+  .A .band { display:inline-block; margin-top:10px; font-size:11px; background:#E4EDE7; color:#6B9C8A; padding:5px 12px; border-radius:20px; font-weight:600; }
+  .A .bag { width:150px; height:160px; margin:18px auto 8px; border-radius:34px 34px 40px 40px; background:linear-gradient(160deg,#9DC3B4,#6B9C8A); position:relative; box-shadow:0 14px 26px rgba(107,156,138,.32); }
+  .A .bag::before { content:""; position:absolute; top:-14px; left:50%; transform:translateX(-50%); width:70px; height:44px; border:9px solid #6B9C8A; border-bottom:none; border-radius:40px 40px 0 0; }
+  .A .meta { display:flex; justify-content:space-between; font-size:12px; color:#8a9690; padding:0 4px; margin-top:6px; }
+  .A .field { margin:18px 6px 0; background:#fff; border:1px solid #ECEAE3; border-radius:18px; padding:14px 16px; font-size:13px; color:#aeb6b1; box-shadow:0 4px 14px rgba(0,0,0,.03); }
+  .A .cta { margin:10px 6px 0; background:#6B9C8A; color:#fff; text-align:center; padding:14px; border-radius:18px; font-size:14px; font-weight:600; }
+
+  /* ---------- B. Jardin ---------- */
+  .B { background:#F3F6EE; color:#283A2C; }
+  .B .status { color:#283A2C; }
+  .B .pad { padding:20px 20px 0; }
+  .B .greet { font-size:13px; color:#7a8c72; font-weight:500; }
+  .B .card { background:#fff; border-radius:24px; padding:18px; margin-top:14px; box-shadow:0 8px 22px rgba(40,58,44,.07); }
+  .B .load { font-size:12px; color:#7a8c72; text-transform:uppercase; letter-spacing:.08em; }
+  .B .kg { font-size:50px; font-weight:700; line-height:1; color:#283A2C; }
+  .B .kg small { font-size:20px; color:#4E7C59; }
+  .B .barwrap { height:8px; background:#E4EBDD; border-radius:6px; margin-top:14px; overflow:hidden; }
+  .B .bar { height:100%; width:63%; background:linear-gradient(90deg,#7DAE6A,#4E7C59); border-radius:6px; }
+  .B .barlabel { font-size:11px; color:#7a8c72; margin-top:7px; }
+  .B .garden { margin-top:14px; height:120px; border-radius:24px; background:linear-gradient(180deg,#DCEBD0,#C2DDB0); position:relative; overflow:hidden; }
+  .B .hill { position:absolute; bottom:0; width:100%; height:50px; background:#4E7C59; border-radius:50% 50% 0 0 / 100% 100% 0 0; }
+  .B .tree { position:absolute; bottom:34px; left:42%; width:22px; height:34px; }
+  .B .tree::before { content:""; position:absolute; bottom:0; left:9px; width:5px; height:16px; background:#6b4f3a; }
+  .B .tree::after { content:""; position:absolute; bottom:12px; left:0; width:22px; height:24px; background:#3F6B49; border-radius:50%; }
+  .B .flower { position:absolute; bottom:30px; left:22%; width:8px; height:8px; border-radius:50%; background:#E8A87C; box-shadow:0 -6px 0 #E8A87C; }
+  .B .cta { margin-top:14px; background:#4E7C59; color:#fff; text-align:center; padding:14px; border-radius:18px; font-size:14px; font-weight:600; }
+  .B .field { margin-top:10px; background:#fff; border:1px dashed #B9CDA8; border-radius:18px; padding:13px 16px; font-size:13px; color:#9aa994; }
+
+  /* ---------- C. Aurore ---------- */
+  .C { background:linear-gradient(180deg,#FDF4F0 0%,#F6ECF2 55%,#EDE9F4 100%); color:#5B5470; }
+  .C .status { color:#5B5470; }
+  .C .pad { padding:22px 22px 0; }
+  .C .greet { font-size:13px; color:#9b91ac; }
+  .C .load { font-size:12px; color:#9b91ac; letter-spacing:.05em; margin-top:16px; }
+  .C .kg { font-size:58px; font-weight:600; line-height:1; background:linear-gradient(120deg,#E8A87C,#B98BB0); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .C .kg small { font-size:22px; -webkit-text-fill-color:#B98BB0; }
+  .C .bag { width:140px; height:150px; margin:14px auto 6px; border-radius:32px 32px 38px 38px; background:linear-gradient(160deg,#F6C9A8,#E8A87C); position:relative; box-shadow:0 16px 30px rgba(232,168,124,.35); }
+  .C .bag::before { content:""; position:absolute; top:-13px; left:50%; transform:translateX(-50%); width:64px; height:40px; border:8px solid #E8A87C; border-bottom:none; border-radius:38px 38px 0 0; }
+  .C .glow { position:absolute; inset:0; border-radius:32px; box-shadow:0 0 40px 8px rgba(232,168,124,.25) inset; }
+  .C .pills { display:flex; gap:10px; justify-content:center; margin-top:8px; }
+  .C .pill { background:rgba(255,255,255,.7); backdrop-filter:blur(6px); border-radius:16px; padding:9px 13px; font-size:11px; color:#7c7390; text-align:center; }
+  .C .pill b { display:block; font-size:15px; color:#5B5470; }
+  .C .field { margin:16px 6px 0; background:rgba(255,255,255,.75); border-radius:20px; padding:14px 16px; font-size:13px; color:#a99fbb; }
+  .C .cta { margin:10px 6px 0; background:linear-gradient(120deg,#E8A87C,#B98BB0); color:#fff; text-align:center; padding:14px; border-radius:20px; font-size:14px; font-weight:600; box-shadow:0 8px 20px rgba(185,139,176,.35); }
+</style>
+</head>
+<body>
+  <h1>Mindow — 3 directions visuelles</h1>
+  <p class="sub">Écran héros : le Sac à Dos Mental · ton tutoiement, anti-culpabilisant · choisis ta direction</p>
+
+  <div class="row">
+
+    <!-- A. SOUFFLE -->
+    <div class="col">
+      <div class="phone"><div class="screen A">
+        <div class="notch"></div>
+        <div class="status"><span>9:41</span><span>100%</span></div>
+        <div class="pad">
+          <div class="greet">Bonjour Camille</div>
+          <div class="load">CHARGE MENTALE ACTUELLE</div>
+          <div class="kg">63<small> kg</small></div>
+          <span class="band">Modéré</span>
+          <div class="bag"></div>
+          <div class="meta"><span>12 préoccupations</span><span>−6 kg cette semaine</span></div>
+          <div class="field">Qu'est-ce qui occupe ton esprit ?</div>
+          <div class="cta">Déposer dans mon sac à dos</div>
+        </div>
+      </div></div>
+      <div class="name">A · Souffle</div>
+      <div class="why">Pastel aérien, beaucoup de respiration, rondeur et typo légère. Le plus « zen » et minimal — le calme avant tout.</div>
+    </div>
+
+    <!-- B. JARDIN -->
+    <div class="col">
+      <div class="phone"><div class="screen B">
+        <div class="notch"></div>
+        <div class="status"><span>9:41</span><span>100%</span></div>
+        <div class="pad">
+          <div class="greet">🌿 Ton jardin pousse, Camille</div>
+          <div class="card">
+            <div class="load">Charge mentale</div>
+            <div class="kg">63<small> kg</small></div>
+            <div class="barwrap"><div class="bar"></div></div>
+            <div class="barlabel">12 préoccupations ouvertes · −6 kg cette semaine</div>
+          </div>
+          <div class="garden">
+            <div class="flower"></div><div class="tree"></div><div class="hill"></div>
+          </div>
+          <div class="field">Qu'est-ce qui occupe ton esprit ?</div>
+          <div class="cta">Déposer dans mon sac à dos</div>
+        </div>
+      </div></div>
+      <div class="name">B · Jardin</div>
+      <div class="why">La métaphore du jardin mène l'écran : verts organiques, progression visible, nature. Chaleureux et vivant.</div>
+    </div>
+
+    <!-- C. AURORE -->
+    <div class="col">
+      <div class="phone"><div class="screen C">
+        <div class="notch"></div>
+        <div class="status"><span>9:41</span><span>100%</span></div>
+        <div class="pad">
+          <div class="greet">Respire, Camille ✨</div>
+          <div class="load">Charge mentale actuelle</div>
+          <div class="kg">63<small> kg</small></div>
+          <div class="bag"><div class="glow"></div></div>
+          <div class="pills">
+            <div class="pill">ouvertes<b>12</b></div>
+            <div class="pill">cette semaine<b>−6 kg</b></div>
+            <div class="pill">série<b>5 j</b></div>
+          </div>
+          <div class="field">Qu'est-ce qui occupe ton esprit ?</div>
+          <div class="cta">Déposer dans mon sac à dos</div>
+        </div>
+      </div></div>
+      <div class="name">C · Aurore</div>
+      <div class="why">Dégradé d'aube doux et onirique, légère touche de couleur chaude-violette. Moderne, émotionnel, évoque la légèreté qui revient.</div>
+    </div>
+
+  </div>
+</body>
+</html>
