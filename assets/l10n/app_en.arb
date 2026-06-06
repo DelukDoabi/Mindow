@@ -175,5 +175,45 @@
   "consentAccept": "Got it, I agree",
   "@consentAccept": {
     "description": "Explicit affirmative consent button label"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of the settings screen"
+  },
+  "settingsPrivacySection": "Privacy & data",
+  "@settingsPrivacySection": {
+    "description": "Section header for the GDPR privacy and data actions"
+  },
+  "settingsExportData": "Export my data",
+  "@settingsExportData": {
+    "description": "Button label to request a GDPR data export"
+  },
+  "settingsExportRequested": "Your export is on its way. We'll get it ready for you.",
+  "@settingsExportRequested": {
+    "description": "Calm confirmation shown after a data export is requested"
+  },
+  "settingsDeleteAccount": "Delete my account",
+  "@settingsDeleteAccount": {
+    "description": "Button label to start account deletion"
+  },
+  "settingsDeleteConfirmTitle": "Delete your account?",
+  "@settingsDeleteConfirmTitle": {
+    "description": "Title of the account deletion confirmation dialog"
+  },
+  "settingsDeleteConfirmBody": "This permanently erases your account and everything in your backpack. It can't be undone.",
+  "@settingsDeleteConfirmBody": {
+    "description": "Body of the account deletion confirmation dialog, clear but calm about permanence"
+  },
+  "settingsDeleteConfirmCta": "Delete",
+  "@settingsDeleteConfirmCta": {
+    "description": "Confirm button in the account deletion dialog"
+  },
+  "settingsCancel": "Cancel",
+  "@settingsCancel": {
+    "description": "Cancel button in a settings dialog"
+  },
+  "settingsActionError": "Small hiccup. Shall we try again?",
+  "@settingsActionError": {
+    "description": "Calm error shown when a settings action fails"
   }
 }

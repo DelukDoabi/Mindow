@@ -50,7 +50,7 @@ development_status:
   1-4-account-creation-authentication: review
   1-5-returning-user-routing: review
   1-6-ai-processing-consent-privacy-notice: review
-  1-7-gdpr-data-export-account-deletion: backlog
+  1-7-gdpr-data-export-account-deletion: review
   epic-1-retrospective: optional
 
   # Epic 2: Brain Dump & Mental Backpack

@@ -361,6 +361,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it, I agree'**
   String get consentAccept;
+
+  /// Title of the settings screen
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Section header for the GDPR privacy and data actions
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & data'**
+  String get settingsPrivacySection;
+
+  /// Button label to request a GDPR data export
+  ///
+  /// In en, this message translates to:
+  /// **'Export my data'**
+  String get settingsExportData;
+
+  /// Calm confirmation shown after a data export is requested
+  ///
+  /// In en, this message translates to:
+  /// **'Your export is on its way. We\'ll get it ready for you.'**
+  String get settingsExportRequested;
+
+  /// Button label to start account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get settingsDeleteAccount;
+
+  /// Title of the account deletion confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get settingsDeleteConfirmTitle;
+
+  /// Body of the account deletion confirmation dialog, clear but calm about permanence
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently erases your account and everything in your backpack. It can\'t be undone.'**
+  String get settingsDeleteConfirmBody;
+
+  /// Confirm button in the account deletion dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get settingsDeleteConfirmCta;
+
+  /// Cancel button in a settings dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get settingsCancel;
+
+  /// Calm error shown when a settings action fails
+  ///
+  /// In en, this message translates to:
+  /// **'Small hiccup. Shall we try again?'**
+  String get settingsActionError;
 }
 
 class _AppLocalizationsDelegate

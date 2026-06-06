@@ -12,6 +12,7 @@ import 'package:mindow/features/onboarding/onboarding_context_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_mind_volume_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';
 import 'package:mindow/features/onboarding/welcome_screen.dart';
+import 'package:mindow/features/settings/settings_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_router.g.dart';
@@ -26,6 +27,7 @@ abstract final class Routes {
   static const String onboardingConsent = '/onboarding/consent';
   static const String account = '/onboarding/account';
   static const String home = '/';
+  static const String settings = '/settings';
 }
 
 /// Whether [location] belongs to the welcome/onboarding flow that a returning,
@@ -90,6 +92,10 @@ GoRouter appRouter(Ref ref) {
         path: Routes.home,
         builder: (context, state) => const _PlaceholderHome(),
       ),
+      GoRoute(
+        path: Routes.settings,
+        builder: (context, state) => const SettingsScreen(),
+      ),
     ],
   );
 }
@@ -104,28 +110,40 @@ class _PlaceholderHome extends StatelessWidget {
 
     return AuroreCanvas(
       child: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(AuroreSpacing.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.homeWelcomeTitle,
-                  style: textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AuroreSpacing.md),
-                Text(
-                  l10n.homeWelcomeBody,
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: AuroreColors.inkMuted,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () => context.go(Routes.settings),
+                color: AuroreColors.inkMuted,
+                icon: const Icon(Icons.settings_outlined),
+              ),
             ),
-          ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AuroreSpacing.xl),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.homeWelcomeTitle,
+                      style: textTheme.headlineMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AuroreSpacing.md),
+                    Text(
+                      l10n.homeWelcomeBody,
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: AuroreColors.inkMuted,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

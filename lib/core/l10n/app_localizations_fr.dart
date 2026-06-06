@@ -147,4 +147,35 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get consentAccept => 'J\'ai compris, j\'accepte';
+
+  @override
+  String get settingsTitle => 'Réglages';
+
+  @override
+  String get settingsPrivacySection => 'Confidentialité et données';
+
+  @override
+  String get settingsExportData => 'Exporter mes données';
+
+  @override
+  String get settingsExportRequested => 'Ton export arrive. On te le prépare.';
+
+  @override
+  String get settingsDeleteAccount => 'Supprimer mon compte';
+
+  @override
+  String get settingsDeleteConfirmTitle => 'Supprimer ton compte ?';
+
+  @override
+  String get settingsDeleteConfirmBody =>
+      'Ça efface définitivement ton compte et tout ce qui se trouve dans ton sac à dos. C\'est irréversible.';
+
+  @override
+  String get settingsDeleteConfirmCta => 'Supprimer';
+
+  @override
+  String get settingsCancel => 'Annuler';
+
+  @override
+  String get settingsActionError => 'Petit souci. On réessaie ?';
 }

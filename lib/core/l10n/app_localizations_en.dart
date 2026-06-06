@@ -146,4 +146,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consentAccept => 'Got it, I agree';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsPrivacySection => 'Privacy & data';
+
+  @override
+  String get settingsExportData => 'Export my data';
+
+  @override
+  String get settingsExportRequested =>
+      'Your export is on its way. We\'ll get it ready for you.';
+
+  @override
+  String get settingsDeleteAccount => 'Delete my account';
+
+  @override
+  String get settingsDeleteConfirmTitle => 'Delete your account?';
+
+  @override
+  String get settingsDeleteConfirmBody =>
+      'This permanently erases your account and everything in your backpack. It can\'t be undone.';
+
+  @override
+  String get settingsDeleteConfirmCta => 'Delete';
+
+  @override
+  String get settingsCancel => 'Cancel';
+
+  @override
+  String get settingsActionError => 'Small hiccup. Shall we try again?';
 }

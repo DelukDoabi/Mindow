@@ -84,6 +84,24 @@ class AuthRepository {
 
   /// Signs the current user out.
   Future<void> signOut() => _requireClient().auth.signOut();
+
+  /// Requests a GDPR data export (NFR-10).
+  ///
+  /// Invokes the `account-export` Edge Function, which gathers the user's
+  /// Preoccupations and derived data server-side and handles delivery. The
+  /// full data cascade completes with the Epic 2 data model.
+  Future<void> exportData() async {
+    await _requireClient().functions.invoke('account-export');
+  }
+
+  /// Permanently deletes the current account and all its data (NFR-10).
+  ///
+  /// Invokes the `account-delete` Edge Function, which cascade-erases the
+  /// user's Preoccupations and derived data server-side, then signs out.
+  Future<void> deleteAccount() async {
+    await _requireClient().functions.invoke('account-delete');
+    await signOut();
+  }
 }
 
 /// Provides the shared [AuthRepository].
