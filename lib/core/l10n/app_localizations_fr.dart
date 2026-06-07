@@ -178,4 +178,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsActionError => 'Petit souci. On réessaie ?';
+
+  @override
+  String get captureInputPlaceholder => 'Qu\'est-ce qui occupe ton esprit ?';
+
+  @override
+  String get captureSubmitButton => 'Déposer';
+
+  @override
+  String get captureSuccess => 'C\'est noté. Ton esprit s\'allège.';
+
+  @override
+  String get capturePendingLabel => 'En cours';
+
+  @override
+  String get homeEmptyBackpack =>
+      'Ton sac est léger. Dépose ce qui t\'encombre.';
 }

@@ -178,4 +178,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsActionError => 'Small hiccup. Shall we try again?';
+
+  @override
+  String get captureInputPlaceholder => 'What\'s on your mind?';
+
+  @override
+  String get captureSubmitButton => 'Set it down';
+
+  @override
+  String get captureSuccess => 'Noted. Your mind feels a little lighter.';
+
+  @override
+  String get capturePendingLabel => 'Pending';
+
+  @override
+  String get homeEmptyBackpack =>
+      'Your backpack is light. Set down whatever is weighing on you.';
 }

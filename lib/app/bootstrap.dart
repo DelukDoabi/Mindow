@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:mindow/app/app.dart';
 import 'package:mindow/app/env.dart';
+import 'package:mindow/core/sync/event_store.dart';
 import 'package:mindow/core/sync/hive_registrar.g.dart';
+import 'package:mindow/core/sync/sync_providers.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -28,6 +30,11 @@ Future<void> bootstrap(Flavor flavor) async {
       // Local-first persistence is always available.
       await Hive.initFlutter();
       Hive.registerAdapters();
+
+      // The event-sourced outbox is the local source of truth (NFR-3); open it
+      // once for the app lifetime and seed it into Riverpod so the sync engine
+      // providers can read it synchronously.
+      final outboxBox = await Hive.openBox<OutboxRecord>('outbox');
 
       // Read persisted routing state before the first frame so the router's
       // redirect resolves synchronously (no welcome flash / blocking spinner).
@@ -54,6 +61,7 @@ Future<void> bootstrap(Flavor flavor) async {
         overrides: [
           envProvider.overrideWithValue(env),
           onboardingCompleteProvider.overrideWithValue(onboardingComplete),
+          outboxBoxProvider.overrideWithValue(outboxBox),
         ],
         child: const MindowApp(),
       );

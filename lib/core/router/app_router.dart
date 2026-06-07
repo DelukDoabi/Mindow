@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mindow/core/design_system/aurore_colors.dart';
-import 'package:mindow/core/design_system/aurore_spacing.dart';
-import 'package:mindow/core/design_system/widgets/aurore_canvas.dart';
-import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/features/auth/account_screen.dart';
 import 'package:mindow/features/auth/auth_controller.dart';
 import 'package:mindow/features/auth/auth_repository.dart';
+import 'package:mindow/features/brain_dump/presentation/home_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_consent_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_context_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_mind_volume_screen.dart';
@@ -90,7 +87,7 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: Routes.home,
-        builder: (context, state) => const _PlaceholderHome(),
+        builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
         path: Routes.settings,
@@ -98,54 +95,4 @@ GoRouter appRouter(Ref ref) {
       ),
     ],
   );
-}
-
-class _PlaceholderHome extends StatelessWidget {
-  const _PlaceholderHome();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final textTheme = Theme.of(context).textTheme;
-
-    return AuroreCanvas(
-      child: SafeArea(
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                onPressed: () => context.go(Routes.settings),
-                color: AuroreColors.inkMuted,
-                icon: const Icon(Icons.settings_outlined),
-              ),
-            ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(AuroreSpacing.xl),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      l10n.homeWelcomeTitle,
-                      style: textTheme.headlineMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AuroreSpacing.md),
-                    Text(
-                      l10n.homeWelcomeBody,
-                      style: textTheme.bodyLarge?.copyWith(
-                        color: AuroreColors.inkMuted,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

@@ -53,5 +53,10 @@
   "settingsDeleteConfirmBody": "Ça efface définitivement ton compte et tout ce qui se trouve dans ton sac à dos. C'est irréversible.",
   "settingsDeleteConfirmCta": "Supprimer",
   "settingsCancel": "Annuler",
-  "settingsActionError": "Petit souci. On réessaie ?"
+  "settingsActionError": "Petit souci. On réessaie ?",
+  "captureInputPlaceholder": "Qu'est-ce qui occupe ton esprit ?",
+  "captureSubmitButton": "Déposer",
+  "captureSuccess": "C'est noté. Ton esprit s'allège.",
+  "capturePendingLabel": "En cours",
+  "homeEmptyBackpack": "Ton sac est léger. Dépose ce qui t'encombre."
 }

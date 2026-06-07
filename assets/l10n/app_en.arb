@@ -215,5 +215,25 @@
   "settingsActionError": "Small hiccup. Shall we try again?",
   "@settingsActionError": {
     "description": "Calm error shown when a settings action fails"
+  },
+  "captureInputPlaceholder": "What's on your mind?",
+  "@captureInputPlaceholder": {
+    "description": "Placeholder text in the single capture input on Home"
+  },
+  "captureSubmitButton": "Set it down",
+  "@captureSubmitButton": {
+    "description": "Primary action to submit a captured preoccupation"
+  },
+  "captureSuccess": "Noted. Your mind feels a little lighter.",
+  "@captureSuccess": {
+    "description": "Soft, no-guilt confirmation shown after a successful capture"
+  },
+  "capturePendingLabel": "Pending",
+  "@capturePendingLabel": {
+    "description": "Muted label on a captured item awaiting AI analysis"
+  },
+  "homeEmptyBackpack": "Your backpack is light. Set down whatever is weighing on you.",
+  "@homeEmptyBackpack": {
+    "description": "Empty-state copy on Home when no preoccupations have been captured"
   }
 }

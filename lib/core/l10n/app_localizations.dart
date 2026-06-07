@@ -421,6 +421,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Small hiccup. Shall we try again?'**
   String get settingsActionError;
+
+  /// Placeholder text in the single capture input on Home
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get captureInputPlaceholder;
+
+  /// Primary action to submit a captured preoccupation
+  ///
+  /// In en, this message translates to:
+  /// **'Set it down'**
+  String get captureSubmitButton;
+
+  /// Soft, no-guilt confirmation shown after a successful capture
+  ///
+  /// In en, this message translates to:
+  /// **'Noted. Your mind feels a little lighter.'**
+  String get captureSuccess;
+
+  /// Muted label on a captured item awaiting AI analysis
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get capturePendingLabel;
+
+  /// Empty-state copy on Home when no preoccupations have been captured
+  ///
+  /// In en, this message translates to:
+  /// **'Your backpack is light. Set down whatever is weighing on you.'**
+  String get homeEmptyBackpack;
 }
 
 class _AppLocalizationsDelegate
