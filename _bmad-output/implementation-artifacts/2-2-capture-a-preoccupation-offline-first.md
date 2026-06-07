@@ -61,13 +61,13 @@ so that nothing is lost from my mind.
   - [x] Add ARB keys to `assets/l10n/app_fr.arb` then mirror in `assets/l10n/app_en.arb`: capture placeholder, submit label, success confirmation, pending label, and an empty-backpack state. Suggested FR (tone-gated, no guilt — confirm against UX): placeholder `"Qu'est-ce qui occupe ton esprit ?"`, submit `"Déposer"`, success `"C'est noté. Ton esprit s'allège."`. Provide `@key` descriptions for each.
   - [x] Run `flutter gen-l10n` (ARB keys changed) and reference via `AppLocalizations.of(context)`.
 
-- [x] **Task 8 — Tests** (AC: all) — _authored; full suite run deferred at user request (see Completion Notes)_
+- [x] **Task 8 — Tests** (AC: all) — _authored and run green: full `flutter test` suite passes (72/72)_
   - [x] `test/features/brain_dump/domain/preoccupation_captured_event_test.dart`: `eventType == 'preoccupation.captured'`, `toJson`/`fromJson` round-trip (snake_case payload), and decode through the `DomainEventRegistry`.
   - [x] `test/features/brain_dump/brain_dump_repository_test.dart`: capture appends one local outbox record (real Hive box in a temp dir, register adapters like `event_store_test.dart` does); idempotent re-enqueue with the same id is a no-op; empty/whitespace input emits nothing; `getOpenPreoccupations()` returns the captured item with `mentalWeightKg == null`. Projection ordering/idempotency is covered here (folded into the repository read path).
   - [x] `test/features/brain_dump/presentation/home_screen_test.dart`: pump `HomeScreen` in `ProviderScope` + `MaterialApp` with localization delegates; capture input renders the FR placeholder; submitting non-empty text invokes the repository and clears the field; submitting empty text emits nothing; a captured item appears in the pending list; no error banner with a null reconciliation client (offline).
 
 - [x] **Task 9 — Validate & wire-up**
-  - [x] `dart run build_runner build` (no `--delete-conflicting-outputs`), then `flutter gen-l10n`, `flutter analyze` (**0 issues**), `dart format lib test`. Full `flutter test` run deferred at user request.
+  - [x] `dart run build_runner build` (no `--delete-conflicting-outputs`), then `flutter gen-l10n`, `flutter analyze` (**0 issues**), `dart format lib test`. Full `flutter test` suite run green (72/72).
   - [x] Confirm `lib/core/sync/**` still imports nothing from `lib/features/**` (Story 2.1 business-agnostic invariant holds).
 
 ## Dev Notes
@@ -150,7 +150,7 @@ Claude Opus 4.8 (GitHub Copilot)
 - **Offline-first capture is complete end-to-end:** event → `SyncQueue.enqueue` → Hive outbox → `ReplayEngine` projection → `HomeScreen` pending list, with `client: null` (no transport), so no error banner is possible offline (AC#3).
 - **`Preoccupation` is a derived freezed projection**, not a Hive type — no new typeId allocated. `mentalWeightKg == null` is the pending signal (AC#5); weighing is Story 2.3.
 - **Deviation from spec:** the registry/providers were placed in `brain_dump_providers.dart` (not a separate `brain_dump_event_registry.dart`), and decoding uses a top-level `decodePreoccupationCaptured(EventEnvelope)` rather than a `fromJson` factory — this matches the Story 2.1 `counter_event.dart` decoder pattern more closely. A monotonic `Clock` was injected into the repository for deterministic capture timestamps/ordering.
-- **TESTS NOT VERIFIED GREEN — action required before merge.** The four test files are authored but the full `flutter test test/features/brain_dump` run was deferred at the user's request because each run was slow in this environment. The earlier run surfaced 3 failures that were addressed in code but **not re-confirmed**: (1) widget tests used `pumpAndSettle`, which spins forever on the projection's indeterminate `CircularProgressIndicator` — replaced with bounded `pump`s + a separate SnackBar-timer flush; (2) the repository ordering test could be flaky within a single millisecond — fixed via the injected monotonic clock. **A reviewer must run `flutter analyze` (confirmed clean) and the full test suite and confirm green before this story is accepted.**
+- **TESTS VERIFIED GREEN.** The full `flutter test` suite passes (72/72) and `flutter analyze` is clean. Two issues found during the test run were fixed: (1) the `home_screen_test.dart` widget tests used `pumpAndSettle`, which spins forever on the projection's indeterminate `CircularProgressIndicator` — the initial load is now driven by `pumpAndSettle` over a synchronous read (safe), and the capture action runs inside `tester.runAsync(...)` so the real Hive disk write completes, followed by bounded `pump`s so the asserted success SnackBar is still on screen; (2) the repository ordering test could be flaky within a single millisecond — fixed via the injected monotonic clock.
 
 ### File List
 

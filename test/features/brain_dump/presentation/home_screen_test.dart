@@ -55,7 +55,28 @@ void main() {
         ),
       ),
     );
+    // The open-preoccupations read is a synchronous replay over the in-memory
+    // box, so the initial load resolves on a microtask and pumpAndSettle is
+    // safe here.
     await tester.pumpAndSettle();
+  }
+
+  // Submits the current input and drives the rebuild to the point where the
+  // freshly captured item and its success SnackBar are on screen.
+  //
+  // The capture write persists through a real Hive box: that is real file I/O
+  // which the fake test clock never advances, so the tap is performed inside
+  // `runAsync` to let it complete. Afterwards a bounded pump rebuilds the list
+  // and shows the SnackBar without fully settling (the SnackBar is asserted on
+  // and would otherwise auto-dismiss before the checks run).
+  Future<void> capture(WidgetTester tester) async {
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Déposer'));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+    });
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
   }
 
   testWidgets('shows the localized empty backpack and capture affordance', (
@@ -71,16 +92,6 @@ void main() {
     expect(find.text('Déposer'), findsOneWidget);
   });
 
-  // Drives the async submit (capture write, provider reload, SnackBar entrance)
-  // with bounded pumps. `pumpAndSettle` cannot be used here: the reload briefly
-  // shows an indeterminate progress indicator, which never lets the frame
-  // scheduler go idle.
-  Future<void> settleCapture(WidgetTester tester) async {
-    for (var i = 0; i < 6; i++) {
-      await tester.pump(const Duration(milliseconds: 100));
-    }
-  }
-
   // Lets the SnackBar auto-dismiss timer fire so none is left pending.
   Future<void> flushSnackBar(WidgetTester tester) async {
     await tester.pump(const Duration(seconds: 5));
@@ -91,8 +102,7 @@ void main() {
 
     await tester.enterText(find.byType(TextField), 'call the dentist');
     await tester.pump();
-    await tester.tap(find.text('Déposer'));
-    await settleCapture(tester);
+    await capture(tester);
 
     expect(find.text('call the dentist'), findsOneWidget);
     expect(find.text('En cours'), findsOneWidget);
@@ -107,8 +117,7 @@ void main() {
 
     await tester.enterText(find.byType(TextField), 'breathe');
     await tester.pump();
-    await tester.tap(find.text('Déposer'));
-    await settleCapture(tester);
+    await capture(tester);
 
     final field = tester.widget<TextField>(find.byType(TextField));
     expect(field.controller?.text, isEmpty);
