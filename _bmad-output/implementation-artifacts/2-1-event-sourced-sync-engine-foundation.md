@@ -4,7 +4,7 @@ baseline_commit: 20f28fd9b3abe67361633c15b4c923868e1cfbbe
 
 # Story 2.1: Event-sourced sync engine foundation
 
-Status: review
+Status: in-progress
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -57,6 +57,17 @@ so that every feature can emit and replay domain events idempotently, offline-fi
 - [x] **Task 7 — Validate & wire-up**
   - [x] `dart run build_runner build` (no `--delete-conflicting-outputs`), `flutter analyze` (0 issues), `flutter test` (all green incl. new gates), `dart format lib test`.
   - [x] Confirm `core/sync` imports nothing from `lib/features/**` (business-agnostic).
+
+### Review Findings
+
+_Code review 2026-06-07 (commit `7ad00ae`). Layers: Blind Hunter, Edge Case Hunter, Acceptance Auditor — all completed._
+
+- [ ] [Review][Patch] Fixture loader throws at test-collection time when a `v{n}` dir is missing [test/core/sync/convergence_harness_test.dart:_loadFixtures] — `_loadFixtures` calls `dir.listSync()` without `existsSync()`, so a missing schema-version dir raises a cryptic `FileSystemException` during test-tree construction instead of letting the dedicated coverage-gate test fail with its clear assertion (undermines AC#3's intent). Return `[]` when the dir is absent.
+- [ ] [Review][Patch] `UpcasterRegistry.upcast` silently passes through future-versioned envelopes [lib/core/sync/upcasters/upcaster_registry.dart] — when `envelope.schemaVersion > currentSchemaVersion` the `while` loop never runs and the envelope is returned unmodified, risking a silently mis-reduced projection. Fail loudly with a `StateError` (matches the existing fail-loud guards in the same method).
+- [x] [Review][Defer] Outbox box never opened in app / no EventStore provider [lib/app/bootstrap.dart] — deferred to Story 2.2: no event producer exists before 2.2, so the box-open + Riverpod provider wiring lands with the first emitter (`preoccupation.captured`); the engine stays test-injectable until then.
+- [x] [Review][Defer] `SyncQueue.flush()` partial-failure / retry semantics [lib/core/sync/sync_queue.dart] — deferred, revisit when the real reconciliation transport lands in Story 2.2.
+- [x] [Review][Defer] Harden `EventEnvelope.fromJson` / `OutboxRecord.toEnvelope` against malformed/foreign JSON [lib/core/sync/domain_event.dart, lib/core/sync/event_store.dart] — deferred, validate at the real backend boundary introduced in Story 2.2 (current inputs are engine-produced or test fixtures).
+- [x] [Review][Defer] Contract-parity regex robustness vs. comments/strings [test/core/sync/event_contract_parity_test.dart] — deferred, minor test-only hardening.
 
 ## Dev Notes
 
