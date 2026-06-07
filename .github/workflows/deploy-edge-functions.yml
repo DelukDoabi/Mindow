@@ -25,6 +25,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # The secrets are stored as Environment secrets under the "Mindow"
+    # environment, so the job must opt into that environment to read them.
+    environment: Mindow
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
