@@ -5,11 +5,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:mindow/core/ai/ai_client.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/core/sync/event_store.dart';
 import 'package:mindow/core/sync/hive_registrar.g.dart';
 import 'package:mindow/core/sync/sync_providers.dart';
 import 'package:mindow/features/brain_dump/presentation/home_screen.dart';
+
+/// A no-op [AiClient] so the screen's fire-and-forget analysis trigger never
+/// reaches the real Supabase transport in widget tests. Consent is off in these
+/// tests, so `analyze` is never actually called.
+class _NoopAiClient implements AiClient {
+  @override
+  Future<AiAnalysisResult> analyze({
+    required String content,
+    required String languageCode,
+  }) async => const AiCrisisDetected();
+}
 
 void main() {
   late Directory tempDir;
@@ -28,8 +40,16 @@ void main() {
   });
 
   tearDown(() async {
-    await box.close();
-    await tempDir.delete(recursive: true);
+    // The fire-and-forget analysis trigger opens the `onboarding` box (consent
+    // check) on a background microtask, so close EVERY Hive box before deleting
+    // the temp dir, and tolerate a lingering handle on Windows.
+    await Hive.close();
+    try {
+      await tempDir.delete(recursive: true);
+    } on FileSystemException {
+      // The OS will reclaim the temp dir; a lingering handle must not fail the
+      // test whose assertions already passed.
+    }
   });
 
   Future<void> pumpHome(WidgetTester tester) async {
@@ -46,7 +66,10 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [outboxBoxProvider.overrideWithValue(box)],
+        overrides: [
+          outboxBoxProvider.overrideWithValue(box),
+          aiClientProvider.overrideWithValue(_NoopAiClient()),
+        ],
         child: MaterialApp.router(
           routerConfig: router,
           locale: const Locale('fr'),

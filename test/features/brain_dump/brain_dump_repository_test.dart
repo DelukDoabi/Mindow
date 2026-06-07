@@ -8,6 +8,7 @@ import 'package:mindow/core/sync/hive_registrar.g.dart';
 import 'package:mindow/core/sync/sync_queue.dart';
 import 'package:mindow/features/brain_dump/brain_dump_repository.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation_captured_event.dart';
+import 'package:mindow/features/brain_dump/domain/weight_assigned_event.dart';
 
 void main() {
   late Directory tempDir;
@@ -37,7 +38,8 @@ void main() {
         ..register(
           PreoccupationCapturedEvent.type,
           decodePreoccupationCaptured,
-        ),
+        )
+        ..register(WeightAssignedEvent.type, decodeWeightAssigned),
       clock: () => clockNow = clockNow.add(const Duration(seconds: 1)),
     );
   });
@@ -104,6 +106,74 @@ void main() {
     });
 
     test('is empty before any capture', () {
+      expect(repository.getOpenPreoccupations(), isEmpty);
+    });
+  });
+
+  group('weight.assigned projection fold', () {
+    var weightSeq = 0;
+    Future<void> assignWeight(
+      String aggregateId, {
+      required int kg,
+      required String category,
+      String version = 'gpt-4o-mini-2026-06',
+    }) => store.append(
+      WeightAssignedEvent(
+        // Monotonic, lexicographically ordered event ids so replay order (which
+        // breaks ties by event_id for unsynced events) matches emission order.
+        eventId: 'w-${(weightSeq++).toString().padLeft(4, '0')}',
+        aggregateId: aggregateId,
+        occurredAt: clockNow = clockNow.add(const Duration(seconds: 1)),
+        mentalWeightKg: kg,
+        category: category,
+        effortScore: 2,
+        estimatedDurationMinutes: 15,
+        weightModelVersion: version,
+      ),
+    );
+
+    test('sets the weight and category and clears pending', () async {
+      await repository.capturePreoccupation('call the dentist');
+      final id = store.all().single.eventId;
+
+      await assignWeight(id, kg: 7, category: 'Administratif');
+
+      final item = repository.getOpenPreoccupations().single;
+      expect(item.isPending, isFalse);
+      expect(item.mentalWeightKg, 7);
+      expect(item.category, 'Administratif');
+      expect(item.effortScore, 2);
+      expect(item.estimatedDurationMinutes, 15);
+      expect(item.weightModelVersion, 'gpt-4o-mini-2026-06');
+    });
+
+    test('a fallback weight leaves the item non-pending as Autre', () async {
+      await repository.capturePreoccupation('something');
+      final id = store.all().single.eventId;
+
+      await assignWeight(id, kg: 3, category: 'Autre', version: 'fallback-v1');
+
+      final item = repository.getOpenPreoccupations().single;
+      expect(item.isPending, isFalse);
+      expect(item.category, 'Autre');
+      expect(item.weightModelVersion, 'fallback-v1');
+    });
+
+    test('latest weight.assigned wins', () async {
+      await repository.capturePreoccupation('worry');
+      final id = store.all().single.eventId;
+
+      await assignWeight(id, kg: 3, category: 'Autre');
+      await assignWeight(id, kg: 12, category: 'Travail');
+
+      final item = repository.getOpenPreoccupations().single;
+      expect(item.mentalWeightKg, 12);
+      expect(item.category, 'Travail');
+    });
+
+    test('an orphan weight event (no aggregate) is ignored', () async {
+      await assignWeight('ghost', kg: 9, category: 'Santé');
+
       expect(repository.getOpenPreoccupations(), isEmpty);
     });
   });

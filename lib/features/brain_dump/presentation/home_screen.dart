@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +10,7 @@ import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/core/router/app_router.dart';
 import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation.dart';
+import 'package:mindow/features/brain_dump/presentation/crisis_support_view.dart';
 
 /// The Mental Backpack home: the single place a user sets a worry down.
 ///
@@ -59,6 +62,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     await ref.read(brainDumpRepositoryProvider).capturePreoccupation(content);
     _controller.clear();
     ref.invalidate(openPreoccupationsProvider);
+    // Fire-and-forget: analysis never blocks capture (NFR-2).
+    unawaited(ref.read(analysisServiceProvider).analyzePendingPreoccupations());
 
     if (!mounted) return;
     messenger
@@ -71,6 +76,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
     final preoccupations = ref.watch(openPreoccupationsProvider);
+
+    ref.listen<List<String>>(crisisAlertsProvider, (previous, next) {
+      final previousIds = previous ?? const <String>[];
+      final newIds = next.where((id) => !previousIds.contains(id));
+      if (newIds.isEmpty) return;
+      final languageCode = Localizations.localeOf(context).languageCode;
+      for (final id in newIds) {
+        unawaited(
+          showCrisisSupport(context, languageCode: languageCode).then(
+            (_) => ref.read(crisisAlertsProvider.notifier).dismiss(id),
+          ),
+        );
+      }
+    });
 
     return AuroreCanvas(
       child: SafeArea(
@@ -99,6 +118,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       : _PreoccupationList(
                           items: items,
                           pendingLabel: l10n.capturePendingLabel,
+                          weightUnitLabel: l10n.weightKgLabel,
+                          categoryLabel: (token) => _categoryLabel(token, l10n),
                         ),
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
@@ -147,12 +168,32 @@ class _EmptyBackpack extends StatelessWidget {
   }
 }
 
+/// Maps a canonical Category token (FR source of truth) to its localized label.
+String _categoryLabel(String token, AppLocalizations l10n) => switch (token) {
+  'Administratif' => l10n.categoryAdministrative,
+  'Famille' => l10n.categoryFamily,
+  'Santé' => l10n.categoryHealth,
+  'Travail' => l10n.categoryWork,
+  'Finance' => l10n.categoryFinance,
+  'Maison' => l10n.categoryHome,
+  'Personnel' => l10n.categoryPersonal,
+  'Voyage' => l10n.categoryTravel,
+  _ => l10n.categoryOther,
+};
+
 /// A minimal list of captured Preoccupations, most recent first.
 class _PreoccupationList extends StatelessWidget {
-  const _PreoccupationList({required this.items, required this.pendingLabel});
+  const _PreoccupationList({
+    required this.items,
+    required this.pendingLabel,
+    required this.weightUnitLabel,
+    required this.categoryLabel,
+  });
 
   final List<Preoccupation> items;
   final String pendingLabel;
+  final String weightUnitLabel;
+  final String Function(String token) categoryLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -182,12 +223,51 @@ class _PreoccupationList extends StatelessWidget {
                       color: AuroreColors.inkMuted,
                     ),
                   ),
+                ] else ...[
+                  const SizedBox(width: AuroreSpacing.md),
+                  if (item.category != null)
+                    _CategoryChip(label: categoryLabel(item.category!)),
+                  const SizedBox(width: AuroreSpacing.sm),
+                  Text(
+                    '${item.mentalWeightKg} $weightUnitLabel',
+                    style: textTheme.labelMedium?.copyWith(
+                      color: AuroreColors.ink,
+                    ),
+                  ),
                 ],
               ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+/// A small pill rendering a Preoccupation's Category.
+class _CategoryChip extends StatelessWidget {
+  const _CategoryChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AuroreColors.glassStrong,
+        borderRadius: BorderRadius.circular(AuroreRadii.sm),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AuroreSpacing.sm,
+          vertical: AuroreSpacing.xs,
+        ),
+        child: Text(
+          label,
+          style: textTheme.labelSmall?.copyWith(color: AuroreColors.ink),
+        ),
+      ),
     );
   }
 }

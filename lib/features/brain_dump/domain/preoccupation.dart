@@ -8,7 +8,9 @@ part 'preoccupation.freezed.dart';
 /// Hive type — it allocates no `typeId`). [mentalWeightKg] is `null` while the
 /// item is genuinely pending AI analysis (Story 2.3 assigns it, frozen +
 /// versioned); `null` MUST stay distinguishable from any neutral floor value
-/// the AI fallback might use.
+/// the AI fallback might use. The analysis fields ([category], [effortScore],
+/// [estimatedDurationMinutes], [weightModelVersion]) are likewise `null` until
+/// a `weight.assigned` event is folded in.
 @freezed
 abstract class Preoccupation with _$Preoccupation {
   /// Creates a projected preoccupation.
@@ -17,6 +19,10 @@ abstract class Preoccupation with _$Preoccupation {
     required String content,
     required DateTime createdAt,
     int? mentalWeightKg,
+    String? category,
+    int? effortScore,
+    int? estimatedDurationMinutes,
+    String? weightModelVersion,
   }) = _Preoccupation;
 
   const Preoccupation._();

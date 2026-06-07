@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Preoccupation {
 
- String get id; String get content; DateTime get createdAt; int? get mentalWeightKg;
+ String get id; String get content; DateTime get createdAt; int? get mentalWeightKg; String? get category; int? get effortScore; int? get estimatedDurationMinutes; String? get weightModelVersion;
 /// Create a copy of Preoccupation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PreoccupationCopyWith<Preoccupation> get copyWith => _$PreoccupationCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Preoccupation&&(identical(other.id, id) || other.id == id)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.mentalWeightKg, mentalWeightKg) || other.mentalWeightKg == mentalWeightKg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Preoccupation&&(identical(other.id, id) || other.id == id)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.mentalWeightKg, mentalWeightKg) || other.mentalWeightKg == mentalWeightKg)&&(identical(other.category, category) || other.category == category)&&(identical(other.effortScore, effortScore) || other.effortScore == effortScore)&&(identical(other.estimatedDurationMinutes, estimatedDurationMinutes) || other.estimatedDurationMinutes == estimatedDurationMinutes)&&(identical(other.weightModelVersion, weightModelVersion) || other.weightModelVersion == weightModelVersion));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,content,createdAt,mentalWeightKg);
+int get hashCode => Object.hash(runtimeType,id,content,createdAt,mentalWeightKg,category,effortScore,estimatedDurationMinutes,weightModelVersion);
 
 @override
 String toString() {
-  return 'Preoccupation(id: $id, content: $content, createdAt: $createdAt, mentalWeightKg: $mentalWeightKg)';
+  return 'Preoccupation(id: $id, content: $content, createdAt: $createdAt, mentalWeightKg: $mentalWeightKg, category: $category, effortScore: $effortScore, estimatedDurationMinutes: $estimatedDurationMinutes, weightModelVersion: $weightModelVersion)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $PreoccupationCopyWith<$Res>  {
   factory $PreoccupationCopyWith(Preoccupation value, $Res Function(Preoccupation) _then) = _$PreoccupationCopyWithImpl;
 @useResult
 $Res call({
- String id, String content, DateTime createdAt, int? mentalWeightKg
+ String id, String content, DateTime createdAt, int? mentalWeightKg, String? category, int? effortScore, int? estimatedDurationMinutes, String? weightModelVersion
 });
 
 
@@ -62,13 +62,17 @@ class _$PreoccupationCopyWithImpl<$Res>
 
 /// Create a copy of Preoccupation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? content = null,Object? createdAt = null,Object? mentalWeightKg = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? content = null,Object? createdAt = null,Object? mentalWeightKg = freezed,Object? category = freezed,Object? effortScore = freezed,Object? estimatedDurationMinutes = freezed,Object? weightModelVersion = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,mentalWeightKg: freezed == mentalWeightKg ? _self.mentalWeightKg : mentalWeightKg // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,effortScore: freezed == effortScore ? _self.effortScore : effortScore // ignore: cast_nullable_to_non_nullable
+as int?,estimatedDurationMinutes: freezed == estimatedDurationMinutes ? _self.estimatedDurationMinutes : estimatedDurationMinutes // ignore: cast_nullable_to_non_nullable
+as int?,weightModelVersion: freezed == weightModelVersion ? _self.weightModelVersion : weightModelVersion // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -153,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String content,  DateTime createdAt,  int? mentalWeightKg)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String content,  DateTime createdAt,  int? mentalWeightKg,  String? category,  int? effortScore,  int? estimatedDurationMinutes,  String? weightModelVersion)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Preoccupation() when $default != null:
-return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg);case _:
+return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg,_that.category,_that.effortScore,_that.estimatedDurationMinutes,_that.weightModelVersion);case _:
   return orElse();
 
 }
@@ -174,10 +178,10 @@ return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String content,  DateTime createdAt,  int? mentalWeightKg)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String content,  DateTime createdAt,  int? mentalWeightKg,  String? category,  int? effortScore,  int? estimatedDurationMinutes,  String? weightModelVersion)  $default,) {final _that = this;
 switch (_that) {
 case _Preoccupation():
-return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg);case _:
+return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg,_that.category,_that.effortScore,_that.estimatedDurationMinutes,_that.weightModelVersion);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +198,10 @@ return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String content,  DateTime createdAt,  int? mentalWeightKg)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String content,  DateTime createdAt,  int? mentalWeightKg,  String? category,  int? effortScore,  int? estimatedDurationMinutes,  String? weightModelVersion)?  $default,) {final _that = this;
 switch (_that) {
 case _Preoccupation() when $default != null:
-return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg);case _:
+return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg,_that.category,_that.effortScore,_that.estimatedDurationMinutes,_that.weightModelVersion);case _:
   return null;
 
 }
@@ -209,13 +213,17 @@ return $default(_that.id,_that.content,_that.createdAt,_that.mentalWeightKg);cas
 
 
 class _Preoccupation extends Preoccupation {
-  const _Preoccupation({required this.id, required this.content, required this.createdAt, this.mentalWeightKg}): super._();
+  const _Preoccupation({required this.id, required this.content, required this.createdAt, this.mentalWeightKg, this.category, this.effortScore, this.estimatedDurationMinutes, this.weightModelVersion}): super._();
   
 
 @override final  String id;
 @override final  String content;
 @override final  DateTime createdAt;
 @override final  int? mentalWeightKg;
+@override final  String? category;
+@override final  int? effortScore;
+@override final  int? estimatedDurationMinutes;
+@override final  String? weightModelVersion;
 
 /// Create a copy of Preoccupation
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +235,16 @@ _$PreoccupationCopyWith<_Preoccupation> get copyWith => __$PreoccupationCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Preoccupation&&(identical(other.id, id) || other.id == id)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.mentalWeightKg, mentalWeightKg) || other.mentalWeightKg == mentalWeightKg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Preoccupation&&(identical(other.id, id) || other.id == id)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.mentalWeightKg, mentalWeightKg) || other.mentalWeightKg == mentalWeightKg)&&(identical(other.category, category) || other.category == category)&&(identical(other.effortScore, effortScore) || other.effortScore == effortScore)&&(identical(other.estimatedDurationMinutes, estimatedDurationMinutes) || other.estimatedDurationMinutes == estimatedDurationMinutes)&&(identical(other.weightModelVersion, weightModelVersion) || other.weightModelVersion == weightModelVersion));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,content,createdAt,mentalWeightKg);
+int get hashCode => Object.hash(runtimeType,id,content,createdAt,mentalWeightKg,category,effortScore,estimatedDurationMinutes,weightModelVersion);
 
 @override
 String toString() {
-  return 'Preoccupation(id: $id, content: $content, createdAt: $createdAt, mentalWeightKg: $mentalWeightKg)';
+  return 'Preoccupation(id: $id, content: $content, createdAt: $createdAt, mentalWeightKg: $mentalWeightKg, category: $category, effortScore: $effortScore, estimatedDurationMinutes: $estimatedDurationMinutes, weightModelVersion: $weightModelVersion)';
 }
 
 
@@ -247,7 +255,7 @@ abstract mixin class _$PreoccupationCopyWith<$Res> implements $PreoccupationCopy
   factory _$PreoccupationCopyWith(_Preoccupation value, $Res Function(_Preoccupation) _then) = __$PreoccupationCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String content, DateTime createdAt, int? mentalWeightKg
+ String id, String content, DateTime createdAt, int? mentalWeightKg, String? category, int? effortScore, int? estimatedDurationMinutes, String? weightModelVersion
 });
 
 
@@ -264,13 +272,17 @@ class __$PreoccupationCopyWithImpl<$Res>
 
 /// Create a copy of Preoccupation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? content = null,Object? createdAt = null,Object? mentalWeightKg = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? content = null,Object? createdAt = null,Object? mentalWeightKg = freezed,Object? category = freezed,Object? effortScore = freezed,Object? estimatedDurationMinutes = freezed,Object? weightModelVersion = freezed,}) {
   return _then(_Preoccupation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,mentalWeightKg: freezed == mentalWeightKg ? _self.mentalWeightKg : mentalWeightKg // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,effortScore: freezed == effortScore ? _self.effortScore : effortScore // ignore: cast_nullable_to_non_nullable
+as int?,estimatedDurationMinutes: freezed == estimatedDurationMinutes ? _self.estimatedDurationMinutes : estimatedDurationMinutes // ignore: cast_nullable_to_non_nullable
+as int?,weightModelVersion: freezed == weightModelVersion ? _self.weightModelVersion : weightModelVersion // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

@@ -8,6 +8,8 @@ name: Deploy Edge Functions
 #   SUPABASE_ACCESS_TOKEN  - a personal access token from
 #                            https://supabase.com/dashboard/account/tokens
 #   SUPABASE_PROJECT_ID    - the project ref (e.g. knnnhrynruyyjofoxvet)
+#   OPENAI_API_KEY         - the OpenAI API key for the ai-analyze function;
+#                            pushed to the Edge runtime via `supabase secrets set`
 #
 # The functions read SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY
 # which are auto-injected by the Supabase Edge runtime, so no extra function
@@ -45,3 +47,12 @@ jobs:
 
       - name: Deploy account-delete
         run: supabase functions deploy account-delete --project-ref "$SUPABASE_PROJECT_ID"
+
+      - name: Set ai-analyze secrets
+        # The OpenAI key lives ONLY in the Edge runtime (never in the client).
+        run: supabase secrets set OPENAI_API_KEY="$OPENAI_API_KEY" --project-ref "$SUPABASE_PROJECT_ID"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Deploy ai-analyze
+        run: supabase functions deploy ai-analyze --project-ref "$SUPABASE_PROJECT_ID"

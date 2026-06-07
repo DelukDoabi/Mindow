@@ -56,7 +56,7 @@ String _$eventStoreHash() => r'6e2c807ee97e52476058c7775faf47f7d9124bba';
 
 /// The app-wide [SyncQueue].
 ///
-/// No [ReconciliationClient] is wired yet (Story 2.2 is offline-first): the
+/// No `ReconciliationClient` is wired yet (Story 2.2 is offline-first): the
 /// durable outbox is the reconnect queue and `flush()` is a documented no-op
 /// until the backend transport lands.
 
@@ -65,7 +65,7 @@ final syncQueueProvider = SyncQueueProvider._();
 
 /// The app-wide [SyncQueue].
 ///
-/// No [ReconciliationClient] is wired yet (Story 2.2 is offline-first): the
+/// No `ReconciliationClient` is wired yet (Story 2.2 is offline-first): the
 /// durable outbox is the reconnect queue and `flush()` is a documented no-op
 /// until the backend transport lands.
 
@@ -74,7 +74,7 @@ final class SyncQueueProvider
     with $Provider<SyncQueue> {
   /// The app-wide [SyncQueue].
   ///
-  /// No [ReconciliationClient] is wired yet (Story 2.2 is offline-first): the
+  /// No `ReconciliationClient` is wired yet (Story 2.2 is offline-first): the
   /// durable outbox is the reconnect queue and `flush()` is a documented no-op
   /// until the backend transport lands.
   SyncQueueProvider._()

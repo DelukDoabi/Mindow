@@ -194,4 +194,65 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get homeEmptyBackpack =>
       'Ton sac est léger. Dépose ce qui t\'encombre.';
+
+  @override
+  String get weightKgLabel => 'kg';
+
+  @override
+  String get categoryAdministrative => 'Administratif';
+
+  @override
+  String get categoryFamily => 'Famille';
+
+  @override
+  String get categoryHealth => 'Santé';
+
+  @override
+  String get categoryWork => 'Travail';
+
+  @override
+  String get categoryFinance => 'Finance';
+
+  @override
+  String get categoryHome => 'Maison';
+
+  @override
+  String get categoryPersonal => 'Personnel';
+
+  @override
+  String get categoryTravel => 'Voyage';
+
+  @override
+  String get categoryOther => 'Autre';
+
+  @override
+  String get crisisTitle => 'On est là pour toi';
+
+  @override
+  String get crisisBody =>
+      'Ce que tu traverses compte vraiment. Des personnes bienveillantes sont prêtes à t\'écouter, maintenant.';
+
+  @override
+  String get crisisDismiss => 'Fermer';
+
+  @override
+  String get crisisResourceFrSuicide =>
+      'Prévention du suicide — 24h/24, gratuit';
+
+  @override
+  String get crisisResourceFrSamu => 'SAMU — urgence médicale';
+
+  @override
+  String get crisisResourceEnLifeline => 'Suicide & Crisis Lifeline (US)';
+
+  @override
+  String get crisisResourceEnSamaritans => 'Samaritans (Royaume-Uni & Irlande)';
+
+  @override
+  String get analysisFallbackNote =>
+      'On a mis ça de côté pour toi, le temps d\'y voir plus clair.';
+
+  @override
+  String get analysisNoConsentNote =>
+      'L\'analyse est en pause tant que tu n\'as pas activé l\'IA.';
 }

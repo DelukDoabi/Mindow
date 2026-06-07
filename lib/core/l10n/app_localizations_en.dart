@@ -194,4 +194,64 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get homeEmptyBackpack =>
       'Your backpack is light. Set down whatever is weighing on you.';
+
+  @override
+  String get weightKgLabel => 'kg';
+
+  @override
+  String get categoryAdministrative => 'Administrative';
+
+  @override
+  String get categoryFamily => 'Family';
+
+  @override
+  String get categoryHealth => 'Health';
+
+  @override
+  String get categoryWork => 'Work';
+
+  @override
+  String get categoryFinance => 'Finance';
+
+  @override
+  String get categoryHome => 'Home';
+
+  @override
+  String get categoryPersonal => 'Personal';
+
+  @override
+  String get categoryTravel => 'Travel';
+
+  @override
+  String get categoryOther => 'Other';
+
+  @override
+  String get crisisTitle => 'We\'re here for you';
+
+  @override
+  String get crisisBody =>
+      'What you\'re going through matters. Kind people are ready to listen, right now.';
+
+  @override
+  String get crisisDismiss => 'Close';
+
+  @override
+  String get crisisResourceFrSuicide => 'Suicide prevention — 24/7, free';
+
+  @override
+  String get crisisResourceFrSamu => 'SAMU — medical emergency';
+
+  @override
+  String get crisisResourceEnLifeline => 'Suicide & Crisis Lifeline (US)';
+
+  @override
+  String get crisisResourceEnSamaritans => 'Samaritans (UK & Ireland)';
+
+  @override
+  String get analysisFallbackNote =>
+      'We tucked this away for you while things settle.';
+
+  @override
+  String get analysisNoConsentNote =>
+      'Analysis is paused until you turn on AI.';
 }

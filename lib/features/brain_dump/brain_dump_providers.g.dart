@@ -71,7 +71,7 @@ final class DomainEventRegistryProvider
 }
 
 String _$domainEventRegistryHash() =>
-    r'aa028852039341d8adf3f530ea5c261dfca638bc';
+    r'd6068b853bf1328c25863c8f74681cbfd9d082e3';
 
 /// The shared [BrainDumpRepository], wired to the sync engine.
 
@@ -178,3 +178,132 @@ final class OpenPreoccupationsProvider
 
 String _$openPreoccupationsHash() =>
     r'6f7ef8cae632aefc7ac5b078d6362b87e4c06658';
+
+/// Ids of Preoccupations whose analysis tripped the crisis-gate (AC2).
+///
+/// The Home screen `listen`s to this and surfaces the calm support view; the
+/// item itself stays a pending entry (no weight, no auto-delete).
+
+@ProviderFor(CrisisAlerts)
+final crisisAlertsProvider = CrisisAlertsProvider._();
+
+/// Ids of Preoccupations whose analysis tripped the crisis-gate (AC2).
+///
+/// The Home screen `listen`s to this and surfaces the calm support view; the
+/// item itself stays a pending entry (no weight, no auto-delete).
+final class CrisisAlertsProvider
+    extends $NotifierProvider<CrisisAlerts, List<String>> {
+  /// Ids of Preoccupations whose analysis tripped the crisis-gate (AC2).
+  ///
+  /// The Home screen `listen`s to this and surfaces the calm support view; the
+  /// item itself stays a pending entry (no weight, no auto-delete).
+  CrisisAlertsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'crisisAlertsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$crisisAlertsHash();
+
+  @$internal
+  @override
+  CrisisAlerts create() => CrisisAlerts();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<String>>(value),
+    );
+  }
+}
+
+String _$crisisAlertsHash() => r'c1c571548e0730a9c08cb233bbf4445cb4340897';
+
+/// Ids of Preoccupations whose analysis tripped the crisis-gate (AC2).
+///
+/// The Home screen `listen`s to this and surfaces the calm support view; the
+/// item itself stays a pending entry (no weight, no auto-delete).
+
+abstract class _$CrisisAlerts extends $Notifier<List<String>> {
+  List<String> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<List<String>, List<String>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<String>, List<String>>,
+              List<String>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// The consent-gated AI Analysis orchestrator.
+///
+/// Wires the [AnalysisService] to the projection (pending reader + refresh) and
+/// to the crisis-alert surface. Kept alive so the in-flight guard survives
+/// across captures.
+
+@ProviderFor(analysisService)
+final analysisServiceProvider = AnalysisServiceProvider._();
+
+/// The consent-gated AI Analysis orchestrator.
+///
+/// Wires the [AnalysisService] to the projection (pending reader + refresh) and
+/// to the crisis-alert surface. Kept alive so the in-flight guard survives
+/// across captures.
+
+final class AnalysisServiceProvider
+    extends
+        $FunctionalProvider<AnalysisService, AnalysisService, AnalysisService>
+    with $Provider<AnalysisService> {
+  /// The consent-gated AI Analysis orchestrator.
+  ///
+  /// Wires the [AnalysisService] to the projection (pending reader + refresh) and
+  /// to the crisis-alert surface. Kept alive so the in-flight guard survives
+  /// across captures.
+  AnalysisServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'analysisServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$analysisServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<AnalysisService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  AnalysisService create(Ref ref) {
+    return analysisService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AnalysisService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AnalysisService>(value),
+    );
+  }
+}
+
+String _$analysisServiceHash() => r'3183265065fdb82f7aece74d8bfdb93b3a050808';

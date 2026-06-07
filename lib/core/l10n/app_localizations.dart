@@ -451,6 +451,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your backpack is light. Set down whatever is weighing on you.'**
   String get homeEmptyBackpack;
+
+  /// Unit suffix for a Preoccupation's Mental Weight (kilograms)
+  ///
+  /// In en, this message translates to:
+  /// **'kg'**
+  String get weightKgLabel;
+
+  /// Category label: administrative tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Administrative'**
+  String get categoryAdministrative;
+
+  /// Category label: family
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get categoryFamily;
+
+  /// Category label: health
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get categoryHealth;
+
+  /// Category label: work
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get categoryWork;
+
+  /// Category label: finance
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get categoryFinance;
+
+  /// Category label: home
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get categoryHome;
+
+  /// Category label: personal
+  ///
+  /// In en, this message translates to:
+  /// **'Personal'**
+  String get categoryPersonal;
+
+  /// Category label: travel
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get categoryTravel;
+
+  /// Category label: catch-all / other
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get categoryOther;
+
+  /// Calm title of the crisis support view (no gamification)
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re here for you'**
+  String get crisisTitle;
+
+  /// Compassionate body copy on the crisis support view
+  ///
+  /// In en, this message translates to:
+  /// **'What you\'re going through matters. Kind people are ready to listen, right now.'**
+  String get crisisBody;
+
+  /// Action to dismiss the crisis support view
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get crisisDismiss;
+
+  /// Label for the French national suicide-prevention line (3114)
+  ///
+  /// In en, this message translates to:
+  /// **'Suicide prevention — 24/7, free'**
+  String get crisisResourceFrSuicide;
+
+  /// Label for the French medical emergency line (15)
+  ///
+  /// In en, this message translates to:
+  /// **'SAMU — medical emergency'**
+  String get crisisResourceFrSamu;
+
+  /// Label for the US Suicide & Crisis Lifeline (988)
+  ///
+  /// In en, this message translates to:
+  /// **'Suicide & Crisis Lifeline (US)'**
+  String get crisisResourceEnLifeline;
+
+  /// Label for the Samaritans line (116 123)
+  ///
+  /// In en, this message translates to:
+  /// **'Samaritans (UK & Ireland)'**
+  String get crisisResourceEnSamaritans;
+
+  /// Soft note shown when AI analysis fell back to a neutral weight
+  ///
+  /// In en, this message translates to:
+  /// **'We tucked this away for you while things settle.'**
+  String get analysisFallbackNote;
+
+  /// Note shown when AI analysis is skipped because consent is off
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis is paused until you turn on AI.'**
+  String get analysisNoConsentNote;
 }
 
 class _AppLocalizationsDelegate

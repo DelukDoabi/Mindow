@@ -235,5 +235,81 @@
   "homeEmptyBackpack": "Your backpack is light. Set down whatever is weighing on you.",
   "@homeEmptyBackpack": {
     "description": "Empty-state copy on Home when no preoccupations have been captured"
+  },
+  "weightKgLabel": "kg",
+  "@weightKgLabel": {
+    "description": "Unit suffix for a Preoccupation's Mental Weight (kilograms)"
+  },
+  "categoryAdministrative": "Administrative",
+  "@categoryAdministrative": {
+    "description": "Category label: administrative tasks"
+  },
+  "categoryFamily": "Family",
+  "@categoryFamily": {
+    "description": "Category label: family"
+  },
+  "categoryHealth": "Health",
+  "@categoryHealth": {
+    "description": "Category label: health"
+  },
+  "categoryWork": "Work",
+  "@categoryWork": {
+    "description": "Category label: work"
+  },
+  "categoryFinance": "Finance",
+  "@categoryFinance": {
+    "description": "Category label: finance"
+  },
+  "categoryHome": "Home",
+  "@categoryHome": {
+    "description": "Category label: home"
+  },
+  "categoryPersonal": "Personal",
+  "@categoryPersonal": {
+    "description": "Category label: personal"
+  },
+  "categoryTravel": "Travel",
+  "@categoryTravel": {
+    "description": "Category label: travel"
+  },
+  "categoryOther": "Other",
+  "@categoryOther": {
+    "description": "Category label: catch-all / other"
+  },
+  "crisisTitle": "We're here for you",
+  "@crisisTitle": {
+    "description": "Calm title of the crisis support view (no gamification)"
+  },
+  "crisisBody": "What you're going through matters. Kind people are ready to listen, right now.",
+  "@crisisBody": {
+    "description": "Compassionate body copy on the crisis support view"
+  },
+  "crisisDismiss": "Close",
+  "@crisisDismiss": {
+    "description": "Action to dismiss the crisis support view"
+  },
+  "crisisResourceFrSuicide": "Suicide prevention — 24/7, free",
+  "@crisisResourceFrSuicide": {
+    "description": "Label for the French national suicide-prevention line (3114)"
+  },
+  "crisisResourceFrSamu": "SAMU — medical emergency",
+  "@crisisResourceFrSamu": {
+    "description": "Label for the French medical emergency line (15)"
+  },
+  "crisisResourceEnLifeline": "Suicide & Crisis Lifeline (US)",
+  "@crisisResourceEnLifeline": {
+    "description": "Label for the US Suicide & Crisis Lifeline (988)"
+  },
+  "crisisResourceEnSamaritans": "Samaritans (UK & Ireland)",
+  "@crisisResourceEnSamaritans": {
+    "description": "Label for the Samaritans line (116 123)"
+  },
+  "analysisFallbackNote": "We tucked this away for you while things settle.",
+  "@analysisFallbackNote": {
+    "description": "Soft note shown when AI analysis fell back to a neutral weight"
+  },
+  "analysisNoConsentNote": "Analysis is paused until you turn on AI.",
+  "@analysisNoConsentNote": {
+    "description": "Note shown when AI analysis is skipped because consent is off"
   }
 }

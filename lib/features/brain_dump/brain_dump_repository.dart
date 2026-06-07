@@ -4,6 +4,7 @@ import 'package:mindow/core/sync/replay_engine.dart';
 import 'package:mindow/core/sync/sync_queue.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation_captured_event.dart';
+import 'package:mindow/features/brain_dump/domain/weight_assigned_event.dart';
 import 'package:uuid/uuid.dart';
 
 // Collaborators are kept in private fields; named parameters cannot be private
@@ -13,8 +14,11 @@ import 'package:uuid/uuid.dart';
 /// Folds the event log into the open-preoccupations projection.
 ///
 /// Keyed by `aggregateId` so a future edit/delete event (Story 2.4) can update
-/// or remove the same entry. Mental Weight stays `null` here — Story 2.3
-/// assigns it via a separate event.
+/// or remove the same entry. A [PreoccupationCapturedEvent] creates the entry
+/// (Mental Weight `null` = pending); a [WeightAssignedEvent] folds the assigned
+/// weight/category onto it. Because events replay in order, the LAST
+/// `weight.assigned` wins (Resolved Decision #4). An orphan weight event whose
+/// aggregate has not been captured is ignored.
 Map<String, Preoccupation> _reducePreoccupations(
   Map<String, Preoccupation> state,
   DomainEvent event,
@@ -26,6 +30,20 @@ Map<String, Preoccupation> _reducePreoccupations(
         id: event.aggregateId,
         content: event.content,
         createdAt: event.occurredAt,
+      ),
+    };
+  }
+  if (event is WeightAssignedEvent) {
+    final existing = state[event.aggregateId];
+    if (existing == null) return state;
+    return <String, Preoccupation>{
+      ...state,
+      event.aggregateId: existing.copyWith(
+        mentalWeightKg: event.mentalWeightKg,
+        category: event.category,
+        effortScore: event.effortScore,
+        estimatedDurationMinutes: event.estimatedDurationMinutes,
+        weightModelVersion: event.weightModelVersion,
       ),
     };
   }
