@@ -170,7 +170,7 @@ Claude Opus 4.8 (GitHub Copilot)
 - Crisis-gate runs FIRST inside the `ai-analyze` Edge Function (fast FR/EN rules pre-filter then a dedicated LLM confirmation) before any weighing or entitlement branch; on crisis it returns `{is_crisis:true}` and the client emits NO weight event.
 - Weighing returns the fixed-nine category, integer 1-20 kg mental weight, 1-5 effort score, estimated duration, and a server-stamped `weight_model_version`. Fallback floor constants keep failed items out of permanent pending while staying distinct from the `null` pending signal.
 - French is the source of truth for all new copy (category labels, crisis, fallback/no-consent); `app_fr.arb` written first then mirrored to `app_en.arb`.
-- The Deno test for `ai-analyze` was not added (corp network blocks the Supabase CLI / local Deno run); manual post-deploy verification is documented instead, per the Task 9 fallback clause. `OPENAI_API_KEY` is provisioned as an Edge secret via the CI deploy workflow.
+- The Deno test for `ai-analyze` was not added (corp network blocks the Supabase CLI / local Deno run); manual post-deploy verification is documented instead, per the Task 9 fallback clause. The AI provider is **Google Gemini Flash** (reached via its OpenAI-compatible endpoint; model/base-URL env-overridable), chosen for its free tier and strong FR multilingual / structured-output support. `GEMINI_API_KEY` is provisioned as an Edge secret via the CI deploy workflow. The provider swap touched only `index.ts` + the workflow secret name, confirming the seam isolates the provider from the client.
 - Validation green: `build_runner` build OK, `flutter gen-l10n` OK, `flutter analyze` 0 issues, `dart format` applied, full `flutter test` suite passes (86 tests).
 
 ### File List
@@ -194,7 +194,7 @@ Modified:
 - `lib/features/brain_dump/presentation/home_screen.dart`
 - `assets/l10n/app_fr.arb`, `assets/l10n/app_en.arb` (+ regenerated `lib/core/l10n/*`)
 - `pubspec.yaml` (added `url_launcher`)
-- `.github/workflows/deploy-edge-functions.yml` (wire `ai-analyze` deploy + `OPENAI_API_KEY` secret)
+- `.github/workflows/deploy-edge-functions.yml` (wire `ai-analyze` deploy + `GEMINI_API_KEY` secret)
 - `test/features/brain_dump/brain_dump_repository_test.dart`
 - `test/features/brain_dump/presentation/home_screen_test.dart`
 
@@ -204,3 +204,4 @@ Modified:
 | ---------- | ------- | ------------------------------------------------------------------ | ------ |
 | 2026-06-07 | 0.1     | Story drafted with resolved decisions baked in                     | boss   |
 | 2026-06-07 | 1.0     | Implemented Tasks 1-9; analysis pipeline + crisis-gate; tests green | Amelia |
+| 2026-06-07 | 1.1     | Swapped AI provider OpenAI -> Google Gemini Flash (free tier, env-configurable, OpenAI-compatible endpoint); crisis-gate + weighing both on Gemini | Amelia |

@@ -1,13 +1,18 @@
 // AI Analysis Edge Function with crisis-gate (FR-6, NFR-8).
 //
-// The OpenAI key lives ONLY here, in the Edge runtime (AC1) — the client never
-// sees it. The crisis-gate runs FIRST, before any weighing and before any
+// The model API key lives ONLY here, in the Edge runtime (AC1) - the client
+// never sees it. The crisis-gate runs FIRST, before any weighing and before any
 // Free/Premium branch (safety is not a Premium feature): a fast FR/EN rules
 // pre-filter short-circuits the obvious cases, and a dedicated LLM confirmation
 // prompt guards against false positives. Only when the content is NOT a crisis
-// is it weighed by GPT-4o Mini into the fixed contract
+// is it weighed into the fixed contract
 // `{ category, mental_weight_kg, effort_score, estimated_duration_minutes }`,
 // with `weight_model_version` stamped server-side so weights stay comparable.
+//
+// Provider: Google Gemini Flash, reached through its OpenAI-compatible Chat
+// Completions endpoint so the request/response shape matches the rest of the
+// code. The model and base URL are env-overridable, so the provider can be
+// swapped (any OpenAI-compatible API) without touching this file.
 //
 // Request:  { "content": string, "language": "fr" | "en" }
 // Response: { "is_crisis": true }
@@ -15,17 +20,22 @@
 //             "estimated_duration_minutes", "weight_model_version" }
 //
 // Deploy: `supabase functions deploy ai-analyze` (CI only on this network).
-// Requires the `OPENAI_API_KEY` Edge secret.
+// Requires the `GEMINI_API_KEY` Edge secret.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
 
-// Stamped onto every model-produced weight so the North Star stays comparable
-// as the prompt/model evolves (architecture principle 3). Bump on any change.
-const WEIGHT_MODEL_VERSION = 'gpt-4o-mini-2026-06';
+// Gemini reached via its OpenAI-compatible surface. Base URL and model are
+// env-overridable so the provider/model can change without a code edit.
+const MODEL = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.0-flash';
+const BASE_URL =
+  Deno.env.get('GEMINI_BASE_URL') ??
+  'https://generativelanguage.googleapis.com/v1beta/openai';
+const CHAT_URL = `${BASE_URL}/chat/completions`;
 
-const OPENAI_CHAT_URL = 'https://api.openai.com/v1/chat/completions';
-const OPENAI_MODEL = 'gpt-4o-mini';
+// Stamped onto every model-produced weight so the North Star stays comparable
+// as the prompt/model evolves (architecture principle 3). Tracks the model.
+const WEIGHT_MODEL_VERSION = `${MODEL}-2026-06`;
 
 // The fixed nine Categories (prd.md Glossary / §8.3). The model MUST pick one.
 const CATEGORIES = [
@@ -75,19 +85,19 @@ function preFilterFlags(content: string): boolean {
   return CRISIS_PATTERNS.some((pattern) => pattern.test(content));
 }
 
-async function callOpenAi(
+async function callModel(
   apiKey: string,
   systemPrompt: string,
   userContent: string,
 ): Promise<Record<string, unknown>> {
-  const response = await fetch(OPENAI_CHAT_URL, {
+  const response = await fetch(CHAT_URL, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: OPENAI_MODEL,
+      model: MODEL,
       temperature: 0,
       response_format: { type: 'json_object' },
       messages: [
@@ -98,13 +108,13 @@ async function callOpenAi(
   });
 
   if (!response.ok) {
-    throw new Error(`OpenAI error ${response.status}`);
+    throw new Error(`Model error ${response.status}`);
   }
 
   const data = await response.json();
   const raw = data?.choices?.[0]?.message?.content;
   if (typeof raw !== 'string') {
-    throw new Error('OpenAI returned no content');
+    throw new Error('Model returned no content');
   }
   return JSON.parse(raw) as Record<string, unknown>;
 }
@@ -122,7 +132,7 @@ async function confirmCrisis(
     'Figurative venting about chores or work (e.g. "this is killing me") is NOT a crisis. ' +
     `The message is written in ${language}. ` +
     'Respond ONLY as JSON: {"is_crisis": boolean}.';
-  const result = await callOpenAi(apiKey, system, content);
+  const result = await callModel(apiKey, system, content);
   return result['is_crisis'] === true;
 }
 
@@ -146,7 +156,7 @@ async function weigh(
     '- effort_score: integer 1-5 (1 = trivial, 5 = very effortful).\n' +
     '- estimated_duration_minutes: integer estimate of focused time to resolve.\n' +
     `The worry is written in ${language}. Calibrate so weights are comparable across people and time.`;
-  const result = await callOpenAi(apiKey, system, content);
+  const result = await callModel(apiKey, system, content);
   const category = CATEGORIES.includes(result['category'] as string)
     ? (result['category'] as string)
     : 'Autre';
@@ -200,7 +210,7 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Missing content' }, 400);
   }
 
-  const apiKey = Deno.env.get('OPENAI_API_KEY');
+  const apiKey = Deno.env.get('GEMINI_API_KEY');
   if (!apiKey) {
     return jsonResponse({ error: 'AI unavailable' }, 503);
   }
