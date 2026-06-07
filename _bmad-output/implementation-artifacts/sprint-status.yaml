@@ -56,7 +56,7 @@ development_status:
   # Epic 2: Brain Dump & Mental Backpack
   epic-2: in-progress
   2-1-event-sourced-sync-engine-foundation: in-progress
-  2-2-capture-a-preoccupation-offline-first: backlog
+  2-2-capture-a-preoccupation-offline-first: ready-for-dev
   2-3-ai-analysis-pipeline-with-crisis-gate: backlog
   2-4-edit-and-delete-a-preoccupation: backlog
   2-5-display-current-mental-load: backlog
