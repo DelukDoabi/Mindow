@@ -1,0 +1,90 @@
+# Builds the Flutter web app and publishes it to GitHub Pages on every push to
+# main, giving the app a STABLE public URL (https://delukdoabi.github.io/Mindow/).
+# A stable origin is what makes OAuth redirects (Google sign-in) reliable, unlike
+# `flutter run` whose local port changes on every launch.
+#
+# One-time setup (GitHub UI):
+#   1. Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+#   2. Settings -> Secrets and variables -> Actions -> Variables, add:
+#        SUPABASE_URL       = https://knnnhrynruyyjofoxvet.supabase.co
+#        SUPABASE_ANON_KEY  = <the public anon JWT>
+#      (The anon key is public by design — it already ships inside the client
+#       binary and is guarded by Row Level Security — so a repo Variable is fine.)
+#
+# Only PUBLIC keys are injected here. Service-role / AI secrets stay server-side
+# in the Edge Functions and are never built into the web bundle.
+
+name: Deploy Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "lib/**"
+      - "web/**"
+      - "assets/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - ".github/workflows/deploy-web.yml"
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: "3.44.1"
+
+# Required for the GitHub Pages deployment to authenticate.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment; cancel in-progress runs for the same ref.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy to Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # The repo is served from a subpath (/Mindow/), so the base href must match.
+      - name: Build web (prod flavor)
+        run: >-
+          flutter build web
+          --release
+          -t lib/main_prod.dart
+          --base-href /Mindow/
+          --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }}
+          --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
