@@ -1,0 +1,44 @@
+name: Deploy Edge Functions
+
+# Deploys the GDPR Supabase Edge Functions from CI, which runs outside the
+# corporate network that blocks the Supabase CLI locally (SSL inspection +
+# authenticated proxy).
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   SUPABASE_ACCESS_TOKEN  - a personal access token from
+#                            https://supabase.com/dashboard/account/tokens
+#   SUPABASE_PROJECT_ID    - the project ref (e.g. knnnhrynruyyjofoxvet)
+#
+# The functions read SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY
+# which are auto-injected by the Supabase Edge runtime, so no extra function
+# secrets are needed.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/**'
+      - 'supabase/config.toml'
+      - '.github/workflows/deploy-edge-functions.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy account-export
+        run: supabase functions deploy account-export --project-ref "$SUPABASE_PROJECT_ID"
+
+      - name: Deploy account-delete
+        run: supabase functions deploy account-delete --project-ref "$SUPABASE_PROJECT_ID"
