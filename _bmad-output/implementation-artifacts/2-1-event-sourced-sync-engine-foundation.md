@@ -1,6 +1,10 @@
+---
+baseline_commit: 20f28fd9b3abe67361633c15b4c923868e1cfbbe
+---
+
 # Story 2.1: Event-sourced sync engine foundation
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -19,40 +23,40 @@ so that every feature can emit and replay domain events idempotently, offline-fi
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1 — Event store / Hive outbox** (AC: #1)
-  - [ ] Create `lib/core/sync/event_store.dart`: a persisted `OutboxRecord` wrapping a serialized `DomainEvent` envelope plus an `OutboxState { local, sent, acked }` enum and `receivedAt` (nullable until server-acked).
-  - [ ] Add the FIRST real Hive `TypeAdapter`(s) via `hive_ce_generator`: create `lib/core/sync/hive_adapters.dart` with `@GenerateAdapters([AdapterSpec<OutboxRecord>(), AdapterSpec<OutboxState>()])`, run `build_runner`, and register through the generated `hive_registrar.g.dart` `HiveRegistrar` extension.
-  - [ ] Append the new typeId(s) to `lib/core/sync/hive_registry.dart` (start at `firstAvailableTypeId = 10`; e.g. `OutboxState` = 10, `OutboxRecord` = 11) — append-only, never reuse.
-  - [ ] Expose an `EventStore` API: `append(DomainEvent)` → writes a `local` record; `markSent(eventId)`, `markAcked(eventId, receivedAt)`; query helpers (`pending()`, `all()`). Hive box is opened in bootstrap (or lazily, test-injectable).
-  - [ ] `append` of an already-present `event_id` is a no-op (idempotent write).
+- [x] **Task 1 — Event store / Hive outbox** (AC: #1)
+  - [x] Create `lib/core/sync/event_store.dart`: a persisted `OutboxRecord` wrapping a serialized `DomainEvent` envelope plus an `OutboxState { local, sent, acked }` enum and `receivedAt` (nullable until server-acked).
+  - [x] Add the FIRST real Hive `TypeAdapter`(s) via `hive_ce_generator`: create `lib/core/sync/hive_adapters.dart` with `@GenerateAdapters([AdapterSpec<OutboxRecord>(), AdapterSpec<OutboxState>()])`, run `build_runner`, and register through the generated `hive_registrar.g.dart` `HiveRegistrar` extension.
+  - [x] Append the new typeId(s) to `lib/core/sync/hive_registry.dart` (start at `firstAvailableTypeId = 10`; e.g. `OutboxState` = 10, `OutboxRecord` = 11) — append-only, never reuse.
+  - [x] Expose an `EventStore` API: `append(DomainEvent)` → writes a `local` record; `markSent(eventId)`, `markAcked(eventId, receivedAt)`; query helpers (`pending()`, `all()`). Hive box is opened in bootstrap (or lazily, test-injectable).
+  - [x] `append` of an already-present `event_id` is a no-op (idempotent write).
 
-- [ ] **Task 2 — Replay engine** (AC: #2)
-  - [ ] Create `lib/core/sync/replay_engine.dart`: replays a list/stream of records into a caller-supplied reducer, ordered by `received_at` ascending, tie-break by `event_id` (lexicographic).
-  - [ ] Idempotency: maintain a seen-`event_id` set so a duplicate event is skipped (no-op), never double-applied.
-  - [ ] Records still `local` (no `received_at`) order AFTER acked records or by a documented rule — define and test the ordering of not-yet-received events explicitly.
-  - [ ] Keep the reducer generic (`T Function(T state, DomainEvent event)`) — no feature types.
+- [x] **Task 2 — Replay engine** (AC: #2)
+  - [x] Create `lib/core/sync/replay_engine.dart`: replays a list/stream of records into a caller-supplied reducer, ordered by `received_at` ascending, tie-break by `event_id` (lexicographic).
+  - [x] Idempotency: maintain a seen-`event_id` set so a duplicate event is skipped (no-op), never double-applied.
+  - [x] Records still `local` (no `received_at`) order AFTER acked records or by a documented rule — define and test the ordering of not-yet-received events explicitly.
+  - [x] Keep the reducer generic (`T Function(T state, DomainEvent event)`) — no feature types.
 
-- [ ] **Task 3 — Sync queue with injectable clock** (AC: #1, #2)
-  - [ ] Create `lib/core/sync/sync_queue.dart`: an abstract queue over the `EventStore` with an injectable `Clock` (or `DateTime Function()`), so tests control time and ordering deterministically.
-  - [ ] No network here yet — reconciliation transport (`reconciliation_client.dart`) is stubbed/abstract; Story 2.2+ wires Supabase. Document the seam.
+- [x] **Task 3 — Sync queue with injectable clock** (AC: #1, #2)
+  - [x] Create `lib/core/sync/sync_queue.dart`: an abstract queue over the `EventStore` with an injectable `Clock` (or `DateTime Function()`), so tests control time and ordering deterministically.
+  - [x] No network here yet — reconciliation transport (`reconciliation_client.dart`) is stubbed/abstract; Story 2.2+ wires Supabase. Document the seam.
 
-- [ ] **Task 4 — Schema versioning & upcasters** (AC: #3)
-  - [ ] Create `lib/core/sync/upcasters/upcaster_registry.dart`: pure `vN → vN+1` upcasting functions applied at READ/replay time only (never rewrite stored history).
-  - [ ] Define `currentSchemaVersion` and make the set of supported versions enumerable so the fixture gate can assert coverage.
+- [x] **Task 4 — Schema versioning & upcasters** (AC: #3)
+  - [x] Create `lib/core/sync/upcasters/upcaster_registry.dart`: pure `vN → vN+1` upcasting functions applied at READ/replay time only (never rewrite stored history).
+  - [x] Define `currentSchemaVersion` and make the set of supported versions enumerable so the fixture gate can assert coverage.
 
-- [ ] **Task 5 — Convergence harness + versioned fixtures (CI gate)** (AC: #3)
-  - [ ] Create `test/core/sync/fixtures/v1/` with at least one fixture (input event stream + expected converged projection) using a TEST-ONLY fake event (e.g. `CounterIncremented`) so the engine stays business-agnostic.
-  - [ ] Create `test/core/sync/convergence_harness_test.dart`: loads every `v{n}/` fixture, replays through the engine + upcasters, asserts convergence, and asserts idempotency (replaying twice == once) and order-independence (shuffled input converges identically).
-  - [ ] Add a gate assertion: for every supported `schema_version` (1..currentSchemaVersion), a `v{n}/` fixture directory MUST exist, else the test FAILS.
-  - [ ] Wire the harness into CI: add a dedicated step in `.github/workflows/ci.yml` (alongside the existing "Hive registry gate") so the convergence gate runs explicitly.
+- [x] **Task 5 — Convergence harness + versioned fixtures (CI gate)** (AC: #3)
+  - [x] Create `test/core/sync/fixtures/v1/` with at least one fixture (input event stream + expected converged projection) using a TEST-ONLY fake event (e.g. `CounterIncremented`) so the engine stays business-agnostic.
+  - [x] Create `test/core/sync/convergence_harness_test.dart`: loads every `v{n}/` fixture, replays through the engine + upcasters, asserts convergence, and asserts idempotency (replaying twice == once) and order-independence (shuffled input converges identically).
+  - [x] Add a gate assertion: for every supported `schema_version` (1..currentSchemaVersion), a `v{n}/` fixture directory MUST exist, else the test FAILS.
+  - [x] Wire the harness into CI: add a dedicated step in `.github/workflows/ci.yml` (alongside the existing "Hive registry gate") so the convergence gate runs explicitly.
 
-- [ ] **Task 6 — Shared event contract parity (CI gate)** (AC: #4)
-  - [ ] Create `supabase/functions/_shared/events.ts`: the envelope contract mirroring `domain_event.dart` — `event_id`, `aggregate_id` (or `user_id` per architecture), `event_type`, `schema_version`, `created_at`, `received_at`. Document the snake_case (wire) ↔ camelCase (Dart) boundary.
-  - [ ] Create `test/core/sync/event_contract_parity_test.dart`: parses both `domain_event.dart` field names and `_shared/events.ts` field names and asserts the envelope keys match (a drift fails CI). Keep it tolerant of comments/formatting.
+- [x] **Task 6 — Shared event contract parity (CI gate)** (AC: #4)
+  - [x] Create `supabase/functions/_shared/events.ts`: the envelope contract mirroring `domain_event.dart` — `event_id`, `aggregate_id` (or `user_id` per architecture), `event_type`, `schema_version`, `created_at`, `received_at`. Document the snake_case (wire) ↔ camelCase (Dart) boundary.
+  - [x] Create `test/core/sync/event_contract_parity_test.dart`: parses both `domain_event.dart` field names and `_shared/events.ts` field names and asserts the envelope keys match (a drift fails CI). Keep it tolerant of comments/formatting.
 
-- [ ] **Task 7 — Validate & wire-up**
-  - [ ] `dart run build_runner build` (no `--delete-conflicting-outputs`), `flutter analyze` (0 issues), `flutter test` (all green incl. new gates), `dart format lib test`.
-  - [ ] Confirm `core/sync` imports nothing from `lib/features/**` (business-agnostic).
+- [x] **Task 7 — Validate & wire-up**
+  - [x] `dart run build_runner build` (no `--delete-conflicting-outputs`), `flutter analyze` (0 issues), `flutter test` (all green incl. new gates), `dart format lib test`.
+  - [x] Confirm `core/sync` imports nothing from `lib/features/**` (business-agnostic).
 
 ## Dev Notes
 
@@ -123,8 +127,62 @@ No conflicts with the flat-vs-split rule: `core/sync` already exists as a dedica
 
 ### Agent Model Used
 
+Claude Opus 4.8 (GitHub Copilot)
+
 ### Debug Log References
+
+- `dart run build_runner build` — wrote 3 outputs (`hive_adapters.g.dart`, `hive_adapters.g.yaml`, `hive_registrar.g.dart`) in 106s. typeIds assigned `OutboxState` = 10, `OutboxRecord` = 11 (matches the `hive_registry.dart` CI gate).
+- `flutter analyze` — No issues found.
+- `flutter test` — All 57 tests passed (27 in `test/core/sync`).
 
 ### Completion Notes List
 
+- **Envelope reconciliation decision:** the Dart side keeps `aggregateId` ↔ wire `aggregate_id`. The authoritative `user_id` is NOT part of the client-emitted envelope — the backend derives it from the authenticated JWT and stamps it alongside `received_at` on insert. Documented in both `domain_event.dart` and `supabase/functions/_shared/events.ts`; the 7 envelope keys (`event_id`, `aggregate_id`, `event_type`, `schema_version`, `created_at`, `received_at`, `payload`) are the single source of truth, parity-gated.
+- **Storage stability:** `OutboxRecord` stores the payload as a JSON-encoded `String` (`payloadJson`) rather than a nested `Map`, sidestepping Hive nested-map typing quirks while keeping `EventEnvelope.payload` a `Map`.
+- **Replay ordering of local events:** not-yet-received (`receivedAt == null`) events sort AFTER all received ones; ties (and the local tail) break by `event_id` lexicographically. Explicitly tested.
+- **Transport seam:** `ReconciliationClient` is an abstract interface only; `SyncQueue.flush()` is a no-op when no client is wired (offline-first / scaffold builds). The concrete Supabase wiring is deferred to Story 2.2+. `SyncQueue` uses an injectable `Clock` (default `systemUtcClock`) used as the `received_at` fallback when the backend does not acknowledge a record.
+- **Schema versioning:** `currentSchemaVersion = 1`; `supportedSchemaVersions` drives the convergence fixture-coverage gate (every `v{n}/` must have ≥1 fixture). No upcasters needed yet (`UpcasterRegistry.empty()`).
+- **Three CI gates added** to `.github/workflows/ci.yml`: convergence gate, contract parity gate (alongside the pre-existing Hive registry gate).
+- **`.g.yaml` committed** to pin typeId/field-index assignments for offline data stability.
+- `Hive.registerAdapters()` is now called in `lib/app/bootstrap.dart` right after `Hive.initFlutter()`.
+
 ### File List
+
+**Created (lib):**
+- `lib/core/sync/event_store.dart`
+- `lib/core/sync/sync_queue.dart`
+- `lib/core/sync/replay_engine.dart`
+- `lib/core/sync/reconciliation_client.dart`
+- `lib/core/sync/hive_adapters.dart`
+- `lib/core/sync/upcasters/upcaster_registry.dart`
+- `lib/core/sync/hive_adapters.g.dart` (generated)
+- `lib/core/sync/hive_adapters.g.yaml` (generated)
+- `lib/core/sync/hive_registrar.g.dart` (generated)
+
+**Modified (lib):**
+- `lib/core/sync/domain_event.dart` (added `EventEnvelope`, `eventEnvelopeKeys`, `DomainEventRegistry`, `toEnvelope`)
+- `lib/core/sync/hive_registry.dart` (appended typeIds 10, 11)
+- `lib/app/bootstrap.dart` (register adapters)
+
+**Created (server):**
+- `supabase/functions/_shared/events.ts`
+
+**Created (tests):**
+- `test/core/sync/event_store_test.dart`
+- `test/core/sync/replay_engine_test.dart`
+- `test/core/sync/sync_queue_test.dart`
+- `test/core/sync/convergence_harness_test.dart`
+- `test/core/sync/event_contract_parity_test.dart`
+- `test/core/sync/support/counter_event.dart`
+- `test/core/sync/fixtures/v1/basic_convergence.json`
+- `test/core/sync/fixtures/v1/mixed_ordering.json`
+
+**Modified (CI):**
+- `.github/workflows/ci.yml` (convergence + parity gates)
+
+## Change Log
+
+| Date       | Version | Description                                              | Author |
+| ---------- | ------- | -------------------------------------------------------- | ------ |
+| 2026-06-07 | 0.1     | Story created                                            | Bob    |
+| 2026-06-07 | 1.0     | Event-sourced sync engine foundation implemented (review) | Amelia |

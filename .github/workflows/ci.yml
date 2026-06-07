@@ -41,6 +41,16 @@ jobs:
       - name: Hive registry gate
         run: flutter test test/core/sync/hive_registry_test.dart
 
+      # The convergence gate — replay must be deterministic, idempotent and
+      # order-independent, with a fixture set covering every schema version.
+      - name: Convergence gate
+        run: flutter test test/core/sync/convergence_harness_test.dart
+
+      # The contract parity gate — the Dart envelope keys and the shared
+      # TypeScript contract must not drift apart.
+      - name: Contract parity gate
+        run: flutter test test/core/sync/event_contract_parity_test.dart
+
       - name: Test
         run: flutter test
 
