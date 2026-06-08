@@ -1,3 +1,5 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,18 +32,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadAiConsent();
+    unawaited(_loadAiConsent());
   }
 
   Future<void> _loadAiConsent() async {
     final granted = await ref
         .read(onboardingRepositoryProvider)
         .isAiConsentGranted();
-    if (mounted)
+    if (mounted) {
       setState(() {
         _aiConsent = granted;
         _aiConsentLoading = false;
       });
+    }
   }
 
   Future<void> _toggleAiConsent(bool value) async {
@@ -142,20 +145,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: AuroreSpacing.sm),
-              _aiConsentLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : SwitchListTile(
-                      value: _aiConsent,
-                      onChanged: _busy ? null : _toggleAiConsent,
-                      title: Text(l10n.settingsAiConsentToggle),
-                      subtitle: Text(
-                        l10n.settingsAiConsentSubtitle,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: AuroreColors.inkMuted,
-                        ),
-                      ),
-                      contentPadding: EdgeInsets.zero,
+              if (_aiConsentLoading)
+                const Center(child: CircularProgressIndicator())
+              else
+                SwitchListTile(
+                  value: _aiConsent,
+                  onChanged: _busy ? null : _toggleAiConsent,
+                  title: Text(l10n.settingsAiConsentToggle),
+                  subtitle: Text(
+                    l10n.settingsAiConsentSubtitle,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: AuroreColors.inkMuted,
                     ),
+                  ),
+                  contentPadding: EdgeInsets.zero,
+                ),
               const SizedBox(height: AuroreSpacing.lg),
               Text(
                 l10n.settingsPrivacySection,
