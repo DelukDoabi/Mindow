@@ -29,12 +29,31 @@ BrainDumpRepository brainDumpRepository(Ref ref) => BrainDumpRepository(
   registry: ref.watch(domainEventRegistryProvider),
 );
 
+/// Monotonically-increasing revision counter — bumped every time a
+/// [WeightAssignedEvent] (or any future mutation) lands in the local outbox.
+///
+/// Kept alive so [AnalysisService] can always bump it from its async
+/// callbacks, even when the home screen is momentarily off-screen.
+@Riverpod(keepAlive: true)
+class ProjectionRevision extends _$ProjectionRevision {
+  @override
+  int build() => 0;
+
+  /// Increments the revision, causing every watcher to rebuild.
+  void bump() => state = state + 1;
+}
+
 /// The open Preoccupations projection, most recent first.
 ///
-/// Invalidate this after a capture so the freshly appended item appears.
+/// Re-runs whenever a new preoccupation is captured ([ref.invalidate] from the
+/// widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
+/// after a weight is assigned — the two triggers together ensure the list is
+/// always current without polling.
 @riverpod
-Future<List<Preoccupation>> openPreoccupations(Ref ref) async =>
-    ref.watch(brainDumpRepositoryProvider).getOpenPreoccupations();
+Future<List<Preoccupation>> openPreoccupations(Ref ref) async {
+  ref.watch(projectionRevisionProvider);
+  return ref.read(brainDumpRepositoryProvider).getOpenPreoccupations();
+}
 
 /// Ids of Preoccupations whose analysis tripped the crisis-gate (AC2).
 ///
@@ -72,5 +91,6 @@ AnalysisService analysisService(Ref ref) => AnalysisService(
       .where((preoccupation) => preoccupation.isPending)
       .toList(),
   onCrisis: (id) => ref.read(crisisAlertsProvider.notifier).push(id),
-  onProjectionChanged: () => ref.invalidate(openPreoccupationsProvider),
+  onProjectionChanged: () =>
+      ref.read(projectionRevisionProvider.notifier).bump(),
 );

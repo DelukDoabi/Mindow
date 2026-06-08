@@ -126,16 +126,97 @@ final class BrainDumpRepositoryProvider
 String _$brainDumpRepositoryHash() =>
     r'5c6d257bfb80176b5504fc20244faa3c05ef962e';
 
+/// Monotonically-increasing revision counter — bumped every time a
+/// [WeightAssignedEvent] (or any future mutation) lands in the local outbox.
+///
+/// Kept alive so [AnalysisService] can always bump it from its async
+/// callbacks, even when the home screen is momentarily off-screen.
+
+@ProviderFor(ProjectionRevision)
+final projectionRevisionProvider = ProjectionRevisionProvider._();
+
+/// Monotonically-increasing revision counter — bumped every time a
+/// [WeightAssignedEvent] (or any future mutation) lands in the local outbox.
+///
+/// Kept alive so [AnalysisService] can always bump it from its async
+/// callbacks, even when the home screen is momentarily off-screen.
+final class ProjectionRevisionProvider
+    extends $NotifierProvider<ProjectionRevision, int> {
+  /// Monotonically-increasing revision counter — bumped every time a
+  /// [WeightAssignedEvent] (or any future mutation) lands in the local outbox.
+  ///
+  /// Kept alive so [AnalysisService] can always bump it from its async
+  /// callbacks, even when the home screen is momentarily off-screen.
+  ProjectionRevisionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'projectionRevisionProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$projectionRevisionHash();
+
+  @$internal
+  @override
+  ProjectionRevision create() => ProjectionRevision();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$projectionRevisionHash() =>
+    r'bafc4fcb8d6bdf4bee12a30043bd4b13eff26f05';
+
+/// Monotonically-increasing revision counter — bumped every time a
+/// [WeightAssignedEvent] (or any future mutation) lands in the local outbox.
+///
+/// Kept alive so [AnalysisService] can always bump it from its async
+/// callbacks, even when the home screen is momentarily off-screen.
+
+abstract class _$ProjectionRevision extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 /// The open Preoccupations projection, most recent first.
 ///
-/// Invalidate this after a capture so the freshly appended item appears.
+/// Re-runs whenever a new preoccupation is captured ([ref.invalidate] from the
+/// widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
+/// after a weight is assigned — the two triggers together ensure the list is
+/// always current without polling.
 
 @ProviderFor(openPreoccupations)
 final openPreoccupationsProvider = OpenPreoccupationsProvider._();
 
 /// The open Preoccupations projection, most recent first.
 ///
-/// Invalidate this after a capture so the freshly appended item appears.
+/// Re-runs whenever a new preoccupation is captured ([ref.invalidate] from the
+/// widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
+/// after a weight is assigned — the two triggers together ensure the list is
+/// always current without polling.
 
 final class OpenPreoccupationsProvider
     extends
@@ -149,7 +230,10 @@ final class OpenPreoccupationsProvider
         $FutureProvider<List<Preoccupation>> {
   /// The open Preoccupations projection, most recent first.
   ///
-  /// Invalidate this after a capture so the freshly appended item appears.
+  /// Re-runs whenever a new preoccupation is captured ([ref.invalidate] from the
+  /// widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
+  /// after a weight is assigned — the two triggers together ensure the list is
+  /// always current without polling.
   OpenPreoccupationsProvider._()
     : super(
         from: null,
@@ -177,7 +261,7 @@ final class OpenPreoccupationsProvider
 }
 
 String _$openPreoccupationsHash() =>
-    r'6f7ef8cae632aefc7ac5b078d6362b87e4c06658';
+    r'0c89812e4a1dfd0b608959b859b512a030d5452b';
 
 /// Ids of Preoccupations whose analysis tripped the crisis-gate (AC2).
 ///
@@ -306,4 +390,4 @@ final class AnalysisServiceProvider
   }
 }
 
-String _$analysisServiceHash() => r'3183265065fdb82f7aece74d8bfdb93b3a050808';
+String _$analysisServiceHash() => r'a1566512587e93f609b46772e44835dedc3b8c90';
