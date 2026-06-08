@@ -90,33 +90,54 @@ async function callModel(
   systemPrompt: string,
   userContent: string,
 ): Promise<Record<string, unknown>> {
-  const response = await fetch(CHAT_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      temperature: 0,
-      response_format: { type: 'json_object' },
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userContent },
-      ],
-    }),
-  });
+  // Retry up to 3 times with exponential back-off (1s, 2s, 4s) so that
+  // transient 429 rate-limit responses from Gemini are handled transparently.
+  const maxAttempts = 3;
+  let lastError: Error = new Error('callModel: no attempt made');
 
-  if (!response.ok) {
-    throw new Error(`Model error ${response.status}`);
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const response = await fetch(CHAT_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        temperature: 0,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userContent },
+        ],
+      }),
+    });
+
+    if (response.status === 429) {
+      // Honour Retry-After if provided, otherwise double the base delay.
+      const retryAfter = response.headers.get('Retry-After');
+      const delayMs = retryAfter
+        ? parseInt(retryAfter, 10) * 1000
+        : 1000 * Math.pow(2, attempt);
+      console.warn(`[ai-analyze] 429 on attempt ${attempt + 1}, retrying in ${delayMs}ms`);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      lastError = new Error(`Model error ${response.status}`);
+      continue;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Model error ${response.status}`);
+    }
+
+    const data = await response.json();
+    const raw = data?.choices?.[0]?.message?.content;
+    if (typeof raw !== 'string') {
+      throw new Error('Model returned no content');
+    }
+    return JSON.parse(raw) as Record<string, unknown>;
   }
 
-  const data = await response.json();
-  const raw = data?.choices?.[0]?.message?.content;
-  if (typeof raw !== 'string') {
-    throw new Error('Model returned no content');
-  }
-  return JSON.parse(raw) as Record<string, unknown>;
+  throw lastError;
 }
 
 // Dedicated crisis-confirmation prompt (the second half of the gate).
