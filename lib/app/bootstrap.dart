@@ -47,6 +47,9 @@ Future<void> bootstrap(Flavor flavor) async {
           // pinned supabase_flutter version; `anonKey` is the public key.
           // ignore: deprecated_member_use
           anonKey: env.supabaseAnonKey,
+          // Explicit: detect the PKCE `?code=` callback in the URL after an
+          // OAuth redirect so the session is established before runApp.
+          detectSessionInUri: true,
         );
       }
 

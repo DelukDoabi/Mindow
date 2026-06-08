@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:mindow/app/env.dart';
 import 'package:mindow/core/data/supabase_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -61,12 +62,29 @@ class AuthRepository {
   }
 
   /// Starts the Apple OAuth sign-in flow.
-  Future<void> signInWithApple() =>
-      _requireClient().auth.signInWithOAuth(OAuthProvider.apple);
+  Future<void> signInWithApple() => _requireClient().auth.signInWithOAuth(
+    OAuthProvider.apple,
+    redirectTo: _webRedirectTo,
+  );
 
   /// Starts the Google OAuth sign-in flow.
-  Future<void> signInWithGoogle() =>
-      _requireClient().auth.signInWithOAuth(OAuthProvider.google);
+  Future<void> signInWithGoogle() => _requireClient().auth.signInWithOAuth(
+    OAuthProvider.google,
+    redirectTo: _webRedirectTo,
+  );
+
+  /// On Flutter web, returns the canonical app origin + path so that the PKCE
+  /// `?code=` callback lands on a URL that exactly matches the allowed redirect
+  /// URLs configured in the Supabase dashboard. The hash fragment (/#/route)
+  /// is excluded so it does not corrupt the redirect URL matching.
+  ///
+  /// Returns `null` on native platforms where the deep-link scheme is used.
+  static String? get _webRedirectTo {
+    if (!kIsWeb) return null;
+    final base = Uri.base;
+    // `authority` already includes the port when non-standard (e.g. localhost).
+    return '${base.scheme}://${base.authority}${base.path}';
+  }
 
   /// Signs in with email + password, creating the account if it does not yet
   /// exist. Sign-in is attempted first; on failure a sign-up is performed.
