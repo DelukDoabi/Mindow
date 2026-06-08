@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/features/auth/auth_repository.dart';
+import 'package:mindow/features/onboarding/onboarding_repository.dart';
 import 'package:mindow/features/settings/settings_screen.dart';
 
 /// In-memory auth repository so the screen never initializes Supabase.
@@ -27,13 +28,32 @@ class _FakeAuthRepository extends AuthRepository {
   }
 }
 
+/// In-memory onboarding repository so the screen never touches Hive.
+class _FakeOnboardingRepository extends OnboardingRepository {
+  bool _aiConsent = false;
+
+  @override
+  Future<bool> isAiConsentGranted() async => _aiConsent;
+
+  @override
+  Future<void> setAiConsent({required bool granted}) async {
+    _aiConsent = granted;
+  }
+}
+
 void main() {
   Future<void> pumpSettings(
     WidgetTester tester, {
     required _FakeAuthRepository auth,
+    _FakeOnboardingRepository? onboarding,
   }) async {
     final container = ProviderContainer(
-      overrides: [authRepositoryProvider.overrideWithValue(auth)],
+      overrides: [
+        authRepositoryProvider.overrideWithValue(auth),
+        onboardingRepositoryProvider.overrideWithValue(
+          onboarding ?? _FakeOnboardingRepository(),
+        ),
+      ],
     );
     addTearDown(container.dispose);
 
