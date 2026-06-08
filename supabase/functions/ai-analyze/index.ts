@@ -225,9 +225,10 @@ Deno.serve(async (req) => {
 
     // Not a crisis: weigh it.
     return jsonResponse(await weigh(apiKey, content, language));
-  } catch (_error) {
-    // Surface a clean 502 so the client falls back to a neutral weight (AC5);
-    // never leak provider internals.
+  } catch (err) {
+    // Log the provider error server-side (visible in Supabase Function Logs)
+    // without leaking internals to the client (AC5).
+    console.error('[ai-analyze] provider error:', err);
     return jsonResponse({ error: 'Analysis failed' }, 502);
   }
 });
