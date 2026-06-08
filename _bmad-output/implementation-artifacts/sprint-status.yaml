@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-09
+last_updated: 2026-06-10
 project: Mindow
 project_key: NOKEY
 tracking_system: file-system
@@ -58,7 +58,7 @@ development_status:
   2-1-event-sourced-sync-engine-foundation: in-progress
   2-2-capture-a-preoccupation-offline-first: review
   2-3-ai-analysis-pipeline-with-crisis-gate: review
-  2-4-edit-and-delete-a-preoccupation: in-progress
+  2-4-edit-and-delete-a-preoccupation: review
   2-5-display-current-mental-load: backlog
   2-6-animated-backpack-visualization: backlog
   2-7-open-items-count-weekly-progression: backlog

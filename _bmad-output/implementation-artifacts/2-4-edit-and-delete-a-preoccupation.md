@@ -4,7 +4,7 @@ baseline_commit: 3564048
 
 # Story 2.4: Edit and delete a Preoccupation
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
