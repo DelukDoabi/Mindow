@@ -7,6 +7,7 @@ import 'package:mindow/core/design_system/widgets/aurore_canvas.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/core/router/app_router.dart';
 import 'package:mindow/features/auth/auth_repository.dart';
+import 'package:mindow/features/onboarding/onboarding_repository.dart';
 
 /// Settings surface holding the GDPR data rights (Story 1.7, NFR-10).
 ///
@@ -23,6 +24,30 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _busy = false;
   bool _hasError = false;
+  bool _aiConsent = false;
+  bool _aiConsentLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAiConsent();
+  }
+
+  Future<void> _loadAiConsent() async {
+    final granted = await ref
+        .read(onboardingRepositoryProvider)
+        .isAiConsentGranted();
+    if (mounted)
+      setState(() {
+        _aiConsent = granted;
+        _aiConsentLoading = false;
+      });
+  }
+
+  Future<void> _toggleAiConsent(bool value) async {
+    setState(() => _aiConsent = value);
+    await ref.read(onboardingRepositoryProvider).setAiConsent(granted: value);
+  }
 
   Future<void> _runExport() async {
     setState(() {
@@ -110,6 +135,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: AuroreSpacing.md),
               Text(l10n.settingsTitle, style: textTheme.headlineMedium),
               const SizedBox(height: AuroreSpacing.xl),
+              Text(
+                l10n.settingsAiSection,
+                style: textTheme.titleMedium?.copyWith(
+                  color: AuroreColors.inkMuted,
+                ),
+              ),
+              const SizedBox(height: AuroreSpacing.sm),
+              _aiConsentLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SwitchListTile(
+                      value: _aiConsent,
+                      onChanged: _busy ? null : _toggleAiConsent,
+                      title: Text(l10n.settingsAiConsentToggle),
+                      subtitle: Text(
+                        l10n.settingsAiConsentSubtitle,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: AuroreColors.inkMuted,
+                        ),
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+              const SizedBox(height: AuroreSpacing.lg),
               Text(
                 l10n.settingsPrivacySection,
                 style: textTheme.titleMedium?.copyWith(

@@ -216,6 +216,18 @@
   "@settingsActionError": {
     "description": "Calm error shown when a settings action fails"
   },
+  "settingsAiSection": "AI Analysis",
+  "@settingsAiSection": {
+    "description": "Section header for the AI consent toggle in Settings"
+  },
+  "settingsAiConsentToggle": "Analyse my worries with AI",
+  "@settingsAiConsentToggle": {
+    "description": "Label for the AI consent switch in Settings"
+  },
+  "settingsAiConsentSubtitle": "Your words are sent to an AI partner for analysis then returned to you. Nothing is shared elsewhere.",
+  "@settingsAiConsentSubtitle": {
+    "description": "Subtitle explaining what AI consent means in Settings"
+  },
   "captureInputPlaceholder": "What's on your mind?",
   "@captureInputPlaceholder": {
     "description": "Placeholder text in the single capture input on Home"

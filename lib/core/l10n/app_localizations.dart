@@ -422,6 +422,24 @@ abstract class AppLocalizations {
   /// **'Small hiccup. Shall we try again?'**
   String get settingsActionError;
 
+  /// Section header for the AI consent toggle in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'AI Analysis'**
+  String get settingsAiSection;
+
+  /// Label for the AI consent switch in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Analyse my worries with AI'**
+  String get settingsAiConsentToggle;
+
+  /// Subtitle explaining what AI consent means in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Your words are sent to an AI partner for analysis then returned to you. Nothing is shared elsewhere.'**
+  String get settingsAiConsentSubtitle;
+
   /// Placeholder text in the single capture input on Home
   ///
   /// In en, this message translates to:

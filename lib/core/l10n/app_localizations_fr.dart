@@ -180,6 +180,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsActionError => 'Petit souci. On réessaie ?';
 
   @override
+  String get settingsAiSection => 'Analyse par l\'IA';
+
+  @override
+  String get settingsAiConsentToggle =>
+      'Analyser mes préoccupations avec l\'IA';
+
+  @override
+  String get settingsAiConsentSubtitle =>
+      'Tes mots sont envoyés à un partenaire d\'IA pour être analysés, puis te reviennent. Rien n\'est partagé ailleurs.';
+
+  @override
   String get captureInputPlaceholder => 'Qu\'est-ce qui occupe ton esprit ?';
 
   @override

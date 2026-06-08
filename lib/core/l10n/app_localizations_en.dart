@@ -180,6 +180,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsActionError => 'Small hiccup. Shall we try again?';
 
   @override
+  String get settingsAiSection => 'AI Analysis';
+
+  @override
+  String get settingsAiConsentToggle => 'Analyse my worries with AI';
+
+  @override
+  String get settingsAiConsentSubtitle =>
+      'Your words are sent to an AI partner for analysis then returned to you. Nothing is shared elsewhere.';
+
+  @override
   String get captureInputPlaceholder => 'What\'s on your mind?';
 
   @override
