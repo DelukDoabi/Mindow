@@ -60,8 +60,7 @@ Map<String, Preoccupation> _reducePreoccupations(
   }
   if (event is PreoccupationDeletedEvent) {
     if (!state.containsKey(event.aggregateId)) return state;
-    return Map<String, Preoccupation>.from(state)
-      ..remove(event.aggregateId);
+    return Map<String, Preoccupation>.from(state)..remove(event.aggregateId);
   }
   return state;
 }

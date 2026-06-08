@@ -7,7 +7,7 @@ import 'package:mindow/core/sync/domain_event.dart';
 /// and category — they are NOT cleared; re-analysis, if triggered, will emit a
 /// fresh `weight.assigned` that supersedes via latest-wins). An orphan update
 /// event (no prior `preoccupation.captured` for the same aggregate) is silently
-/// ignored by the reducer (defensive guard, same pattern as [WeightAssignedEvent]).
+/// ignored by the reducer (defensive guard, same pattern as `WeightAssignedEvent`).
 ///
 /// If the trimmed new content differs from the original, the call site triggers
 /// AI re-analysis asynchronously (debounced by content-equality; NFR-11 cost

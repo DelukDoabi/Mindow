@@ -7,21 +7,21 @@ import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation.dart';
 
-/// A modal bottom sheet that lets the user edit or delete a [Preoccupation].
+/// A modal bottom sheet that lets the user edit or delete a `Preoccupation`.
 ///
-/// Opens via [showEditPreoccupationSheet].  On save:
-///   - [BrainDumpRepository.updatePreoccupation] is called (offline-first).
+/// Opens via `showEditPreoccupationSheet`.  On save:
+///   - `BrainDumpRepository.updatePreoccupation` is called (offline-first).
 ///   - The projection revision is bumped immediately so the list rebuilds.
 ///   - If content changed, AI re-analysis is triggered fire-and-forget
 ///     (NFR-11: only if content differs — avoids redundant Groq calls).
 ///
 /// On delete:
-///   - Confirmation [AlertDialog] is shown (UX safety guardrail).
-///   - [BrainDumpRepository.deletePreoccupation] is called on confirm.
+///   - Confirmation `AlertDialog` is shown (UX safety guardrail).
+///   - `BrainDumpRepository.deletePreoccupation` is called on confirm.
 ///   - The projection revision is bumped immediately.
 class EditPreoccupationSheet extends ConsumerStatefulWidget {
   /// Creates the edit sheet for [item].
-  const EditPreoccupationSheet({super.key, required this.item});
+  const EditPreoccupationSheet({required this.item, super.key});
 
   /// The preoccupation being edited or deleted.
   final Preoccupation item;
@@ -76,7 +76,9 @@ class _EditPreoccupationSheetState
     // Re-analyse asynchronously only when content actually changed (NFR-11).
     if (contentChanged) {
       unawaited(
-        ref.read(analysisServiceProvider).analyzePreoccupation(
+        ref
+            .read(analysisServiceProvider)
+            .analyzePreoccupation(
               id: widget.item.id,
               content: newContent,
             ),
