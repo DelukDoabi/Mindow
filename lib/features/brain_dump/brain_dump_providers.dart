@@ -45,8 +45,8 @@ class ProjectionRevision extends _$ProjectionRevision {
 
 /// The open Preoccupations projection, most recent first.
 ///
-/// Re-runs whenever a new preoccupation is captured ([ref.invalidate] from the
-/// widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
+/// Re-runs whenever a new preoccupation is captured (via `ref.invalidate` from
+/// the widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
 /// after a weight is assigned — the two triggers together ensure the list is
 /// always current without polling.
 @riverpod
