@@ -8,6 +8,8 @@ import 'package:mindow/core/sync/hive_registrar.g.dart';
 import 'package:mindow/core/sync/sync_queue.dart';
 import 'package:mindow/features/brain_dump/brain_dump_repository.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation_captured_event.dart';
+import 'package:mindow/features/brain_dump/domain/preoccupation_deleted_event.dart';
+import 'package:mindow/features/brain_dump/domain/preoccupation_updated_event.dart';
 import 'package:mindow/features/brain_dump/domain/weight_assigned_event.dart';
 
 void main() {
@@ -39,7 +41,15 @@ void main() {
           PreoccupationCapturedEvent.type,
           decodePreoccupationCaptured,
         )
-        ..register(WeightAssignedEvent.type, decodeWeightAssigned),
+        ..register(WeightAssignedEvent.type, decodeWeightAssigned)
+        ..register(
+          PreoccupationUpdatedEvent.type,
+          decodePreoccupationUpdated,
+        )
+        ..register(
+          PreoccupationDeletedEvent.type,
+          decodePreoccupationDeleted,
+        ),
       clock: () => clockNow = clockNow.add(const Duration(seconds: 1)),
     );
   });
@@ -175,6 +185,115 @@ void main() {
       await assignWeight('ghost', kg: 9, category: 'Santé');
 
       expect(repository.getOpenPreoccupations(), isEmpty);
+    });
+  });
+
+  group('deletePreoccupation', () {
+    test('removes the item from the projection', () async {
+      await repository.capturePreoccupation('pay the rent');
+      final id = store.all().single.eventId;
+
+      await repository.deletePreoccupation(id);
+
+      expect(repository.getOpenPreoccupations(), isEmpty);
+    });
+
+    test('appends a local deleted event to the outbox', () async {
+      await repository.capturePreoccupation('something');
+      final captureId = store.all().single.eventId;
+
+      await repository.deletePreoccupation(captureId);
+
+      final events = store.all();
+      expect(events, hasLength(2));
+      final deleteRecord = events.firstWhere(
+        (r) => r.eventType == PreoccupationDeletedEvent.type,
+      );
+      expect(deleteRecord.toEnvelope().aggregateId, captureId);
+    });
+
+    test('an orphan delete event (no aggregate) is silently ignored', () async {
+      await repository.capturePreoccupation('worry A');
+      await repository.deletePreoccupation('non-existent-id');
+
+      // The captured item is unaffected.
+      expect(repository.getOpenPreoccupations(), hasLength(1));
+    });
+  });
+
+  group('updatePreoccupation', () {
+    test('updates the content of the item in the projection', () async {
+      await repository.capturePreoccupation('call dentist');
+      final id = store.all().single.eventId;
+
+      await repository.updatePreoccupation(id, 'schedule dentist appointment');
+
+      final item = repository.getOpenPreoccupations().single;
+      expect(item.content, 'schedule dentist appointment');
+    });
+
+    test('preserves the Mental Weight after an update', () async {
+      await repository.capturePreoccupation('send invoice');
+      final id = store.all().single.eventId;
+
+      // Simulate a weight.assigned event directly on the store.
+      await store.append(
+        WeightAssignedEvent(
+          eventId: 'w-0001',
+          aggregateId: id,
+          occurredAt: clockNow = clockNow.add(const Duration(seconds: 1)),
+          mentalWeightKg: 8,
+          category: 'Finance',
+          effortScore: 3,
+          estimatedDurationMinutes: 30,
+          weightModelVersion: 'test-v1',
+        ),
+      );
+
+      await repository.updatePreoccupation(id, 'send invoice to client');
+
+      final item = repository.getOpenPreoccupations().single;
+      expect(item.content, 'send invoice to client');
+      expect(item.mentalWeightKg, 8);
+      expect(item.category, 'Finance');
+    });
+
+    test('trims surrounding whitespace before persisting', () async {
+      await repository.capturePreoccupation('exercise');
+      final id = store.all().single.eventId;
+
+      await repository.updatePreoccupation(id, '  go for a run  ');
+
+      final item = repository.getOpenPreoccupations().single;
+      expect(item.content, 'go for a run');
+    });
+
+    test('rejects empty or whitespace-only input without emitting', () async {
+      await repository.capturePreoccupation('something');
+      final id = store.all().single.eventId;
+      final countBefore = store.all().length;
+
+      await repository.updatePreoccupation(id, '');
+      await repository.updatePreoccupation(id, '   ');
+
+      expect(store.all().length, countBefore);
+    });
+
+    test('appends a local updated event to the outbox', () async {
+      await repository.capturePreoccupation('pay bills');
+      final id = store.all().single.eventId;
+
+      await repository.updatePreoccupation(id, 'pay electric bill');
+
+      final events = store.all();
+      expect(events, hasLength(2));
+      final updateRecord = events.firstWhere(
+        (r) => r.eventType == PreoccupationUpdatedEvent.type,
+      );
+      expect(
+        updateRecord.toEnvelope().payload['content'],
+        'pay electric bill',
+      );
     });
   });
 }

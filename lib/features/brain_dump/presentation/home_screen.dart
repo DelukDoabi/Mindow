@@ -11,6 +11,7 @@ import 'package:mindow/core/router/app_router.dart';
 import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation.dart';
 import 'package:mindow/features/brain_dump/presentation/crisis_support_view.dart';
+import 'package:mindow/features/brain_dump/presentation/edit_preoccupation_sheet.dart';
 
 /// The Mental Backpack home: the single place a user sets a worry down.
 ///
@@ -120,6 +121,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           pendingLabel: l10n.capturePendingLabel,
                           weightUnitLabel: l10n.weightKgLabel,
                           categoryLabel: (token) => _categoryLabel(token, l10n),
+                          onTapItem: (item) => showEditPreoccupationSheet(
+                            context,
+                            item: item,
+                          ),
                         ),
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
@@ -188,12 +193,14 @@ class _PreoccupationList extends StatelessWidget {
     required this.pendingLabel,
     required this.weightUnitLabel,
     required this.categoryLabel,
+    required this.onTapItem,
   });
 
   final List<Preoccupation> items;
   final String pendingLabel;
   final String weightUnitLabel;
   final String Function(String token) categoryLabel;
+  final void Function(Preoccupation item) onTapItem;
 
   @override
   Widget build(BuildContext context) {
@@ -203,39 +210,43 @@ class _PreoccupationList extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: AuroreSpacing.sm),
       itemBuilder: (context, index) {
         final item = items[index];
-        return DecoratedBox(
-          decoration: BoxDecoration(
-            color: AuroreColors.glass,
-            borderRadius: BorderRadius.circular(AuroreRadii.md),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(AuroreSpacing.lg),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(item.content, style: textTheme.bodyLarge),
-                ),
-                if (item.isPending) ...[
-                  const SizedBox(width: AuroreSpacing.md),
-                  Text(
-                    pendingLabel,
-                    style: textTheme.labelSmall?.copyWith(
-                      color: AuroreColors.inkMuted,
-                    ),
+        return InkWell(
+          borderRadius: BorderRadius.circular(AuroreRadii.md),
+          onTap: () => onTapItem(item),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: AuroreColors.glass,
+              borderRadius: BorderRadius.circular(AuroreRadii.md),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AuroreSpacing.lg),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(item.content, style: textTheme.bodyLarge),
                   ),
-                ] else ...[
-                  const SizedBox(width: AuroreSpacing.md),
-                  if (item.category != null)
-                    _CategoryChip(label: categoryLabel(item.category!)),
-                  const SizedBox(width: AuroreSpacing.sm),
-                  Text(
-                    '${item.mentalWeightKg} $weightUnitLabel',
-                    style: textTheme.labelMedium?.copyWith(
-                      color: AuroreColors.ink,
+                  if (item.isPending) ...[
+                    const SizedBox(width: AuroreSpacing.md),
+                    Text(
+                      pendingLabel,
+                      style: textTheme.labelSmall?.copyWith(
+                        color: AuroreColors.inkMuted,
+                      ),
                     ),
-                  ),
+                  ] else ...[
+                    const SizedBox(width: AuroreSpacing.md),
+                    if (item.category != null)
+                      _CategoryChip(label: categoryLabel(item.category!)),
+                    const SizedBox(width: AuroreSpacing.sm),
+                    Text(
+                      '${item.mentalWeightKg} $weightUnitLabel',
+                      style: textTheme.labelMedium?.copyWith(
+                        color: AuroreColors.ink,
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         );

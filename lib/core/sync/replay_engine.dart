@@ -12,9 +12,11 @@ typedef EventReducer<S> = S Function(S state, DomainEvent event);
 ///
 /// Guarantees (NFR / AC-2):
 ///   * **Ordering** — by `received_at` ascending; not-yet-received (`null`)
-///     events sort AFTER all received ones; ties (and the local tail) break by
-///     `event_id` lexicographically. This makes replay order-independent of the
-///     input sequence.
+///     events sort AFTER all received ones; ties break by `created_at`
+///     (event occurrence time); final tiebreaker is `event_id`
+///     lexicographically. This ensures causal events (delete, update) issued
+///     after a capture always replay in correct order even when all events are
+///     still local.
 ///   * **Idempotency** — a duplicated `event_id` is applied exactly once;
 ///     re-running the whole replay yields the same state.
 ///   * **Schema** — each envelope is upcast to [currentSchemaVersion] before it
@@ -46,7 +48,13 @@ class ReplayEngine {
     return state;
   }
 
-  /// Orders by `received_at` (nulls last), tie-break by `event_id`.
+  /// Orders by `received_at` (nulls last), tie-break by `created_at` (event
+  /// occurrence time), then by `event_id` as a final deterministic tiebreaker.
+  ///
+  /// Using `created_at` before `event_id` ensures that causal events (delete,
+  /// update) issued after a capture are always replayed in the correct order,
+  /// even when all events are still local (null `received_at`) and random UUID
+  /// v4 ids are used as `event_id`.
   static int _compare(EventEnvelope a, EventEnvelope b) {
     final ra = a.receivedAt;
     final rb = b.receivedAt;
@@ -58,6 +66,8 @@ class ReplayEngine {
     } else if (ra != null && rb == null) {
       return -1;
     }
+    final byCreatedAt = a.createdAt.compareTo(b.createdAt);
+    if (byCreatedAt != 0) return byCreatedAt;
     return a.eventId.compareTo(b.eventId);
   }
 }

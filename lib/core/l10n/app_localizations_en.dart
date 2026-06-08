@@ -264,4 +264,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get analysisNoConsentNote =>
       'Analysis is paused until you turn on AI.';
+
+  @override
+  String get editSheetTitle => 'Edit preoccupation';
+
+  @override
+  String get editSheetSaveButton => 'Save';
+
+  @override
+  String get editSheetDeleteButton => 'Delete';
+
+  @override
+  String get editSuccess => 'Preoccupation updated.';
+
+  @override
+  String get deleteConfirmTitle => 'Delete this preoccupation?';
+
+  @override
+  String get deleteConfirmBody =>
+      'It will be permanently removed from your backpack.';
+
+  @override
+  String get deleteConfirmCta => 'Delete';
+
+  @override
+  String get deleteSuccess => 'Preoccupation deleted.';
 }

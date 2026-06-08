@@ -266,4 +266,29 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get analysisNoConsentNote =>
       'L\'analyse est en pause tant que tu n\'as pas activé l\'IA.';
+
+  @override
+  String get editSheetTitle => 'Modifier la préoccupation';
+
+  @override
+  String get editSheetSaveButton => 'Enregistrer';
+
+  @override
+  String get editSheetDeleteButton => 'Supprimer';
+
+  @override
+  String get editSuccess => 'C\'est mis à jour.';
+
+  @override
+  String get deleteConfirmTitle => 'Supprimer cette préoccupation ?';
+
+  @override
+  String get deleteConfirmBody =>
+      'Elle sera retirée définitivement de ton sac à dos.';
+
+  @override
+  String get deleteConfirmCta => 'Supprimer';
+
+  @override
+  String get deleteSuccess => 'Préoccupation supprimée.';
 }

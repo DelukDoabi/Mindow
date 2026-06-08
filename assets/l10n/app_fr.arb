@@ -80,5 +80,13 @@
   "crisisResourceEnLifeline": "Suicide & Crisis Lifeline (US)",
   "crisisResourceEnSamaritans": "Samaritans (Royaume-Uni & Irlande)",
   "analysisFallbackNote": "On a mis ça de côté pour toi, le temps d'y voir plus clair.",
-  "analysisNoConsentNote": "L'analyse est en pause tant que tu n'as pas activé l'IA."
+  "analysisNoConsentNote": "L'analyse est en pause tant que tu n'as pas activé l'IA.",
+  "editSheetTitle": "Modifier la préoccupation",
+  "editSheetSaveButton": "Enregistrer",
+  "editSheetDeleteButton": "Supprimer",
+  "editSuccess": "C'est mis à jour.",
+  "deleteConfirmTitle": "Supprimer cette préoccupation ?",
+  "deleteConfirmBody": "Elle sera retirée définitivement de ton sac à dos.",
+  "deleteConfirmCta": "Supprimer",
+  "deleteSuccess": "Préoccupation supprimée."
 }

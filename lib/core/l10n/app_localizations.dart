@@ -583,6 +583,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Analysis is paused until you turn on AI.'**
   String get analysisNoConsentNote;
+
+  /// Title of the edit preoccupation bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Edit preoccupation'**
+  String get editSheetTitle;
+
+  /// Save button label in the edit preoccupation sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get editSheetSaveButton;
+
+  /// Delete button label in the edit preoccupation sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get editSheetDeleteButton;
+
+  /// Snack bar message shown after a preoccupation is successfully edited
+  ///
+  /// In en, this message translates to:
+  /// **'Preoccupation updated.'**
+  String get editSuccess;
+
+  /// Title of the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this preoccupation?'**
+  String get deleteConfirmTitle;
+
+  /// Body text of the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'It will be permanently removed from your backpack.'**
+  String get deleteConfirmBody;
+
+  /// Confirm delete button label in the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteConfirmCta;
+
+  /// Snack bar message shown after a preoccupation is successfully deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Preoccupation deleted.'**
+  String get deleteSuccess;
 }
 
 class _AppLocalizationsDelegate

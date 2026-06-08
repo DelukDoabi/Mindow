@@ -5,6 +5,8 @@ import 'package:mindow/features/brain_dump/analysis_service.dart';
 import 'package:mindow/features/brain_dump/brain_dump_repository.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation_captured_event.dart';
+import 'package:mindow/features/brain_dump/domain/preoccupation_deleted_event.dart';
+import 'package:mindow/features/brain_dump/domain/preoccupation_updated_event.dart';
 import 'package:mindow/features/brain_dump/domain/weight_assigned_event.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -19,7 +21,9 @@ part 'brain_dump_providers.g.dart';
 @Riverpod(keepAlive: true)
 DomainEventRegistry domainEventRegistry(Ref ref) => DomainEventRegistry()
   ..register(PreoccupationCapturedEvent.type, decodePreoccupationCaptured)
-  ..register(WeightAssignedEvent.type, decodeWeightAssigned);
+  ..register(WeightAssignedEvent.type, decodeWeightAssigned)
+  ..register(PreoccupationUpdatedEvent.type, decodePreoccupationUpdated)
+  ..register(PreoccupationDeletedEvent.type, decodePreoccupationDeleted);
 
 /// The shared [BrainDumpRepository], wired to the sync engine.
 @riverpod

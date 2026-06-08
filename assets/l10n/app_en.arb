@@ -323,5 +323,37 @@
   "analysisNoConsentNote": "Analysis is paused until you turn on AI.",
   "@analysisNoConsentNote": {
     "description": "Note shown when AI analysis is skipped because consent is off"
+  },
+  "editSheetTitle": "Edit preoccupation",
+  "@editSheetTitle": {
+    "description": "Title of the edit preoccupation bottom sheet"
+  },
+  "editSheetSaveButton": "Save",
+  "@editSheetSaveButton": {
+    "description": "Save button label in the edit preoccupation sheet"
+  },
+  "editSheetDeleteButton": "Delete",
+  "@editSheetDeleteButton": {
+    "description": "Delete button label in the edit preoccupation sheet"
+  },
+  "editSuccess": "Preoccupation updated.",
+  "@editSuccess": {
+    "description": "Snack bar message shown after a preoccupation is successfully edited"
+  },
+  "deleteConfirmTitle": "Delete this preoccupation?",
+  "@deleteConfirmTitle": {
+    "description": "Title of the delete confirmation dialog"
+  },
+  "deleteConfirmBody": "It will be permanently removed from your backpack.",
+  "@deleteConfirmBody": {
+    "description": "Body text of the delete confirmation dialog"
+  },
+  "deleteConfirmCta": "Delete",
+  "@deleteConfirmCta": {
+    "description": "Confirm delete button label in the delete confirmation dialog"
+  },
+  "deleteSuccess": "Preoccupation deleted.",
+  "@deleteSuccess": {
+    "description": "Snack bar message shown after a preoccupation is successfully deleted"
   }
 }
