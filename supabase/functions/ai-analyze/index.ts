@@ -126,7 +126,16 @@ async function callModel(
     }
 
     if (!response.ok) {
-      throw new Error(`Model error ${response.status}`);
+      // Log the full Gemini error body so it appears in Supabase Function Logs
+      // and makes it easy to distinguish auth failures (401), quota errors (429
+      // that slipped through), model-not-found (404), etc. from generic 5xx.
+      let errorBody = '<unreadable>';
+      try {
+        errorBody = await response.text();
+      } catch {
+        // ignore secondary read failure
+      }
+      throw new Error(`Model error ${response.status}: ${errorBody}`);
     }
 
     const data = await response.json();
@@ -214,11 +223,13 @@ Deno.serve(async (req) => {
     Deno.env.get('SUPABASE_ANON_KEY')!,
     { global: { headers: { Authorization: authHeader } } },
   );
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
+  try {
+    const { data, error: userError } = await supabase.auth.getUser();
+    if (userError || !data.user) {
+      return jsonResponse({ error: 'Unauthorized' }, 401);
+    }
+  } catch (err) {
+    console.error('[ai-analyze] auth check failed:', err);
     return jsonResponse({ error: 'Unauthorized' }, 401);
   }
 
