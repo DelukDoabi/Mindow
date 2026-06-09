@@ -80,16 +80,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     ref.listen<List<String>>(crisisAlertsProvider, (previous, next) {
       final previousIds = previous ?? const <String>[];
-      final newIds = next.where((id) => !previousIds.contains(id));
+      final newIds = next.where((id) => !previousIds.contains(id)).toList();
       if (newIds.isEmpty) return;
-      final languageCode = Localizations.localeOf(context).languageCode;
-      for (final id in newIds) {
-        unawaited(
-          showCrisisSupport(context, languageCode: languageCode).then(
-            (_) => ref.read(crisisAlertsProvider.notifier).dismiss(id),
-          ),
-        );
-      }
+      // Show only the first new crisis dialog. If multiple items trip the gate
+      // simultaneously, further ids are already in the provider's state and
+      // will surface the next time the dialog is dismissed (sequential, not
+      // stacked).
+      final id = newIds.first;
+      unawaited(
+        showCrisisSupport(
+          context,
+          languageCode: Localizations.localeOf(context).languageCode,
+        ).then(
+          (_) => ref.read(crisisAlertsProvider.notifier).dismiss(id),
+        ),
+      );
     });
 
     return AuroreCanvas(

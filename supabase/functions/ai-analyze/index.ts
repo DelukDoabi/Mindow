@@ -158,8 +158,11 @@ async function confirmCrisis(
 }
 
 function clampInt(value: unknown, min: number, max: number, fallback: number): number {
-  const n = typeof value === 'number' ? Math.round(value) : Number.NaN;
-  if (Number.isNaN(n)) return fallback;
+  // Use Number() so that string-encoded numbers (e.g. "7") are coerced
+  // correctly. typeof-guarding for 'number' rejects those strings and would
+  // silently return the fallback for valid LLM responses serialized as strings.
+  const n = Math.round(Number(value));
+  if (!Number.isFinite(n)) return fallback;
   return Math.min(max, Math.max(min, n));
 }
 

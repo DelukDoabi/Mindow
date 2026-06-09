@@ -4,7 +4,7 @@ baseline_commit: 413c58c6b2f6773c81e5f1d6822ad5d78ca73423
 
 # Story 2.3: AI Analysis pipeline with crisis-gate
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -76,8 +76,8 @@ so that the pile becomes meaningful without effort.
 
 ### Review Findings
 
-- [ ] [Review][Patch] `clampInt` silently returns fallback when LLM returns a numeric field as a string — `typeof value === 'number'` is false for `"7"` → fallback used silently instead of correct value [supabase/functions/ai-analyze/index.ts:clampInt]
-- [ ] [Review][Patch] Multiple simultaneous crisis alerts (>1 new id in the same listener callback) show stacked overlapping dialogs — the `for` loop fires `showCrisisSupport` without awaiting the previous dialog [lib/features/brain_dump/presentation/home_screen.dart:ref.listen]
+- [x] [Review][Patch] `clampInt` silently returns fallback when LLM returns a numeric field as a string — `typeof value === 'number'` is false for `"7"` → fallback used silently instead of correct value [supabase/functions/ai-analyze/index.ts:clampInt]
+- [x] [Review][Patch] Multiple simultaneous crisis alerts (>1 new id in the same listener callback) show stacked overlapping dialogs — the `for` loop fires `showCrisisSupport` without awaiting the previous dialog [lib/features/brain_dump/presentation/home_screen.dart:ref.listen]
 - [x] [Review][Defer] Category tokens hardcoded independently in TS edge function (`CATEGORIES` array) and Dart switch (`_categoryLabel`) with no shared source of truth — a category rename requires edits in two places [supabase/functions/ai-analyze/index.ts + lib/features/brain_dump/presentation/home_screen.dart:_categoryLabel] — deferred, pre-existing design decision; same repo, low risk for MVP
 - [x] [Review][Defer] `AnalysisService` always sends `languageCode = 'fr'` regardless of device locale — English-device users get French-calibrated analysis [lib/features/brain_dump/brain_dump_providers.dart:analysisService] — deferred, intentional French-first MVP default
 
