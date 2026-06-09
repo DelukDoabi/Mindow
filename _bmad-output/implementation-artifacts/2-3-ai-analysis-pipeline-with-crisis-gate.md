@@ -74,6 +74,13 @@ so that the pile becomes meaningful without effort.
   - [x] (If feasible) a Deno test for `ai-analyze` asserting crisis-gate returns `{isCrisis:true}` before weighing and that a normal input yields the constrained JSON shape. Otherwise document manual verification post-deploy.
   - [x] Validate: `dart run build_runner build` (no `--delete-conflicting-outputs`), `flutter gen-l10n`, `flutter analyze` (0 issues), `dart format lib test`, and confirm the `event_contract_parity_test` still passes. Run `flutter test`.
 
+### Review Findings
+
+- [ ] [Review][Patch] `clampInt` silently returns fallback when LLM returns a numeric field as a string — `typeof value === 'number'` is false for `"7"` → fallback used silently instead of correct value [supabase/functions/ai-analyze/index.ts:clampInt]
+- [ ] [Review][Patch] Multiple simultaneous crisis alerts (>1 new id in the same listener callback) show stacked overlapping dialogs — the `for` loop fires `showCrisisSupport` without awaiting the previous dialog [lib/features/brain_dump/presentation/home_screen.dart:ref.listen]
+- [x] [Review][Defer] Category tokens hardcoded independently in TS edge function (`CATEGORIES` array) and Dart switch (`_categoryLabel`) with no shared source of truth — a category rename requires edits in two places [supabase/functions/ai-analyze/index.ts + lib/features/brain_dump/presentation/home_screen.dart:_categoryLabel] — deferred, pre-existing design decision; same repo, low risk for MVP
+- [x] [Review][Defer] `AnalysisService` always sends `languageCode = 'fr'` regardless of device locale — English-device users get French-calibrated analysis [lib/features/brain_dump/brain_dump_providers.dart:analysisService] — deferred, intentional French-first MVP default
+
 ## Dev Notes
 
 ### Architecture patterns and constraints

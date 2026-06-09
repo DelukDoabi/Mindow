@@ -4,7 +4,7 @@ baseline_commit: 7f7a2b314f9b11ef79a89dcd9fb9023dae689b7f
 
 # Story 2.2: Capture a Preoccupation (offline-first)
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

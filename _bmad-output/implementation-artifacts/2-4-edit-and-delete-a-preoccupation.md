@@ -4,7 +4,7 @@ baseline_commit: 3564048
 
 # Story 2.4: Edit and delete a Preoccupation
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -95,6 +95,10 @@ So that my backpack reflects reality.
     - Replay order: capture → update → delete → item absent; capture → delete → update is also absent (delete tombstone wins regardless of subsequent update, because the delete removes the key and the update then finds no entry to fold onto).
   - [ ] (Optional, if time allows) Widget test `test/features/brain_dump/presentation/edit_preoccupation_sheet_test.dart`: renders pre-filled content; Save button disabled when content unchanged; tapping Supprimer shows confirmation dialog.
   - [ ] Validate: `dart run build_runner build`, `flutter gen-l10n`, `flutter analyze` (0 issues — no `[ref.xxx]` in doc comments, use backticks instead), `dart format lib test`, `flutter test`.
+
+### Review Findings
+
+- [x] [Review][Defer] `ReplayEngine._compare` falls through to random UUID tiebreaker for same-millisecond local events — two operations on the same clock tick get non-causal ordering [lib/core/sync/replay_engine.dart:_compare] — deferred, theoretical edge case; `createdAt` fix introduced in this story already reduces risk significantly in practice
 
 ## Dev Notes
 
