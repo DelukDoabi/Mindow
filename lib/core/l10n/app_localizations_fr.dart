@@ -291,4 +291,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteSuccess => 'Préoccupation supprimée.';
+
+  @override
+  String get mentalLoadCaption => 'sur tes épaules';
+
+  @override
+  String mentalLoadSemanticLabel(int totalKg) {
+    return '$totalKg kg sur tes épaules';
+  }
 }

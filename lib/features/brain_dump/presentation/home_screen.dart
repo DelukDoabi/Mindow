@@ -12,6 +12,7 @@ import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation.dart';
 import 'package:mindow/features/brain_dump/presentation/crisis_support_view.dart';
 import 'package:mindow/features/brain_dump/presentation/edit_preoccupation_sheet.dart';
+import 'package:mindow/features/mental_load/presentation/mental_load_hero.dart';
 
 /// The Mental Backpack home: the single place a user sets a worry down.
 ///
@@ -116,6 +117,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 l10n.homeWelcomeTitle,
                 style: textTheme.headlineMedium,
               ),
+              const SizedBox(height: AuroreSpacing.lg),
+              const MentalLoadHero(),
               const SizedBox(height: AuroreSpacing.lg),
               Expanded(
                 child: preoccupations.when(

@@ -631,6 +631,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preoccupation deleted.'**
   String get deleteSuccess;
+
+  /// Caption displayed below the Mental Load numeral on the home hero.
+  ///
+  /// In en, this message translates to:
+  /// **'on your shoulders'**
+  String get mentalLoadCaption;
+
+  /// Accessibility label for the Mental Load hero combining the numeric total and caption.
+  ///
+  /// In en, this message translates to:
+  /// **'{totalKg} kg on your shoulders'**
+  String mentalLoadSemanticLabel(int totalKg);
 }
 
 class _AppLocalizationsDelegate

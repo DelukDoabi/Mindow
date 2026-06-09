@@ -71,7 +71,7 @@ final class DomainEventRegistryProvider
 }
 
 String _$domainEventRegistryHash() =>
-    r'd6068b853bf1328c25863c8f74681cbfd9d082e3';
+    r'2f1e381caa2b59872af215034f5ff3bc7d20319f';
 
 /// The shared [BrainDumpRepository], wired to the sync engine.
 
@@ -203,8 +203,8 @@ abstract class _$ProjectionRevision extends $Notifier<int> {
 
 /// The open Preoccupations projection, most recent first.
 ///
-/// Re-runs whenever a new preoccupation is captured ([ref.invalidate] from the
-/// widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
+/// Re-runs whenever a new preoccupation is captured (via `ref.invalidate` from
+/// the widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
 /// after a weight is assigned — the two triggers together ensure the list is
 /// always current without polling.
 
@@ -213,8 +213,8 @@ final openPreoccupationsProvider = OpenPreoccupationsProvider._();
 
 /// The open Preoccupations projection, most recent first.
 ///
-/// Re-runs whenever a new preoccupation is captured ([ref.invalidate] from the
-/// widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
+/// Re-runs whenever a new preoccupation is captured (via `ref.invalidate` from
+/// the widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
 /// after a weight is assigned — the two triggers together ensure the list is
 /// always current without polling.
 
@@ -230,8 +230,8 @@ final class OpenPreoccupationsProvider
         $FutureProvider<List<Preoccupation>> {
   /// The open Preoccupations projection, most recent first.
   ///
-  /// Re-runs whenever a new preoccupation is captured ([ref.invalidate] from the
-  /// widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
+  /// Re-runs whenever a new preoccupation is captured (via `ref.invalidate` from
+  /// the widget) OR whenever [ProjectionRevision] is bumped by [AnalysisService]
   /// after a weight is assigned — the two triggers together ensure the list is
   /// always current without polling.
   OpenPreoccupationsProvider._()

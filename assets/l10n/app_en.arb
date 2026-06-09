@@ -355,5 +355,19 @@
   "deleteSuccess": "Preoccupation deleted.",
   "@deleteSuccess": {
     "description": "Snack bar message shown after a preoccupation is successfully deleted"
+  },
+  "mentalLoadCaption": "on your shoulders",
+  "@mentalLoadCaption": {
+    "description": "Caption displayed below the Mental Load numeral on the home hero."
+  },
+  "mentalLoadSemanticLabel": "{totalKg} kg on your shoulders",
+  "@mentalLoadSemanticLabel": {
+    "description": "Accessibility label for the Mental Load hero combining the numeric total and caption.",
+    "placeholders": {
+      "totalKg": {
+        "type": "int",
+        "description": "Total Mental Weight in kilograms across all assigned preoccupations."
+      }
+    }
   }
 }

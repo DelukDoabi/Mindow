@@ -88,5 +88,19 @@
   "deleteConfirmTitle": "Supprimer cette préoccupation ?",
   "deleteConfirmBody": "Elle sera retirée définitivement de ton sac à dos.",
   "deleteConfirmCta": "Supprimer",
-  "deleteSuccess": "Préoccupation supprimée."
+  "deleteSuccess": "Préoccupation supprimée.",
+  "mentalLoadCaption": "sur tes épaules",
+  "@mentalLoadCaption": {
+    "description": "Caption displayed below the Mental Load numeral on the home hero."
+  },
+  "mentalLoadSemanticLabel": "{totalKg} kg sur tes épaules",
+  "@mentalLoadSemanticLabel": {
+    "description": "Accessibility label for the Mental Load hero combining the numeric total and caption.",
+    "placeholders": {
+      "totalKg": {
+        "type": "int",
+        "description": "Total Mental Weight in kilograms across all assigned preoccupations."
+      }
+    }
+  }
 }
