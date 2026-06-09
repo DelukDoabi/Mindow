@@ -673,6 +673,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'very heavy'**
   String get loadBandTresLourd;
+
+  /// Muted label below the open preoccupations count pill.
+  ///
+  /// In en, this message translates to:
+  /// **'in progress'**
+  String get statPillOpenCountLabel;
+
+  /// Bold value shown in the kg-freed stat pill.
+  ///
+  /// In en, this message translates to:
+  /// **'{kg} kg'**
+  String statPillKgFreedValue(int kg);
+
+  /// Muted label below the kg-freed this week stat pill.
+  ///
+  /// In en, this message translates to:
+  /// **'freed this week'**
+  String get statPillKgFreedLabel;
 }
 
 class _AppLocalizationsDelegate

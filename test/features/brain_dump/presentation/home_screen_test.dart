@@ -11,6 +11,8 @@ import 'package:mindow/core/sync/event_store.dart';
 import 'package:mindow/core/sync/hive_registrar.g.dart';
 import 'package:mindow/core/sync/sync_providers.dart';
 import 'package:mindow/features/brain_dump/presentation/home_screen.dart';
+import 'package:mindow/features/mental_load/domain/weekly_progression_projection.dart';
+import 'package:mindow/features/mental_load/mental_load_providers.dart';
 
 /// A no-op [AiClient] so the screen's fire-and-forget analysis trigger never
 /// reaches the real Supabase transport in widget tests. Consent is off in these
@@ -53,6 +55,14 @@ void main() {
   });
 
   Future<void> pumpHome(WidgetTester tester) async {
+    // The default test viewport (800×600) is too short for the full Home
+    // layout (hero + backpack + stat pills + list + capture bar). Use a
+    // taller viewport that reflects real phone proportions.
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final router = GoRouter(
       initialLocation: '/',
       routes: [
@@ -69,6 +79,11 @@ void main() {
         overrides: [
           outboxBoxProvider.overrideWithValue(box),
           aiClientProvider.overrideWithValue(_NoopAiClient()),
+          weeklyProgressionProvider.overrideWithValue(
+            const AsyncValue.data(
+              WeeklyProgressionProjection(openCount: 0, kgFreedThisWeek: 0),
+            ),
+          ),
         ],
         child: MaterialApp.router(
           routerConfig: router,

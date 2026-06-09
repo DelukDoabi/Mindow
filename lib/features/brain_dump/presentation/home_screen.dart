@@ -14,6 +14,7 @@ import 'package:mindow/features/brain_dump/presentation/crisis_support_view.dart
 import 'package:mindow/features/brain_dump/presentation/edit_preoccupation_sheet.dart';
 import 'package:mindow/features/mental_load/presentation/backpack_widget.dart';
 import 'package:mindow/features/mental_load/presentation/mental_load_hero.dart';
+import 'package:mindow/features/mental_load/presentation/stat_pill_row.dart';
 
 /// The Mental Backpack home: the single place a user sets a worry down.
 ///
@@ -137,6 +138,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Center(
                 child: BackpackWidget(onTap: _scrollListToTop),
               ),
+              const SizedBox(height: AuroreSpacing.md),
+              const StatPillRow(),
               const SizedBox(height: AuroreSpacing.lg),
               Expanded(
                 child: preoccupations.when(

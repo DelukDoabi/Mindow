@@ -314,4 +314,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadBandTresLourd => 'very heavy';
+
+  @override
+  String get statPillOpenCountLabel => 'in progress';
+
+  @override
+  String statPillKgFreedValue(int kg) {
+    return '$kg kg';
+  }
+
+  @override
+  String get statPillKgFreedLabel => 'freed this week';
 }

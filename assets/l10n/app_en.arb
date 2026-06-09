@@ -395,5 +395,23 @@
   "loadBandTresLourd": "very heavy",
   "@loadBandTresLourd": {
     "description": "Load band label: very heavy (80+ kg)."
+  },
+  "statPillOpenCountLabel": "in progress",
+  "@statPillOpenCountLabel": {
+    "description": "Muted label below the open preoccupations count pill."
+  },
+  "statPillKgFreedValue": "{kg} kg",
+  "@statPillKgFreedValue": {
+    "description": "Bold value shown in the kg-freed stat pill.",
+    "placeholders": {
+      "kg": {
+        "type": "int",
+        "description": "Kilograms freed this week."
+      }
+    }
+  },
+  "statPillKgFreedLabel": "freed this week",
+  "@statPillKgFreedLabel": {
+    "description": "Muted label below the kg-freed this week stat pill."
   }
 }

@@ -99,8 +99,9 @@ class _BackpackWidgetState extends ConsumerState<BackpackWidget>
 
     // Schedule animation update post-frame to avoid setState during build.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted)
+      if (mounted) {
         _animateToBand(band.animationValue, reduceMotion: reduceMotion);
+      }
     });
 
     return Semantics(

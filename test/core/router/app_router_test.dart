@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/core/router/app_router.dart';
 import 'package:mindow/features/auth/auth_repository.dart';
+import 'package:mindow/features/mental_load/domain/weekly_progression_projection.dart';
+import 'package:mindow/features/mental_load/mental_load_providers.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';
 
 /// In-memory auth repository so the router never initializes Supabase.
@@ -32,6 +34,13 @@ void main() {
     required bool signedIn,
     required bool onboardingComplete,
   }) async {
+    // Tall viewport: the Home screen layout (hero + backpack + stat pills +
+    // list + capture bar) needs more than the default 600px test height.
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final auth = _FakeAuthRepository(signedIn: signedIn);
     addTearDown(auth.dispose);
 
@@ -39,6 +48,11 @@ void main() {
       overrides: [
         authRepositoryProvider.overrideWithValue(auth),
         onboardingCompleteProvider.overrideWithValue(onboardingComplete),
+        weeklyProgressionProvider.overrideWithValue(
+          const AsyncValue.data(
+            WeeklyProgressionProjection(openCount: 0, kgFreedThisWeek: 0),
+          ),
+        ),
       ],
     );
     addTearDown(container.dispose);

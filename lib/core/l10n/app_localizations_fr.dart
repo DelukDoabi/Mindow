@@ -316,4 +316,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get loadBandTresLourd => 'très lourd';
+
+  @override
+  String get statPillOpenCountLabel => 'en cours';
+
+  @override
+  String statPillKgFreedValue(int kg) {
+    return '$kg kg';
+  }
+
+  @override
+  String get statPillKgFreedLabel => 'libérés cette semaine';
 }
