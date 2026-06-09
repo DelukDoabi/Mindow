@@ -297,4 +297,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String mentalLoadSemanticLabel(int totalKg) {
     return '$totalKg kg on your shoulders';
   }
+
+  @override
+  String backpackSemanticLabel(String band) {
+    return 'Backpack $band';
+  }
+
+  @override
+  String get loadBandLeger => 'light';
+
+  @override
+  String get loadBandModere => 'moderate';
+
+  @override
+  String get loadBandLourd => 'heavy';
+
+  @override
+  String get loadBandTresLourd => 'very heavy';
 }

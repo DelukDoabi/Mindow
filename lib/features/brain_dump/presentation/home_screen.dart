@@ -12,6 +12,7 @@ import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation.dart';
 import 'package:mindow/features/brain_dump/presentation/crisis_support_view.dart';
 import 'package:mindow/features/brain_dump/presentation/edit_preoccupation_sheet.dart';
+import 'package:mindow/features/mental_load/presentation/backpack_widget.dart';
 import 'package:mindow/features/mental_load/presentation/mental_load_hero.dart';
 
 /// The Mental Backpack home: the single place a user sets a worry down.
@@ -31,6 +32,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _controller = TextEditingController();
+  final _listScrollController = ScrollController();
   bool _canSubmit = false;
 
   @override
@@ -44,7 +46,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _controller
       ..removeListener(_onTextChanged)
       ..dispose();
+    _listScrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollListToTop() {
+    if (!_listScrollController.hasClients) return;
+    unawaited(
+      _listScrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   void _onTextChanged() {
@@ -120,12 +134,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: AuroreSpacing.lg),
               const MentalLoadHero(),
               const SizedBox(height: AuroreSpacing.lg),
+              Center(
+                child: BackpackWidget(onTap: _scrollListToTop),
+              ),
+              const SizedBox(height: AuroreSpacing.lg),
               Expanded(
                 child: preoccupations.when(
                   data: (items) => items.isEmpty
                       ? _EmptyBackpack(message: l10n.homeEmptyBackpack)
                       : _PreoccupationList(
                           items: items,
+                          controller: _listScrollController,
                           pendingLabel: l10n.capturePendingLabel,
                           weightUnitLabel: l10n.weightKgLabel,
                           categoryLabel: (token) => _categoryLabel(token, l10n),
@@ -198,6 +217,7 @@ String _categoryLabel(String token, AppLocalizations l10n) => switch (token) {
 class _PreoccupationList extends StatelessWidget {
   const _PreoccupationList({
     required this.items,
+    required this.controller,
     required this.pendingLabel,
     required this.weightUnitLabel,
     required this.categoryLabel,
@@ -205,6 +225,7 @@ class _PreoccupationList extends StatelessWidget {
   });
 
   final List<Preoccupation> items;
+  final ScrollController controller;
   final String pendingLabel;
   final String weightUnitLabel;
   final String Function(String token) categoryLabel;
@@ -214,6 +235,7 @@ class _PreoccupationList extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return ListView.separated(
+      controller: controller,
       itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: AuroreSpacing.sm),
       itemBuilder: (context, index) {

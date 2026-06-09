@@ -369,5 +369,31 @@
         "description": "Total Mental Weight in kilograms across all assigned preoccupations."
       }
     }
+  },
+  "backpackSemanticLabel": "Backpack {band}",
+  "@backpackSemanticLabel": {
+    "description": "Accessibility label for the backpack widget, describing its current heaviness band.",
+    "placeholders": {
+      "band": {
+        "type": "String",
+        "description": "Human-readable name of the current load band (e.g. moderate)."
+      }
+    }
+  },
+  "loadBandLeger": "light",
+  "@loadBandLeger": {
+    "description": "Load band label: light (0–19 kg)."
+  },
+  "loadBandModere": "moderate",
+  "@loadBandModere": {
+    "description": "Load band label: moderate (20–49 kg)."
+  },
+  "loadBandLourd": "heavy",
+  "@loadBandLourd": {
+    "description": "Load band label: heavy (50–79 kg)."
+  },
+  "loadBandTresLourd": "very heavy",
+  "@loadBandTresLourd": {
+    "description": "Load band label: very heavy (80+ kg)."
   }
 }

@@ -643,6 +643,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{totalKg} kg on your shoulders'**
   String mentalLoadSemanticLabel(int totalKg);
+
+  /// Accessibility label for the backpack widget, describing its current heaviness band.
+  ///
+  /// In en, this message translates to:
+  /// **'Backpack {band}'**
+  String backpackSemanticLabel(String band);
+
+  /// Load band label: light (0–19 kg).
+  ///
+  /// In en, this message translates to:
+  /// **'light'**
+  String get loadBandLeger;
+
+  /// Load band label: moderate (20–49 kg).
+  ///
+  /// In en, this message translates to:
+  /// **'moderate'**
+  String get loadBandModere;
+
+  /// Load band label: heavy (50–79 kg).
+  ///
+  /// In en, this message translates to:
+  /// **'heavy'**
+  String get loadBandLourd;
+
+  /// Load band label: very heavy (80+ kg).
+  ///
+  /// In en, this message translates to:
+  /// **'very heavy'**
+  String get loadBandTresLourd;
 }
 
 class _AppLocalizationsDelegate
