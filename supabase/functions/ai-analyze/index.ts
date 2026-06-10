@@ -24,13 +24,20 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
 
-// Detect provider from env variables. Groq takes precedence, then Gemini, then custom.
-const AI_API_KEY =
-  Deno.env.get('GROQ_API_KEY') ??
-  Deno.env.get('GEMINI_API_KEY') ??
-  Deno.env.get('AI_API_KEY');
+// The provider is selected first so that the matching API key is picked.
+// AI_PROVIDER drives both the key name and the base URL — they are always in sync.
+// If AI_PROVIDER is not set the code falls back to 'gemini' (not 'groq') so that
+// GEMINI_API_KEY is used when both keys are present in Supabase secrets.
+const AI_PROVIDER = Deno.env.get('AI_PROVIDER') ?? 'gemini';
 
-const AI_PROVIDER = Deno.env.get('AI_PROVIDER') ?? 'groq';
+// Key is selected based on the resolved provider, never by scan order.
+// This prevents a GROQ_API_KEY secret from being silently sent to the Gemini endpoint.
+const AI_API_KEY =
+  AI_PROVIDER === 'groq'
+    ? Deno.env.get('GROQ_API_KEY')
+    : AI_PROVIDER === 'gemini'
+      ? Deno.env.get('GEMINI_API_KEY')
+      : Deno.env.get('AI_API_KEY');
 
 // Default model depends on provider
 const DEFAULT_MODEL =
