@@ -22,6 +22,11 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Inject Firebase config
+        env:
+          FIREBASE_OPTIONS_B64: ${{ secrets.FIREBASE_OPTIONS_B64 }}
+        run: echo "$FIREBASE_OPTIONS_B64" | base64 -d > lib/firebase_options.dart
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -69,6 +74,11 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
+
+      - name: Inject Firebase config
+        env:
+          FIREBASE_OPTIONS_B64: ${{ secrets.FIREBASE_OPTIONS_B64 }}
+        run: echo "$FIREBASE_OPTIONS_B64" | base64 -d > lib/firebase_options.dart
 
       - name: Install dependencies
         run: flutter pub get
