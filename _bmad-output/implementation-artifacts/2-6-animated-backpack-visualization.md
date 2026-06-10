@@ -4,7 +4,7 @@ baseline_commit: 7d55a56
 
 # Story 2.6: Animated Backpack Visualization
 
-Status: review
+Status: done
 
 ## Story
 

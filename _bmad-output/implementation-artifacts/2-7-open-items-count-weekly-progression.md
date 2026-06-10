@@ -4,7 +4,7 @@ baseline_commit: 5a3582f
 
 # Story 2.7: Open-items count & weekly progression
 
-Status: review
+Status: done
 
 ## Story
 

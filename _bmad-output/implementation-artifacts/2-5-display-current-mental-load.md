@@ -4,7 +4,7 @@ baseline_commit: 7bcfdc5
 
 # Story 2.5: Display current Mental Load
 
-Status: review
+Status: done
 
 ## Story
 
