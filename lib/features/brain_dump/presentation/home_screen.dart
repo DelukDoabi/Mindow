@@ -167,89 +167,188 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       unawaited(_runMissionValidation(next));
     });
 
-    return AuroreCanvas(
-      child: SafeArea(
+    // Build the list sliver from the async preoccupations state.
+    final listSliver = preoccupations.when(
+      loading: () => const SliverToBoxAdapter(
         child: Padding(
-          padding: const EdgeInsets.all(AuroreSpacing.xl),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  onPressed: () => context.go(Routes.settings),
-                  color: AuroreColors.inkMuted,
-                  icon: const Icon(Icons.settings_outlined),
-                ),
-              ),
-              Text(
-                l10n.homeWelcomeTitle,
-                style: textTheme.headlineMedium,
-              ),
-              const SizedBox(height: AuroreSpacing.lg),
-              const MentalLoadHero(),
-              const SizedBox(height: AuroreSpacing.lg),
-              Center(
-                child: BackpackWidget(onTap: _scrollListToTop),
-              ),
-              const SizedBox(height: AuroreSpacing.md),
-              StatPillRow(
-                onTap: () => context.go(Routes.garden),
-              ),
-              const SizedBox(height: AuroreSpacing.md),
-              aiConsentGranted.maybeWhen(
-                data: (granted) => granted && !isSignedIn
-                    ? _AnalysisDeferredBanner(
-                        title: l10n.analysisDeferredTitle,
-                        body: l10n.analysisDeferredBody,
-                        createAccountLabel: l10n.analysisDeferredCreateAccount,
-                        signInLabel: l10n.analysisDeferredSignIn,
-                      )
-                    : const SizedBox.shrink(),
-                orElse: () => const SizedBox.shrink(),
-              ),
-              const SizedBox(height: AuroreSpacing.lg),
-              _DailyMissionSection(mission: todayMission),
-              const SizedBox(height: AuroreSpacing.sm),
-              _HistoryEntryButton(victories: victories),
-              const SizedBox(height: AuroreSpacing.lg),
-              Expanded(
-                child: preoccupations.when(
-                  data: (items) => items.isEmpty
-                      ? _EmptyBackpack(message: l10n.homeEmptyBackpack)
-                      : _PreoccupationList(
-                          items: items,
-                          controller: _listScrollController,
-                          pendingLabel: l10n.capturePendingLabel,
-                          weightUnitLabel: l10n.weightKgLabel,
-                          categoryLabel: (token) => _categoryLabel(token, l10n),
-                          onTapItem: (item) => showEditPreoccupationSheet(
-                            context,
-                            item: item,
+          padding: EdgeInsets.symmetric(vertical: AuroreSpacing.xl),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+      error: (_, _) => SliverFillRemaining(
+        hasScrollBody: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AuroreSpacing.xl),
+          child: _EmptyBackpack(message: l10n.homeEmptyBackpack),
+        ),
+      ),
+      data: (items) {
+        if (items.isEmpty) {
+          return SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AuroreSpacing.xl),
+              child: _EmptyBackpack(message: l10n.homeEmptyBackpack),
+            ),
+          );
+        }
+        return SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: AuroreSpacing.xl),
+          sliver: SliverList.separated(
+            itemCount: items.length,
+            separatorBuilder: (_, _) =>
+                const SizedBox(height: AuroreSpacing.sm),
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return InkWell(
+                borderRadius: BorderRadius.circular(AuroreRadii.md),
+                onTap: () => showEditPreoccupationSheet(context, item: item),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AuroreColors.glass,
+                    borderRadius: BorderRadius.circular(AuroreRadii.md),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AuroreSpacing.lg),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.content,
+                            style: textTheme.bodyLarge,
                           ),
                         ),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (_, _) =>
-                      _EmptyBackpack(message: l10n.homeEmptyBackpack),
+                        if (item.isPending) ...[
+                          const SizedBox(width: AuroreSpacing.md),
+                          Text(
+                            l10n.capturePendingLabel,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: AuroreColors.inkMuted,
+                            ),
+                          ),
+                        ] else ...[
+                          const SizedBox(width: AuroreSpacing.md),
+                          if (item.category != null)
+                            _CategoryChip(
+                              label: _categoryLabel(item.category!, l10n),
+                            ),
+                          const SizedBox(width: AuroreSpacing.sm),
+                          Text(
+                            '${item.mentalWeightKg} ${l10n.weightKgLabel}',
+                            style: textTheme.labelMedium?.copyWith(
+                              color: AuroreColors.ink,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: AuroreSpacing.lg),
-              TextField(
-                controller: _controller,
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => _canSubmit ? _submit() : null,
-                decoration: InputDecoration(
-                  hintText: l10n.captureInputPlaceholder,
-                ),
-              ),
-              const SizedBox(height: AuroreSpacing.md),
-              FilledButton(
-                onPressed: _canSubmit ? _submit : null,
-                child: Text(l10n.captureSubmitButton),
-              ),
-            ],
+              );
+            },
           ),
+        );
+      },
+    );
+
+    return AuroreCanvas(
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Scrollable area: header widgets + preoccupation list scroll as one.
+            Expanded(
+              child: CustomScrollView(
+                controller: _listScrollController,
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AuroreSpacing.xl,
+                      AuroreSpacing.xl,
+                      AuroreSpacing.xl,
+                      0,
+                    ),
+                    sliver: SliverList.list(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed: () => context.go(Routes.settings),
+                            color: AuroreColors.inkMuted,
+                            icon: const Icon(Icons.settings_outlined),
+                          ),
+                        ),
+                        Text(
+                          l10n.homeWelcomeTitle,
+                          style: textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: AuroreSpacing.lg),
+                        const MentalLoadHero(),
+                        const SizedBox(height: AuroreSpacing.lg),
+                        Center(
+                          child: BackpackWidget(onTap: _scrollListToTop),
+                        ),
+                        const SizedBox(height: AuroreSpacing.md),
+                        StatPillRow(
+                          onTap: () => context.go(Routes.garden),
+                        ),
+                        const SizedBox(height: AuroreSpacing.md),
+                        aiConsentGranted.maybeWhen(
+                          data: (granted) => granted && !isSignedIn
+                              ? _AnalysisDeferredBanner(
+                                  title: l10n.analysisDeferredTitle,
+                                  body: l10n.analysisDeferredBody,
+                                  createAccountLabel:
+                                      l10n.analysisDeferredCreateAccount,
+                                  signInLabel: l10n.analysisDeferredSignIn,
+                                )
+                              : const SizedBox.shrink(),
+                          orElse: () => const SizedBox.shrink(),
+                        ),
+                        const SizedBox(height: AuroreSpacing.lg),
+                        _DailyMissionSection(mission: todayMission),
+                        const SizedBox(height: AuroreSpacing.sm),
+                        _HistoryEntryButton(victories: victories),
+                        const SizedBox(height: AuroreSpacing.lg),
+                      ],
+                    ),
+                  ),
+                  listSliver,
+                  const SliverPadding(
+                    padding: EdgeInsets.only(bottom: AuroreSpacing.xl),
+                  ),
+                ],
+              ),
+            ),
+            // Sticky capture footer — always visible at the bottom.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AuroreSpacing.xl,
+                AuroreSpacing.sm,
+                AuroreSpacing.xl,
+                AuroreSpacing.xl,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    controller: _controller,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (_) => _canSubmit ? _submit() : null,
+                    decoration: InputDecoration(
+                      hintText: l10n.captureInputPlaceholder,
+                    ),
+                  ),
+                  const SizedBox(height: AuroreSpacing.md),
+                  FilledButton(
+                    onPressed: _canSubmit ? _submit : null,
+                    child: Text(l10n.captureSubmitButton),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
