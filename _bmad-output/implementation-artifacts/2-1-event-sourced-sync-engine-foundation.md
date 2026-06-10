@@ -4,7 +4,7 @@ baseline_commit: 20f28fd9b3abe67361633c15b4c923868e1cfbbe
 
 # Story 2.1: Event-sourced sync engine foundation
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -205,3 +205,4 @@ Claude Opus 4.8 (GitHub Copilot)
 | 2026-06-07 | 0.1     | Story created                                            | Bob    |
 | 2026-06-07 | 1.0     | Event-sourced sync engine foundation implemented (review) | Amelia |
 | 2026-06-10 | 1.1     | Closed review patches: missing fixture-dir guard + future schema fail-loud | Amelia |
+| 2026-06-10 | 1.2     | Review skipped by user decision; story marked done       | Amelia |
