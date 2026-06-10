@@ -222,5 +222,31 @@
         "description": "Estimated mission duration in minutes."
       }
     }
+  },
+  "historyOpenAction": "Voir l'historique",
+  "@historyOpenAction": {
+    "description": "CTA to open the victory history sheet."
+  },
+  "historyTitle": "Historique des victoires",
+  "@historyTitle": {
+    "description": "Title of the victory history sheet."
+  },
+  "historyEmptyState": "Aucune victoire pour l'instant.",
+  "@historyEmptyState": {
+    "description": "Empty state when no mission has been validated yet."
+  },
+  "historyItemSummary": "{kg} kg libérés · {minutes} min",
+  "@historyItemSummary": {
+    "description": "One line summary in history rows (kg freed and time invested).",
+    "placeholders": {
+      "kg": {
+        "type": "int",
+        "description": "Freed kilograms for the victory row."
+      },
+      "minutes": {
+        "type": "int",
+        "description": "Invested minutes for the victory row."
+      }
+    }
   }
 }

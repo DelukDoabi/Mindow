@@ -69,7 +69,7 @@ development_status:
   3-1-generate-the-daily-mission: done
   3-2-act-on-the-daily-mission: done
   3-3-validate-a-completed-mission: done
-  3-4-view-victory-history: backlog
+  3-4-view-victory-history: done
   epic-3-retrospective: optional
 
   # Epic 4: Gamification — Garden, Levels & Achievements

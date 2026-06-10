@@ -63,6 +63,7 @@ void main() {
       missionDate: '2026-06-10',
       mission: null,
     ),
+    List<MissionVictory> victories = const <MissionVictory>[],
   }) async {
     // The default test viewport (800×600) is too short for the full Home
     // layout (hero + backpack + stat pills + list + capture bar). Use a
@@ -94,6 +95,7 @@ void main() {
             ),
           ),
           todayMissionProvider.overrideWithValue(AsyncValue.data(mission)),
+          missionVictoriesProvider.overrideWithValue(victories),
         ],
         child: MaterialApp.router(
           routerConfig: router,
@@ -294,5 +296,47 @@ void main() {
     await pumpHome(tester);
 
     expect(find.text("Rien d'urgent aujourd'hui. Profite."), findsOneWidget);
+  });
+
+  testWidgets('opens empty victory history sheet', (tester) async {
+    await pumpHome(tester);
+
+    await tester.tap(find.text("Voir l'historique"));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Historique des victoires'), findsOneWidget);
+    expect(find.text("Aucune victoire pour l'instant."), findsOneWidget);
+  });
+
+  testWidgets('renders victory rows in chronological history', (tester) async {
+    await pumpHome(
+      tester,
+      victories: <MissionVictory>[
+        MissionVictory(
+          missionId: 'm2',
+          missionDate: '2026-06-10',
+          preoccupationId: 'p2',
+          kgFreed: 4,
+          timeInvestedMinutes: 10,
+          validatedAt: DateTime.utc(2026, 6, 10, 9),
+        ),
+        MissionVictory(
+          missionId: 'm1',
+          missionDate: '2026-06-09',
+          preoccupationId: 'p1',
+          kgFreed: 6,
+          timeInvestedMinutes: 15,
+          validatedAt: DateTime.utc(2026, 6, 9, 18),
+        ),
+      ],
+    );
+
+    await tester.tap(find.text("Voir l'historique"));
+    await tester.pumpAndSettle();
+
+    expect(find.text('2026-06-10'), findsOneWidget);
+    expect(find.text('4 kg libérés · 10 min'), findsOneWidget);
+    expect(find.text('2026-06-09'), findsOneWidget);
+    expect(find.text('6 kg libérés · 15 min'), findsOneWidget);
   });
 }

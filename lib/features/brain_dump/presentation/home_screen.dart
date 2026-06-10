@@ -91,6 +91,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _runMissionValidation(String preoccupationId) async {
+    final validationNotifier = ref.read(
+      validationRequestedMissionIdProvider.notifier,
+    );
     final mission = ref
         .read(todayMissionProvider)
         .maybeWhen(
@@ -98,10 +101,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           orElse: () => null,
         );
     if (mission == null || mission.preoccupationId != preoccupationId) {
-      ref
-              .read(validationRequestedMissionIdProvider.notifier)
-              .requestedMissionId =
-          null;
+      validationNotifier.requestedMissionId = null;
       return;
     }
 
@@ -109,8 +109,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         .read(missionValidationServiceProvider)
         .validate(mission);
 
-    ref.read(validationRequestedMissionIdProvider.notifier).requestedMissionId =
-        null;
+    validationNotifier.requestedMissionId = null;
     ref.read(projectionRevisionProvider.notifier).bump();
     refreshTodayMission(ref);
 
@@ -131,6 +130,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final textTheme = Theme.of(context).textTheme;
     final preoccupations = ref.watch(openPreoccupationsProvider);
     final todayMission = ref.watch(todayMissionProvider);
+    final victories = ref.watch(missionVictoriesProvider);
 
     ref.listen<List<String>>(crisisAlertsProvider, (previous, next) {
       final previousIds = previous ?? const <String>[];
@@ -185,6 +185,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const StatPillRow(),
               const SizedBox(height: AuroreSpacing.lg),
               _DailyMissionSection(mission: todayMission),
+              const SizedBox(height: AuroreSpacing.sm),
+              _HistoryEntryButton(victories: victories),
               const SizedBox(height: AuroreSpacing.lg),
               Expanded(
                 child: preoccupations.when(
@@ -223,6 +225,116 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HistoryEntryButton extends StatelessWidget {
+  const _HistoryEntryButton({required this.victories});
+
+  final List<MissionVictory> victories;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton.icon(
+        onPressed: () {
+          unawaited(
+            showModalBottomSheet<void>(
+              context: context,
+              isScrollControlled: true,
+              builder: (_) => _VictoryHistorySheet(victories: victories),
+            ),
+          );
+        },
+        icon: const Icon(Icons.history),
+        label: Text(l10n.historyOpenAction),
+      ),
+    );
+  }
+}
+
+class _VictoryHistorySheet extends StatelessWidget {
+  const _VictoryHistorySheet({required this.victories});
+
+  final List<MissionVictory> victories;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final textTheme = Theme.of(context).textTheme;
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(AuroreSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.historyTitle,
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: AuroreSpacing.md),
+            if (victories.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AuroreSpacing.md),
+                child: Text(
+                  l10n.historyEmptyState,
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: AuroreColors.inkMuted,
+                  ),
+                ),
+              )
+            else
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 320),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: victories.length,
+                  separatorBuilder: (_, _) => const SizedBox(
+                    height: AuroreSpacing.sm,
+                  ),
+                  itemBuilder: (context, index) {
+                    final victory = victories[index];
+                    return DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AuroreColors.glass,
+                        borderRadius: BorderRadius.circular(AuroreRadii.md),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AuroreSpacing.md),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              victory.missionDate,
+                              style: textTheme.labelMedium?.copyWith(
+                                color: AuroreColors.inkMuted,
+                              ),
+                            ),
+                            const SizedBox(height: AuroreSpacing.xs),
+                            Text(
+                              l10n.historyItemSummary(
+                                victory.kgFreed,
+                                victory.timeInvestedMinutes,
+                              ),
+                              style: textTheme.bodyLarge,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ],
         ),
       ),
     );

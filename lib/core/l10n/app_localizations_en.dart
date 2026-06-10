@@ -374,4 +374,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String dailyMissionContextSubtitle(int minutes) {
     return 'Estimate: $minutes min';
   }
+
+  @override
+  String get historyOpenAction => 'View history';
+
+  @override
+  String get historyTitle => 'Victory history';
+
+  @override
+  String get historyEmptyState => 'No victories yet.';
+
+  @override
+  String historyItemSummary(int kg, int minutes) {
+    return '$kg kg freed · $minutes min';
+  }
 }

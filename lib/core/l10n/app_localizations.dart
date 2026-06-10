@@ -769,6 +769,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Estimate: {minutes} min'**
   String dailyMissionContextSubtitle(int minutes);
+
+  /// CTA to open the victory history sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'View history'**
+  String get historyOpenAction;
+
+  /// Title of the victory history sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Victory history'**
+  String get historyTitle;
+
+  /// Empty state when no mission has been validated yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No victories yet.'**
+  String get historyEmptyState;
+
+  /// One line summary in history rows (kg freed and time invested).
+  ///
+  /// In en, this message translates to:
+  /// **'{kg} kg freed · {minutes} min'**
+  String historyItemSummary(int kg, int minutes);
 }
 
 class _AppLocalizationsDelegate
