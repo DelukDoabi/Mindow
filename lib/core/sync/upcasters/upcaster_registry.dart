@@ -40,6 +40,13 @@ class UpcasterRegistry {
   /// the version — both are programming errors that must fail loudly.
   EventEnvelope upcast(EventEnvelope envelope) {
     var current = envelope;
+    if (current.schemaVersion > currentSchemaVersion) {
+      throw StateError(
+        'Envelope schema v${current.schemaVersion} is newer than '
+        'current schema v$currentSchemaVersion.',
+      );
+    }
+
     while (current.schemaVersion < currentSchemaVersion) {
       final from = current.schemaVersion;
       final upcaster = _upcasters[from];

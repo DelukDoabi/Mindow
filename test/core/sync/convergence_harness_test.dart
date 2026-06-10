@@ -29,6 +29,10 @@ class _Fixture {
 
 List<_Fixture> _loadFixtures(int version) {
   final dir = Directory('$_fixturesRoot/v$version');
+  if (!dir.existsSync()) {
+    return <_Fixture>[];
+  }
+
   final files =
       dir
           .listSync()

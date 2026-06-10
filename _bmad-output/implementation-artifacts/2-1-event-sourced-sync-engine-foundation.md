@@ -4,7 +4,7 @@ baseline_commit: 20f28fd9b3abe67361633c15b4c923868e1cfbbe
 
 # Story 2.1: Event-sourced sync engine foundation
 
-Status: in-progress
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -62,8 +62,8 @@ so that every feature can emit and replay domain events idempotently, offline-fi
 
 _Code review 2026-06-07 (commit `7ad00ae`). Layers: Blind Hunter, Edge Case Hunter, Acceptance Auditor — all completed._
 
-- [ ] [Review][Patch] Fixture loader throws at test-collection time when a `v{n}` dir is missing [test/core/sync/convergence_harness_test.dart:_loadFixtures] — `_loadFixtures` calls `dir.listSync()` without `existsSync()`, so a missing schema-version dir raises a cryptic `FileSystemException` during test-tree construction instead of letting the dedicated coverage-gate test fail with its clear assertion (undermines AC#3's intent). Return `[]` when the dir is absent.
-- [ ] [Review][Patch] `UpcasterRegistry.upcast` silently passes through future-versioned envelopes [lib/core/sync/upcasters/upcaster_registry.dart] — when `envelope.schemaVersion > currentSchemaVersion` the `while` loop never runs and the envelope is returned unmodified, risking a silently mis-reduced projection. Fail loudly with a `StateError` (matches the existing fail-loud guards in the same method).
+- [x] [Review][Patch] Fixture loader throws at test-collection time when a `v{n}` dir is missing [test/core/sync/convergence_harness_test.dart:_loadFixtures] — `_loadFixtures` now guards with `existsSync()` and returns `[]` when the fixture directory is absent, preserving the dedicated coverage-gate failure message.
+- [x] [Review][Patch] `UpcasterRegistry.upcast` silently passes through future-versioned envelopes [lib/core/sync/upcasters/upcaster_registry.dart] — `upcast` now fails loudly with `StateError` when `envelope.schemaVersion > currentSchemaVersion`; covered by a dedicated unit test.
 - [x] [Review][Defer] Outbox box never opened in app / no EventStore provider [lib/app/bootstrap.dart] — deferred to Story 2.2: no event producer exists before 2.2, so the box-open + Riverpod provider wiring lands with the first emitter (`preoccupation.captured`); the engine stays test-injectable until then.
 - [x] [Review][Defer] `SyncQueue.flush()` partial-failure / retry semantics [lib/core/sync/sync_queue.dart] — deferred, revisit when the real reconciliation transport lands in Story 2.2.
 - [x] [Review][Defer] Harden `EventEnvelope.fromJson` / `OutboxRecord.toEnvelope` against malformed/foreign JSON [lib/core/sync/domain_event.dart, lib/core/sync/event_store.dart] — deferred, validate at the real backend boundary introduced in Story 2.2 (current inputs are engine-produced or test fixtures).
@@ -145,6 +145,7 @@ Claude Opus 4.8 (GitHub Copilot)
 - `dart run build_runner build` — wrote 3 outputs (`hive_adapters.g.dart`, `hive_adapters.g.yaml`, `hive_registrar.g.dart`) in 106s. typeIds assigned `OutboxState` = 10, `OutboxRecord` = 11 (matches the `hive_registry.dart` CI gate).
 - `flutter analyze` — No issues found.
 - `flutter test` — All 57 tests passed (27 in `test/core/sync`).
+- `flutter test test/core/sync/convergence_harness_test.dart test/core/sync/upcaster_registry_test.dart` — All tests passed (8 + 1), validating both review patches.
 
 ### Completion Notes List
 
@@ -153,6 +154,7 @@ Claude Opus 4.8 (GitHub Copilot)
 - **Replay ordering of local events:** not-yet-received (`receivedAt == null`) events sort AFTER all received ones; ties (and the local tail) break by `event_id` lexicographically. Explicitly tested.
 - **Transport seam:** `ReconciliationClient` is an abstract interface only; `SyncQueue.flush()` is a no-op when no client is wired (offline-first / scaffold builds). The concrete Supabase wiring is deferred to Story 2.2+. `SyncQueue` uses an injectable `Clock` (default `systemUtcClock`) used as the `received_at` fallback when the backend does not acknowledge a record.
 - **Schema versioning:** `currentSchemaVersion = 1`; `supportedSchemaVersions` drives the convergence fixture-coverage gate (every `v{n}/` must have ≥1 fixture). No upcasters needed yet (`UpcasterRegistry.empty()`).
+- **Review patch closure:** `_loadFixtures` now returns an empty list for missing `v{n}` directories (preventing collection-time `FileSystemException`), and `UpcasterRegistry.upcast` now rejects future schema versions with a loud `StateError`.
 - **Three CI gates added** to `.github/workflows/ci.yml`: convergence gate, contract parity gate (alongside the pre-existing Hive registry gate).
 - **`.g.yaml` committed** to pin typeId/field-index assignments for offline data stability.
 - `Hive.registerAdapters()` is now called in `lib/app/bootstrap.dart` right after `Hive.initFlutter()`.
@@ -174,6 +176,7 @@ Claude Opus 4.8 (GitHub Copilot)
 - `lib/core/sync/domain_event.dart` (added `EventEnvelope`, `eventEnvelopeKeys`, `DomainEventRegistry`, `toEnvelope`)
 - `lib/core/sync/hive_registry.dart` (appended typeIds 10, 11)
 - `lib/app/bootstrap.dart` (register adapters)
+- `lib/core/sync/upcasters/upcaster_registry.dart` (rejects future schema versions with `StateError`)
 
 **Created (server):**
 - `supabase/functions/_shared/events.ts`
@@ -184,9 +187,13 @@ Claude Opus 4.8 (GitHub Copilot)
 - `test/core/sync/sync_queue_test.dart`
 - `test/core/sync/convergence_harness_test.dart`
 - `test/core/sync/event_contract_parity_test.dart`
+- `test/core/sync/upcaster_registry_test.dart`
 - `test/core/sync/support/counter_event.dart`
 - `test/core/sync/fixtures/v1/basic_convergence.json`
 - `test/core/sync/fixtures/v1/mixed_ordering.json`
+
+**Modified (tests):**
+- `test/core/sync/convergence_harness_test.dart` (`_loadFixtures` handles missing directories safely)
 
 **Modified (CI):**
 - `.github/workflows/ci.yml` (convergence + parity gates)
@@ -197,3 +204,4 @@ Claude Opus 4.8 (GitHub Copilot)
 | ---------- | ------- | -------------------------------------------------------- | ------ |
 | 2026-06-07 | 0.1     | Story created                                            | Bob    |
 | 2026-06-07 | 1.0     | Event-sourced sync engine foundation implemented (review) | Amelia |
+| 2026-06-10 | 1.1     | Closed review patches: missing fixture-dir guard + future schema fail-loud | Amelia |
