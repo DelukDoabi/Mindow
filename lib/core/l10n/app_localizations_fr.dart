@@ -472,4 +472,44 @@ class AppLocalizationsFr extends AppLocalizations {
   String historyItemSummary(int kg, int minutes) {
     return '$kg kg libérés · $minutes min';
   }
+
+  @override
+  String get achievementsTitle => 'Accomplissements';
+
+  @override
+  String achievementsStreakLabel(int count) {
+    return 'Série en cours : $count jour(s)';
+  }
+
+  @override
+  String get achievementFirstVictoryTitle => 'Première victoire';
+
+  @override
+  String get achievementFirstVictoryDesc => 'Valide ta première mission';
+
+  @override
+  String get achievementTenKgTitle => '10 kg allégés';
+
+  @override
+  String get achievementTenKgDesc => 'Libère au moins 10 kg de charge mentale';
+
+  @override
+  String get achievementHundredPreoccupationsTitle => '100 préoccupations';
+
+  @override
+  String get achievementHundredPreoccupationsDesc =>
+      'Dépose 100 préoccupations dans ton sac à dos';
+
+  @override
+  String get achievementThirtyDayStreakTitle => 'Série de 30 jours';
+
+  @override
+  String get achievementThirtyDayStreakDesc =>
+      'Valide une mission chaque jour pendant 30 jours d\'affilée';
+
+  @override
+  String get achievementUnlocked => 'Débloqué';
+
+  @override
+  String get achievementLocked => 'Pas encore débloqué';
 }

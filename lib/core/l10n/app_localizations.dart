@@ -931,6 +931,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{kg} kg freed · {minutes} min'**
   String historyItemSummary(int kg, int minutes);
+
+  /// Section title for the achievements list on GardenScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievementsTitle;
+
+  /// Streak counter displayed below the level card on GardenScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Current streak: {count} day(s)'**
+  String achievementsStreakLabel(int count);
+
+  /// Title for the First Victory achievement card.
+  ///
+  /// In en, this message translates to:
+  /// **'First Victory'**
+  String get achievementFirstVictoryTitle;
+
+  /// Description for the First Victory achievement card.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your first mission'**
+  String get achievementFirstVictoryDesc;
+
+  /// Title for the Ten Kg Freed achievement card.
+  ///
+  /// In en, this message translates to:
+  /// **'10 kg Freed'**
+  String get achievementTenKgTitle;
+
+  /// Description for the Ten Kg Freed achievement card.
+  ///
+  /// In en, this message translates to:
+  /// **'Free at least 10 kg of mental load'**
+  String get achievementTenKgDesc;
+
+  /// Title for the Hundred Preoccupations achievement card.
+  ///
+  /// In en, this message translates to:
+  /// **'100 Preoccupations'**
+  String get achievementHundredPreoccupationsTitle;
+
+  /// Description for the Hundred Preoccupations achievement card.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop 100 preoccupations into your backpack'**
+  String get achievementHundredPreoccupationsDesc;
+
+  /// Title for the Thirty Day Streak achievement card.
+  ///
+  /// In en, this message translates to:
+  /// **'30-Day Streak'**
+  String get achievementThirtyDayStreakTitle;
+
+  /// Description for the Thirty Day Streak achievement card.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete a mission every day for 30 days in a row'**
+  String get achievementThirtyDayStreakDesc;
+
+  /// Status label for an unlocked achievement.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked'**
+  String get achievementUnlocked;
+
+  /// Status label for a locked achievement (neutral, no pressure language).
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet'**
+  String get achievementLocked;
 }
 
 class _AppLocalizationsDelegate

@@ -589,5 +589,59 @@
         "description": "Invested minutes for the victory row."
       }
     }
+  },
+  "achievementsTitle": "Achievements",
+  "@achievementsTitle": {
+    "description": "Section title for the achievements list on GardenScreen."
+  },
+  "achievementsStreakLabel": "Current streak: {count} day(s)",
+  "@achievementsStreakLabel": {
+    "description": "Streak counter displayed below the level card on GardenScreen.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of consecutive days in the current streak."
+      }
+    }
+  },
+  "achievementFirstVictoryTitle": "First Victory",
+  "@achievementFirstVictoryTitle": {
+    "description": "Title for the First Victory achievement card."
+  },
+  "achievementFirstVictoryDesc": "Complete your first mission",
+  "@achievementFirstVictoryDesc": {
+    "description": "Description for the First Victory achievement card."
+  },
+  "achievementTenKgTitle": "10 kg Freed",
+  "@achievementTenKgTitle": {
+    "description": "Title for the Ten Kg Freed achievement card."
+  },
+  "achievementTenKgDesc": "Free at least 10 kg of mental load",
+  "@achievementTenKgDesc": {
+    "description": "Description for the Ten Kg Freed achievement card."
+  },
+  "achievementHundredPreoccupationsTitle": "100 Preoccupations",
+  "@achievementHundredPreoccupationsTitle": {
+    "description": "Title for the Hundred Preoccupations achievement card."
+  },
+  "achievementHundredPreoccupationsDesc": "Drop 100 preoccupations into your backpack",
+  "@achievementHundredPreoccupationsDesc": {
+    "description": "Description for the Hundred Preoccupations achievement card."
+  },
+  "achievementThirtyDayStreakTitle": "30-Day Streak",
+  "@achievementThirtyDayStreakTitle": {
+    "description": "Title for the Thirty Day Streak achievement card."
+  },
+  "achievementThirtyDayStreakDesc": "Complete a mission every day for 30 days in a row",
+  "@achievementThirtyDayStreakDesc": {
+    "description": "Description for the Thirty Day Streak achievement card."
+  },
+  "achievementUnlocked": "Unlocked",
+  "@achievementUnlocked": {
+    "description": "Status label for an unlocked achievement."
+  },
+  "achievementLocked": "Not yet",
+  "@achievementLocked": {
+    "description": "Status label for a locked achievement (neutral, no pressure language)."
   }
 }

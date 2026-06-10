@@ -4,6 +4,8 @@ import 'package:mindow/core/design_system/aurore_colors.dart';
 import 'package:mindow/core/design_system/aurore_spacing.dart';
 import 'package:mindow/core/design_system/widgets/aurore_canvas.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
+import 'package:mindow/features/gamification/achievement_providers.dart';
+import 'package:mindow/features/gamification/domain/achievement_state.dart';
 import 'package:mindow/features/gamification/domain/garden_state.dart';
 import 'package:mindow/features/gamification/domain/level_state.dart';
 import 'package:mindow/features/gamification/garden_providers.dart';
@@ -17,11 +19,12 @@ class GardenScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final gardenState = ref.watch(gardenStateProvider);
     final levelState = ref.watch(levelStateProvider);
+    final achievementState = ref.watch(achievementStateProvider);
     final textTheme = Theme.of(context).textTheme;
 
     return AuroreCanvas(
       child: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AuroreSpacing.xl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +61,9 @@ class GardenScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: AuroreSpacing.xs),
                       Text(
-                        l10n.gardenCompletedMissions(gardenState.completedMissions),
+                        l10n.gardenCompletedMissions(
+                          gardenState.completedMissions,
+                        ),
                         style: textTheme.bodyMedium,
                       ),
                       if (gardenState.nextUnlockAt > 0) ...[
@@ -92,6 +97,32 @@ class GardenScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+              // --- Streak section (AC #4, UX-DR19: no punitive language) ---
+              const SizedBox(height: AuroreSpacing.lg),
+              Text(
+                l10n.achievementsStreakLabel(achievementState.currentStreak),
+                style: textTheme.bodyMedium?.copyWith(
+                  color: AuroreColors.inkMuted,
+                ),
+              ),
+              // --- Achievements section (AC #4) ---
+              const SizedBox(height: AuroreSpacing.lg),
+              Text(
+                l10n.achievementsTitle,
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: AuroreSpacing.sm),
+              Column(
+                children: Achievement.values.map((achievement) {
+                  return _AchievementCard(
+                    title: _achievementTitle(l10n, achievement),
+                    description: _achievementDescription(l10n, achievement),
+                    isUnlocked: achievementState.isUnlocked(achievement),
+                  );
+                }).toList(),
+              ),
             ],
           ),
         ),
@@ -120,4 +151,87 @@ String _gardenElementLabel(AppLocalizations l10n, GardenElement element) {
     GardenElement.animals => l10n.gardenElementAnimals,
     GardenElement.landscape => l10n.gardenElementLandscape,
   };
+}
+
+String _achievementTitle(AppLocalizations l10n, Achievement achievement) {
+  return switch (achievement) {
+    Achievement.firstVictory => l10n.achievementFirstVictoryTitle,
+    Achievement.tenKgFreed => l10n.achievementTenKgTitle,
+    Achievement.hundredPreoccupations =>
+      l10n.achievementHundredPreoccupationsTitle,
+    Achievement.thirtyDayStreak => l10n.achievementThirtyDayStreakTitle,
+  };
+}
+
+String _achievementDescription(AppLocalizations l10n, Achievement achievement) {
+  return switch (achievement) {
+    Achievement.firstVictory => l10n.achievementFirstVictoryDesc,
+    Achievement.tenKgFreed => l10n.achievementTenKgDesc,
+    Achievement.hundredPreoccupations =>
+      l10n.achievementHundredPreoccupationsDesc,
+    Achievement.thirtyDayStreak => l10n.achievementThirtyDayStreakDesc,
+  };
+}
+
+class _AchievementCard extends StatelessWidget {
+  const _AchievementCard({
+    required this.title,
+    required this.description,
+    required this.isUnlocked,
+  });
+
+  final String title;
+  final String description;
+  final bool isUnlocked;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final textTheme = Theme.of(context).textTheme;
+    final contentColor = isUnlocked ? null : AuroreColors.inkMuted;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AuroreSpacing.sm),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AuroreColors.glass,
+          borderRadius: BorderRadius.circular(AuroreRadii.md),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AuroreSpacing.md),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: contentColor,
+                      ),
+                    ),
+                    const SizedBox(height: AuroreSpacing.xs),
+                    Text(
+                      description,
+                      style: textTheme.bodySmall?.copyWith(color: contentColor),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AuroreSpacing.sm),
+              Text(
+                isUnlocked ? l10n.achievementUnlocked : l10n.achievementLocked,
+                style: textTheme.labelSmall?.copyWith(
+                  color: contentColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

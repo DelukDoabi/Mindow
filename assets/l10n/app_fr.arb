@@ -316,5 +316,59 @@
         "description": "Invested minutes for the victory row."
       }
     }
+  },
+  "achievementsTitle": "Accomplissements",
+  "@achievementsTitle": {
+    "description": "Section title for the achievements list on GardenScreen."
+  },
+  "achievementsStreakLabel": "Série en cours : {count} jour(s)",
+  "@achievementsStreakLabel": {
+    "description": "Streak counter displayed below the level card on GardenScreen.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of consecutive days in the current streak."
+      }
+    }
+  },
+  "achievementFirstVictoryTitle": "Première victoire",
+  "@achievementFirstVictoryTitle": {
+    "description": "Title for the First Victory achievement card."
+  },
+  "achievementFirstVictoryDesc": "Valide ta première mission",
+  "@achievementFirstVictoryDesc": {
+    "description": "Description for the First Victory achievement card."
+  },
+  "achievementTenKgTitle": "10 kg allégés",
+  "@achievementTenKgTitle": {
+    "description": "Title for the Ten Kg Freed achievement card."
+  },
+  "achievementTenKgDesc": "Libère au moins 10 kg de charge mentale",
+  "@achievementTenKgDesc": {
+    "description": "Description for the Ten Kg Freed achievement card."
+  },
+  "achievementHundredPreoccupationsTitle": "100 préoccupations",
+  "@achievementHundredPreoccupationsTitle": {
+    "description": "Title for the Hundred Preoccupations achievement card."
+  },
+  "achievementHundredPreoccupationsDesc": "Dépose 100 préoccupations dans ton sac à dos",
+  "@achievementHundredPreoccupationsDesc": {
+    "description": "Description for the Hundred Preoccupations achievement card."
+  },
+  "achievementThirtyDayStreakTitle": "Série de 30 jours",
+  "@achievementThirtyDayStreakTitle": {
+    "description": "Title for the Thirty Day Streak achievement card."
+  },
+  "achievementThirtyDayStreakDesc": "Valide une mission chaque jour pendant 30 jours d'affilée",
+  "@achievementThirtyDayStreakDesc": {
+    "description": "Description for the Thirty Day Streak achievement card."
+  },
+  "achievementUnlocked": "Débloqué",
+  "@achievementUnlocked": {
+    "description": "Status label for an unlocked achievement."
+  },
+  "achievementLocked": "Pas encore débloqué",
+  "@achievementLocked": {
+    "description": "Status label for a locked achievement (no punitive language)."
   }
 }
