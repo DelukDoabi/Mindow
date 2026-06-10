@@ -359,6 +359,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyMissionValidationTriggered => 'Great. Moving to validation.';
 
   @override
+  String dailyMissionValidationSuccess(int kg) {
+    return 'Mission validated: -$kg kg.';
+  }
+
+  @override
+  String get dailyMissionValidationAlreadyDone =>
+      'Mission already validated for today.';
+
+  @override
   String get dailyMissionContextTitle => 'Your mission today';
 
   @override

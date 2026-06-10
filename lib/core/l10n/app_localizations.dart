@@ -746,6 +746,18 @@ abstract class AppLocalizations {
   /// **'Great. Moving to validation.'**
   String get dailyMissionValidationTriggered;
 
+  /// Feedback shown after mission validation is applied.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission validated: -{kg} kg.'**
+  String dailyMissionValidationSuccess(int kg);
+
+  /// Feedback shown when mission validation was already applied (idempotent duplicate).
+  ///
+  /// In en, this message translates to:
+  /// **'Mission already validated for today.'**
+  String get dailyMissionValidationAlreadyDone;
+
   /// Bottom sheet title shown when the user taps Start on the mission card.
   ///
   /// In en, this message translates to:

@@ -195,6 +195,20 @@
   "@dailyMissionValidationTriggered": {
     "description": "Feedback shown after tapping done on the daily mission card."
   },
+  "dailyMissionValidationSuccess": "Mission validée : -{kg} kg.",
+  "@dailyMissionValidationSuccess": {
+    "description": "Feedback shown after mission validation is applied.",
+    "placeholders": {
+      "kg": {
+        "type": "int",
+        "description": "Freed kilograms from the validated mission."
+      }
+    }
+  },
+  "dailyMissionValidationAlreadyDone": "Mission déjà validée pour aujourd'hui.",
+  "@dailyMissionValidationAlreadyDone": {
+    "description": "Feedback shown when mission validation was already applied (idempotent duplicate)."
+  },
   "dailyMissionContextTitle": "Ta mission du jour",
   "@dailyMissionContextTitle": {
     "description": "Bottom sheet title shown when the user taps Start on the mission card."

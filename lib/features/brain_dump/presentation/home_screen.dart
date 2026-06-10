@@ -90,6 +90,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ..showSnackBar(SnackBar(content: Text(l10n.captureSuccess)));
   }
 
+  Future<void> _runMissionValidation(String preoccupationId) async {
+    final mission = ref
+        .read(todayMissionProvider)
+        .maybeWhen(
+          data: (result) => result.mission,
+          orElse: () => null,
+        );
+    if (mission == null || mission.preoccupationId != preoccupationId) {
+      ref
+              .read(validationRequestedMissionIdProvider.notifier)
+              .requestedMissionId =
+          null;
+      return;
+    }
+
+    final result = await ref
+        .read(missionValidationServiceProvider)
+        .validate(mission);
+
+    ref.read(validationRequestedMissionIdProvider.notifier).requestedMissionId =
+        null;
+    ref.read(projectionRevisionProvider.notifier).bump();
+    refreshTodayMission(ref);
+
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final message = result.wasAlreadyValidated
+        ? l10n.dailyMissionValidationAlreadyDone
+        : l10n.dailyMissionValidationSuccess(result.kgFreed);
+    messenger
+      ..clearSnackBars()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -114,6 +149,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           (_) => ref.read(crisisAlertsProvider.notifier).dismiss(id),
         ),
       );
+    });
+
+    ref.listen<String?>(validationRequestedMissionIdProvider, (previous, next) {
+      if (next == null) return;
+      unawaited(_runMissionValidation(next));
     });
 
     return AuroreCanvas(
@@ -288,15 +328,6 @@ class _DailyMissionSection extends ConsumerWidget {
                     FilledButton(
                       onPressed: () {
                         requestMissionValidation(ref, dailyMission);
-                        ScaffoldMessenger.of(context)
-                          ..clearSnackBars()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                l10n.dailyMissionValidationTriggered,
-                              ),
-                            ),
-                          );
                       },
                       child: Text(l10n.dailyMissionDoneAction),
                     ),

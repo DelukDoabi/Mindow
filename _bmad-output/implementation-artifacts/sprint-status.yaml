@@ -68,7 +68,7 @@ development_status:
   epic-3: in-progress
   3-1-generate-the-daily-mission: done
   3-2-act-on-the-daily-mission: done
-  3-3-validate-a-completed-mission: backlog
+  3-3-validate-a-completed-mission: done
   3-4-view-victory-history: backlog
   epic-3-retrospective: optional
 

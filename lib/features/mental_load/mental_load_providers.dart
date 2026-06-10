@@ -1,6 +1,7 @@
 import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/mental_load/domain/mental_load_projection.dart';
 import 'package:mindow/features/mental_load/domain/weekly_progression_projection.dart';
+import 'package:mindow/features/missions/missions_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'mental_load_providers.g.dart';
@@ -25,8 +26,9 @@ Future<MentalLoadProjection> mentalLoad(Ref ref) async {
 @riverpod
 Future<WeeklyProgressionProjection> weeklyProgression(Ref ref) async {
   final items = await ref.watch(openPreoccupationsProvider.future);
+  final kgFreedThisWeek = ref.watch(missionKgFreedThisWeekProvider);
   return WeeklyProgressionProjection(
     openCount: items.length,
-    kgFreedThisWeek: 0,
+    kgFreedThisWeek: kgFreedThisWeek,
   );
 }
