@@ -1,70 +1,71 @@
 // AI Analysis Edge Function with crisis-gate (FR-6, NFR-8).
 //
-// The model API key lives ONLY here, in the Edge runtime (AC1) - the client
-// never sees it. The crisis-gate runs FIRST, before any weighing and before any
-// Free/Premium branch (safety is not a Premium feature): a fast FR/EN rules
-// pre-filter short-circuits the obvious cases, and a dedicated LLM confirmation
-// prompt guards against false positives. Only when the content is NOT a crisis
-// is it weighed into the fixed contract
-// `{ category, mental_weight_kg, effort_score, estimated_duration_minutes }`,
-// with `weight_model_version` stamped server-side so weights stay comparable.
+// Provider auto-detection — the key present in the Edge runtime determines
+// which provider (and its endpoint) is used. Gemini is preferred over Groq
+// when both keys are set. The API key NEVER leaves the Edge runtime (OWASP).
 //
-// Provider: Configurable OpenAI-compatible API (Groq, Gemini, etc).
-// The model API key lives ONLY here in the Edge runtime (AC1) - the client
-// never sees it. The provider, model and base URL are env-overridable.
+// Supported providers (checked in order):
+//   1. Gemini  — GEMINI_API_KEY required; GEMINI_BASE_URL + GEMINI_MODEL optional
+//   2. Groq    — GROQ_API_KEY required; GROQ_MODEL optional
+//   3. Custom  — AI_API_KEY + AI_BASE_URL + AI_MODEL required
 //
 // Request:  { "content": string, "language": "fr" | "en" }
 // Response: { "is_crisis": true }
 //        |  { "category", "mental_weight_kg", "effort_score",
 //             "estimated_duration_minutes", "weight_model_version" }
 //
-// Deploy: `supabase functions deploy ai-analyze` (CI only on this network).
-// Requires either `GROQ_API_KEY`, `GEMINI_API_KEY` or custom `AI_API_KEY` Edge secret.
+// Deploy: CI-only (corporate network blocks Supabase CLI — see deploy-edge-functions.yml).
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
 
-// The provider is selected first so that the matching API key is picked.
-// AI_PROVIDER drives both the key name and the base URL — they are always in sync.
-// If AI_PROVIDER is not set the code falls back to 'gemini' (not 'groq') so that
-// GEMINI_API_KEY is used when both keys are present in Supabase secrets.
-const AI_PROVIDER = Deno.env.get('AI_PROVIDER') ?? 'gemini';
+// ---------------------------------------------------------------------------
+// Provider resolution — key presence drives provider selection.
+// The key and its matching endpoint are always resolved together.
+// ---------------------------------------------------------------------------
 
-// Key is selected based on the resolved provider, never by scan order.
-// This prevents a GROQ_API_KEY secret from being silently sent to the Gemini endpoint.
-const AI_API_KEY =
-  AI_PROVIDER === 'groq'
-    ? Deno.env.get('GROQ_API_KEY')
-    : AI_PROVIDER === 'gemini'
-      ? Deno.env.get('GEMINI_API_KEY')
-      : Deno.env.get('AI_API_KEY');
+const _geminiKey = Deno.env.get('GEMINI_API_KEY');
+const _groqKey   = Deno.env.get('GROQ_API_KEY');
+const _customKey = Deno.env.get('AI_API_KEY');
 
-// Default model depends on provider
-const DEFAULT_MODEL =
-  AI_PROVIDER === 'groq'
-    ? 'mixtral-8x7b-32768'
-    : AI_PROVIDER === 'gemini'
-      ? 'gemini-2.0-flash'
-      : 'gpt-3.5-turbo';
+let AI_API_KEY:    string | undefined;
+let BASE_URL:      string;
+let MODEL:         string;
+let PROVIDER_NAME: string;
 
-const DEFAULT_BASE_URL =
-  AI_PROVIDER === 'groq'
-    ? 'https://api.groq.com/openai/v1'
-    : AI_PROVIDER === 'gemini'
-      ? 'https://generativelanguage.googleapis.com/v1beta/openai'
-      : 'https://api.openai.com/v1';
+if (_geminiKey) {
+  AI_API_KEY    = _geminiKey;
+  BASE_URL      = Deno.env.get('GEMINI_BASE_URL')
+                  ?? 'https://generativelanguage.googleapis.com/v1beta/openai';
+  MODEL         = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.0-flash';
+  PROVIDER_NAME = 'gemini';
+} else if (_groqKey) {
+  AI_API_KEY    = _groqKey;
+  BASE_URL      = 'https://api.groq.com/openai/v1';
+  MODEL         = Deno.env.get('GROQ_MODEL') ?? 'llama-3.3-70b-versatile';
+  PROVIDER_NAME = 'groq';
+} else if (_customKey) {
+  AI_API_KEY    = _customKey;
+  BASE_URL      = Deno.env.get('AI_BASE_URL') ?? 'https://api.openai.com/v1';
+  MODEL         = Deno.env.get('AI_MODEL')    ?? 'gpt-4o-mini';
+  PROVIDER_NAME = 'custom';
+} else {
+  AI_API_KEY    = undefined;
+  BASE_URL      = '';
+  MODEL         = '';
+  PROVIDER_NAME = 'none';
+}
 
-const MODEL = Deno.env.get('AI_MODEL') ?? DEFAULT_MODEL;
-const BASE_URL = Deno.env.get('AI_BASE_URL') ?? DEFAULT_BASE_URL;
-const CHAT_URL = `${BASE_URL}/chat/completions`;
+const CHAT_URL            = BASE_URL ? `${BASE_URL}/chat/completions` : '';
+const WEIGHT_MODEL_VERSION = `${PROVIDER_NAME}-${MODEL}-2026-06`;
 
-console.log(`[ai-analyze] Using provider: ${AI_PROVIDER}, model: ${MODEL}`);
+console.log(`[ai-analyze] provider=${PROVIDER_NAME} model=${MODEL} url=${CHAT_URL}`);
 
-// Stamped onto every model-produced weight so the North Star stays comparable
-// as the prompt/model evolves (architecture principle 3). Tracks the provider and model.
-const WEIGHT_MODEL_VERSION = `${AI_PROVIDER}-${MODEL}-2026-06`;
+// ---------------------------------------------------------------------------
+// Domain constants
+// ---------------------------------------------------------------------------
 
-// The fixed nine Categories (prd.md Glossary / §8.3). The model MUST pick one.
+// The fixed nine categories (prd.md Glossary / §8.3). The model MUST pick one.
 const CATEGORIES = [
   'Administratif',
   'Famille',
@@ -75,11 +76,11 @@ const CATEGORIES = [
   'Personnel',
   'Voyage',
   'Autre',
-];
+] as const;
 
 // Fast pre-filter: conservative FR/EN signals of self-harm, suicide, or abuse.
-// A hit does NOT auto-classify as crisis — it triggers the dedicated LLM
-// confirmation below, which rules out false positives (e.g. "ce projet me tue").
+// A hit does NOT auto-classify as crisis — it triggers LLM confirmation below,
+// which rules out false positives (e.g. "ce projet me tue").
 const CRISIS_PATTERNS: RegExp[] = [
   /\bsuicide\b/i,
   /\bsuicidaire\b/i,
@@ -101,6 +102,10 @@ const CRISIS_PATTERNS: RegExp[] = [
   /\bbattu(e|es)?\b/i,
 ];
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -109,26 +114,32 @@ function jsonResponse(body: unknown, status = 200): Response {
 }
 
 function preFilterFlags(content: string): boolean {
-  return CRISIS_PATTERNS.some((pattern) => pattern.test(content));
+  return CRISIS_PATTERNS.some((p) => p.test(content));
 }
 
+function clampInt(value: unknown, min: number, max: number, fallback: number): number {
+  const n = Math.round(Number(value));
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+}
+
+// ---------------------------------------------------------------------------
+// Core LLM call — module-level AI_API_KEY / CHAT_URL / MODEL are used.
+// ---------------------------------------------------------------------------
+
 async function callModel(
-  apiKey: string,
   systemPrompt: string,
   userContent: string,
 ): Promise<Record<string, unknown>> {
-  // Retry up to 3 times with exponential back-off (1s, 2s, 4s) so that
-  // transient 429 rate-limit responses from Gemini are handled transparently.
   const maxAttempts = 3;
   let lastError: Error = new Error('callModel: no attempt made');
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      console.log(`[ai-analyze] callModel attempt ${attempt + 1}/${maxAttempts}, URL: ${CHAT_URL}`);
+      console.log(`[ai-analyze] attempt ${attempt + 1}/${maxAttempts} → ${CHAT_URL}`);
       const response = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: `Bearer ${AI_API_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -137,50 +148,42 @@ async function callModel(
           response_format: { type: 'json_object' },
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: userContent },
+            { role: 'user',   content: userContent  },
           ],
         }),
       });
 
-      console.log(`[ai-analyze] Model response status: ${response.status}`);
+      console.log(`[ai-analyze] response status: ${response.status}`);
 
       if (response.status === 429) {
-        // Honour Retry-After if provided, otherwise double the base delay.
         const retryAfter = response.headers.get('Retry-After');
-        const delayMs = retryAfter
+        const delayMs    = retryAfter
           ? parseInt(retryAfter, 10) * 1000
           : 1000 * Math.pow(2, attempt);
-        console.warn(`[ai-analyze] 429 on attempt ${attempt + 1}, retrying in ${delayMs}ms`);
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
-        lastError = new Error(`Model error ${response.status}`);
+        console.warn(`[ai-analyze] 429 rate-limit, retrying in ${delayMs}ms`);
+        await new Promise((r) => setTimeout(r, delayMs));
+        lastError = new Error('Rate limited (429)');
         continue;
       }
 
       if (!response.ok) {
-        // Log the full error body so it appears in Supabase Function Logs
-        // and makes it easy to distinguish auth failures (401), quota errors (429
-        // that slipped through), model-not-found (404), etc. from generic 5xx.
-        let errorBody = '<unreadable>';
-        try {
-          errorBody = await response.text();
-        } catch {
-          // ignore secondary read failure
-        }
-        const errorMsg = `Model error ${response.status}: ${errorBody}`;
-        console.error(`[ai-analyze] ${errorMsg}`);
-        throw new Error(errorMsg);
+        let body = '<unreadable>';
+        try { body = await response.text(); } catch { /* ignore */ }
+        const msg = `Provider error ${response.status}: ${body}`;
+        console.error(`[ai-analyze] ${msg}`);
+        throw new Error(msg);
       }
 
       const data = await response.json();
-      const raw = data?.choices?.[0]?.message?.content;
+      const raw  = data?.choices?.[0]?.message?.content;
       if (typeof raw !== 'string') {
-        throw new Error('Model returned no content');
+        throw new Error(`Provider returned no content. data=${JSON.stringify(data)}`);
       }
       return JSON.parse(raw) as Record<string, unknown>;
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
-      if (attempt === maxAttempts - 1) {
-        throw lastError;
+      if (attempt < maxAttempts - 1) {
+        console.warn(`[ai-analyze] attempt ${attempt + 1} failed: ${lastError.message} — retrying`);
       }
     }
   }
@@ -188,69 +191,65 @@ async function callModel(
   throw lastError;
 }
 
-// Dedicated crisis-confirmation prompt (the second half of the gate).
-async function confirmCrisis(
-  apiKey: string,
-  content: string,
-  language: string,
-): Promise<boolean> {
+// ---------------------------------------------------------------------------
+// Crisis confirmation (second half of the gate)
+// ---------------------------------------------------------------------------
+
+async function confirmCrisis(content: string, language: string): Promise<boolean> {
   const system =
     'You are a safety classifier for a mental-load journaling app. ' +
-    'Decide whether the user message expresses acute personal distress: ' +
+    'Decide whether the user message expresses ACUTE personal distress: ' +
     'suicidal thoughts, intent to self-harm, or being a victim of abuse/violence. ' +
-    'Figurative venting about chores or work (e.g. "this is killing me") is NOT a crisis. ' +
-    `The message is written in ${language}. ` +
-    'Respond ONLY as JSON: {"is_crisis": boolean}.';
-  const result = await callModel(apiKey, system, content);
+    'Figurative venting ("this project is killing me") is NOT a crisis. ' +
+    `The message is in ${language}. ` +
+    'Respond ONLY as JSON: {"is_crisis": boolean}';
+  const result = await callModel(system, content);
   return result['is_crisis'] === true;
 }
 
 function clampInt(value: unknown, min: number, max: number, fallback: number): number {
-  // Use Number() so that string-encoded numbers (e.g. "7") are coerced
-  // correctly. typeof-guarding for 'number' rejects those strings and would
-  // silently return the fallback for valid LLM responses serialized as strings.
   const n = Math.round(Number(value));
-  if (!Number.isFinite(n)) return fallback;
-  return Math.min(max, Math.max(min, n));
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
 }
 
-// Weighing prompt (only reached for non-crisis content).
-async function weigh(
-  apiKey: string,
-  content: string,
-  language: string,
-): Promise<Record<string, unknown>> {
+// ---------------------------------------------------------------------------
+// Weighing
+// ---------------------------------------------------------------------------
+
+async function weigh(content: string, language: string): Promise<Record<string, unknown>> {
   const system =
     'You weigh a single worry for a "mental backpack" app. ' +
-    `Reply in JSON only, with keys exactly: category, mental_weight_kg, effort_score, estimated_duration_minutes. ` +
-    `- category: one of ${JSON.stringify(CATEGORIES)} (use "Autre" if unsure).\n` +
-    '- mental_weight_kg: integer 1-20 (1-5 = light/quick admin, 6-12 = moderate, 13-20 = heavy/looming).\n' +
-    '- effort_score: integer 1-5 (1 = trivial, 5 = very effortful).\n' +
-    '- estimated_duration_minutes: integer estimate of focused time to resolve.\n' +
-    `The worry is written in ${language}. Calibrate so weights are comparable across people and time.`;
-  const result = await callModel(apiKey, system, content);
-  const category = CATEGORIES.includes(result['category'] as string)
+    `Reply in JSON only, with EXACTLY these keys: category, mental_weight_kg, effort_score, estimated_duration_minutes.\n` +
+    `- category: one of ${JSON.stringify(CATEGORIES)} — use "Autre" if unsure.\n` +
+    '- mental_weight_kg: integer 1-20 (1-5 light/quick, 6-12 moderate, 13-20 heavy/looming).\n' +
+    '- effort_score: integer 1-5 (1=trivial, 5=very effortful).\n' +
+    '- estimated_duration_minutes: integer minutes of focused time to resolve.\n' +
+    `The worry is in ${language}. Calibrate so weights are comparable across users and time.`;
+
+  const result   = await callModel(system, content);
+  const category = (CATEGORIES as readonly string[]).includes(result['category'] as string)
     ? (result['category'] as string)
     : 'Autre';
+
   return {
     category,
-    mental_weight_kg: clampInt(result['mental_weight_kg'], 1, 20, 3),
-    effort_score: clampInt(result['effort_score'], 1, 5, 3),
-    estimated_duration_minutes: clampInt(
-      result['estimated_duration_minutes'],
-      1,
-      24 * 60,
-      30,
-    ),
+    mental_weight_kg:           clampInt(result['mental_weight_kg'],           1,     20, 3),
+    effort_score:               clampInt(result['effort_score'],               1,      5, 3),
+    estimated_duration_minutes: clampInt(result['estimated_duration_minutes'], 1, 24 * 60, 30),
     weight_model_version: WEIGHT_MODEL_VERSION,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Entry point
+// ---------------------------------------------------------------------------
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
+  // --- Auth ---
   const authHeader = req.headers.get('Authorization');
   if (!authHeader) {
     return jsonResponse({ error: 'Missing Authorization' }, 401);
@@ -272,41 +271,45 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Unauthorized' }, 401);
   }
 
+  // --- API key guard ---
+  if (!AI_API_KEY) {
+    console.error(
+      '[ai-analyze] No AI API key found. ' +
+      'Set GEMINI_API_KEY, GROQ_API_KEY, or AI_API_KEY as an Edge Function secret.',
+    );
+    return jsonResponse({ error: 'AI unavailable' }, 503);
+  }
+
+  // --- Parse body ---
   let body: { content?: unknown; language?: unknown };
   try {
     body = await req.json();
   } catch {
     return jsonResponse({ error: 'Invalid JSON' }, 400);
   }
-  const content = typeof body.content === 'string' ? body.content.trim() : '';
+  const content  = typeof body.content  === 'string' ? body.content.trim() : '';
   const language = body.language === 'en' ? 'en' : 'fr';
   if (content.length === 0) {
     return jsonResponse({ error: 'Missing content' }, 400);
   }
 
-  const apiKey = AI_API_KEY;
-  if (!apiKey) {
-    console.error('[ai-analyze] No API key configured. Check GROQ_API_KEY, GEMINI_API_KEY, or AI_API_KEY env variables.');
-    return jsonResponse({ error: 'AI unavailable' }, 503);
-  }
-
+  // --- Crisis gate first, then weigh ---
   try {
-    // CRISIS-GATE FIRST: pre-filter, then dedicated LLM confirmation.
     if (preFilterFlags(content)) {
-      console.log('[ai-analyze] Crisis pre-filter triggered, confirming with LLM...');
-      if (await confirmCrisis(apiKey, content, language)) {
+      console.log('[ai-analyze] pre-filter triggered → LLM crisis confirmation');
+      if (await confirmCrisis(content, language)) {
+        console.log('[ai-analyze] crisis confirmed → returning is_crisis:true');
         return jsonResponse({ is_crisis: true });
       }
+      console.log('[ai-analyze] crisis not confirmed → proceeding to weigh');
     }
 
-    // Not a crisis: weigh it.
-    console.log('[ai-analyze] Analyzing weight...');
-    return jsonResponse(await weigh(apiKey, content, language));
+    const result = await weigh(content, language);
+    console.log('[ai-analyze] weight assigned:', JSON.stringify(result));
+    return jsonResponse(result);
   } catch (err) {
-    // Log the provider error server-side (visible in Supabase Function Logs)
-    // without leaking internals to the client (AC5).
-    const errorMsg = err instanceof Error ? err.message : String(err);
-    console.error('[ai-analyze] provider error:', errorMsg);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[ai-analyze] fatal error:', msg);
     return jsonResponse({ error: 'Analysis failed' }, 502);
   }
 });
