@@ -19,18 +19,21 @@ void main() {
     );
   }
 
-  test('produces deterministic tier from replayed validated mission events', () {
-    final events = <MissionValidatedEvent>[
-      event(id: 'e3', missionId: 'm3', missionDate: '2026-06-12'),
-      event(id: 'e1', missionId: 'm1', missionDate: '2026-06-10'),
-      event(id: 'e2', missionId: 'm2', missionDate: '2026-06-11'),
-      event(id: 'e4', missionId: 'm2', missionDate: '2026-06-11'),
-    ];
+  test(
+    'produces deterministic tier from replayed validated mission events',
+    () {
+      final events = <MissionValidatedEvent>[
+        event(id: 'e3', missionId: 'm3', missionDate: '2026-06-12'),
+        event(id: 'e1', missionId: 'm1', missionDate: '2026-06-10'),
+        event(id: 'e2', missionId: 'm2', missionDate: '2026-06-11'),
+        event(id: 'e4', missionId: 'm2', missionDate: '2026-06-11'),
+      ];
 
-    final state = levelStateFromMissionValidatedEvents(events);
+      final state = levelStateFromMissionValidatedEvents(events);
 
-    expect(state.completedMissions, 3);
-    expect(state.currentTier, LevelTier.allegeur);
-    expect(state.nextUnlockAt, 7);
-  });
+      expect(state.completedMissions, 3);
+      expect(state.currentTier, LevelTier.allegeur);
+      expect(state.nextUnlockAt, 7);
+    },
+  );
 }

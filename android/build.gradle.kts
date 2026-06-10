@@ -5,6 +5,13 @@ allprojects {
     }
 }
 
+// Google Services plugin (required for firebase_messaging — Story 5.1)
+buildscript {
+    dependencies {
+        classpath("com.google.gms:google-services:4.4.2")
+    }
+}
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")

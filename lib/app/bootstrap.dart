@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
@@ -9,6 +10,7 @@ import 'package:mindow/core/sync/event_store.dart';
 import 'package:mindow/core/sync/hive_registrar.g.dart';
 import 'package:mindow/core/sync/sync_providers.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';
+import 'package:mindow/firebase_options.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,6 +28,20 @@ Future<void> bootstrap(Flavor flavor) async {
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+
+      // Firebase must be initialized before Supabase (Story 5.1).
+      // Wrapped in try/catch: placeholder firebase_options values will fail
+      // gracefully here without crashing the app.
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } on Object catch (e, st) {
+        // firebase_options.dart still contains placeholder values — expected
+        // during development. Notifications will be unavailable until real
+        // values are provided from Firebase Console.
+        debugPrint('Firebase init skipped (placeholder config): $e\n$st');
+      }
 
       // Local-first persistence is always available.
       await Hive.initFlutter();

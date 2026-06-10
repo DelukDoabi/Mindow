@@ -6,7 +6,9 @@ import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/gamification/domain/garden_state.dart';
 import 'package:mindow/features/missions/domain/mission_validated_event.dart';
 
-final missionValidatedEventsProvider = Provider<List<MissionValidatedEvent>>((ref) {
+final missionValidatedEventsProvider = Provider<List<MissionValidatedEvent>>((
+  ref,
+) {
   ref.watch(projectionRevisionProvider);
 
   return const ReplayEngine().replay<List<MissionValidatedEvent>>(

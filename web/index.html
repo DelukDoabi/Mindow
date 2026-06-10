@@ -31,6 +31,30 @@
 
   <title>mindow</title>
   <link rel="manifest" href="manifest.json">
+
+  <!--
+    Firebase SDK for Web — required for firebase_messaging on Flutter Web (Story 5.1).
+    Replace the firebaseConfig values below with those from Firebase Console:
+    Project settings → Your apps → Web app → Config snippet.
+  -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import { getMessaging } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-messaging.js";
+
+    // TODO(boss): Replace placeholders with real values from Firebase Console
+    const firebaseConfig = {
+      apiKey: "REPLACE_WITH_WEB_API_KEY",
+      authDomain: "REPLACE_WITH_PROJECT_ID.firebaseapp.com",
+      projectId: "REPLACE_WITH_PROJECT_ID",
+      storageBucket: "REPLACE_WITH_PROJECT_ID.firebasestorage.app",
+      messagingSenderId: "REPLACE_WITH_MESSAGING_SENDER_ID",
+      appId: "REPLACE_WITH_WEB_APP_ID",
+      measurementId: "REPLACE_WITH_MEASUREMENT_ID",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    getMessaging(app);
+  </script>
 </head>
 <body>
   <!--

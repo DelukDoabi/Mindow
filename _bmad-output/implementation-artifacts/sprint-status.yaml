@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-10
+last_updated: 2026-06-11
 project: Mindow
 project_key: NOKEY
 tracking_system: file-system
@@ -80,8 +80,8 @@ development_status:
   epic-4-retrospective: optional
 
   # Epic 5: Engagement Notifications
-  epic-5: backlog
-  5-1-notification-permission-fcm-setup: backlog
+  epic-5: in-progress
+  5-1-notification-permission-fcm-setup: in-progress
   5-2-engagement-notification-types: backlog
   5-3-notification-preferences: backlog
   epic-5-retrospective: optional

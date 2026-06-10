@@ -61,8 +61,9 @@ GardenElement gardenElementForCompletedMissions(int completedMissions) {
 
 int nextUnlockThreshold(int completedMissions) {
   final completed = completedMissions < 0 ? 0 : completedMissions;
-  final sortedThresholds = _gardenUnlockThresholds.values.toList(growable: false)
-    ..sort();
+  final sortedThresholds = _gardenUnlockThresholds.values.toList(
+    growable: false,
+  )..sort();
   for (final threshold in sortedThresholds) {
     if (threshold > completed) return threshold;
   }

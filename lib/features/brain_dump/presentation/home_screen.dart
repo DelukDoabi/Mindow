@@ -18,6 +18,7 @@ import 'package:mindow/features/mental_load/presentation/mental_load_hero.dart';
 import 'package:mindow/features/mental_load/presentation/stat_pill_row.dart';
 import 'package:mindow/features/missions/missions_providers.dart';
 import 'package:mindow/features/missions/missions_repository.dart';
+import 'package:mindow/features/notifications/notification_providers.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';
 
 /// The Mental Backpack home: the single place a user sets a worry down.
@@ -44,6 +45,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _controller.addListener(_onTextChanged);
+    // Fire-and-forget: notification setup is non-critical and must never block
+    // the UI or capture flow (Story 5.1, AC: #2, #5, #6).
+    Future<void>.microtask(() {
+      if (mounted) {
+        unawaited(
+          ref.read(notificationServiceProvider).setupNotifications(),
+        );
+      }
+    });
   }
 
   @override

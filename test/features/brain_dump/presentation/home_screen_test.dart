@@ -14,12 +14,36 @@ import 'package:mindow/features/brain_dump/presentation/home_screen.dart';
 import 'package:mindow/features/mental_load/domain/weekly_progression_projection.dart';
 import 'package:mindow/features/mental_load/mental_load_providers.dart';
 import 'package:mindow/features/missions/domain/daily_mission.dart';
+import 'package:mindow/features/missions/mission_validation_service.dart';
 import 'package:mindow/features/missions/missions_providers.dart';
 import 'package:mindow/features/missions/missions_repository.dart';
+import 'package:mindow/features/notifications/notification_providers.dart';
+import 'package:mindow/features/notifications/notification_service.dart';
 
-/// A no-op [AiClient] so the screen's fire-and-forget analysis trigger never
-/// reaches the real Supabase transport in widget tests. Consent is off in these
-/// tests, so `analyze` is never actually called.
+/// No-op [NotificationService] for widget tests — never touches Firebase.
+class _NoopNotificationService implements NotificationService {
+  @override
+  Future<void> setupNotifications() async {}
+
+  @override
+  void dispose() {}
+}
+
+/// No-op [MissionValidationService] for widget tests.
+///
+/// The real service writes to the Hive outbox from an `unawaited` callback,
+/// which blocks FakeAsync and causes the test to hang. Override it with a
+/// synchronous stub so "C'est fait ✓" taps complete immediately.
+class _NoopMissionValidationService implements MissionValidationService {
+  @override
+  Future<MissionValidationResult> validate(DailyMission mission) async =>
+      MissionValidationResult(
+        kgFreed: mission.estimatedKgGain,
+        timeInvestedMinutes: mission.estimatedDurationMinutes,
+        wasAlreadyValidated: false,
+      );
+}
+
 class _NoopAiClient implements AiClient {
   @override
   Future<AiAnalysisResult> analyze({
@@ -96,6 +120,10 @@ void main() {
           ),
           todayMissionProvider.overrideWithValue(AsyncValue.data(mission)),
           missionVictoriesProvider.overrideWithValue(victories),
+          missionValidationServiceProvider
+              .overrideWithValue(_NoopMissionValidationService()),
+          notificationServiceProvider
+              .overrideWithValue(_NoopNotificationService()),
         ],
         child: MaterialApp.router(
           routerConfig: router,
