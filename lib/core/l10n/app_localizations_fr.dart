@@ -281,6 +281,49 @@ class AppLocalizationsFr extends AppLocalizations {
   String get analysisDeferredSignIn => 'Me connecter';
 
   @override
+  String get gardenTitle => 'Jardin mental';
+
+  @override
+  String get gardenSubtitle =>
+      'Chaque mission validée fait grandir ton jardin.';
+
+  @override
+  String gardenCurrentElement(String element) {
+    return 'Déblocage actuel : $element';
+  }
+
+  @override
+  String gardenCompletedMissions(int count) {
+    return 'Missions validées : $count';
+  }
+
+  @override
+  String gardenNextUnlock(int count) {
+    return 'Prochain déblocage à $count missions';
+  }
+
+  @override
+  String get gardenElementSeedling => 'Pousse';
+
+  @override
+  String get gardenElementFlower => 'Fleur';
+
+  @override
+  String get gardenElementShrub => 'Arbuste';
+
+  @override
+  String get gardenElementTree => 'Arbre';
+
+  @override
+  String get gardenElementRiver => 'Rivière';
+
+  @override
+  String get gardenElementAnimals => 'Animaux';
+
+  @override
+  String get gardenElementLandscape => 'Paysage';
+
+  @override
   String get editSheetTitle => 'Modifier la préoccupation';
 
   @override

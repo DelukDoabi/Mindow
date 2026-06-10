@@ -193,7 +193,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: BackpackWidget(onTap: _scrollListToTop),
               ),
               const SizedBox(height: AuroreSpacing.md),
-              const StatPillRow(),
+              StatPillRow(
+                onTap: () => context.go(Routes.garden),
+              ),
               const SizedBox(height: AuroreSpacing.md),
               aiConsentGranted.maybeWhen(
                 data: (granted) => granted && !isSignedIn

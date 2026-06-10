@@ -85,6 +85,45 @@
   "analysisDeferredBody": "Tes entrées sont sauvegardées. Connecte-toi pour lancer l'analyse IA.",
   "analysisDeferredCreateAccount": "Créer mon compte",
   "analysisDeferredSignIn": "Me connecter",
+  "gardenTitle": "Jardin mental",
+  "gardenSubtitle": "Chaque mission validée fait grandir ton jardin.",
+  "gardenCurrentElement": "Déblocage actuel : {element}",
+  "@gardenCurrentElement": {
+    "description": "Libellé de l'élément du jardin actuellement débloqué",
+    "placeholders": {
+      "element": {
+        "type": "String",
+        "description": "Nom localisé de l'élément actuellement débloqué"
+      }
+    }
+  },
+  "gardenCompletedMissions": "Missions validées : {count}",
+  "@gardenCompletedMissions": {
+    "description": "Nombre de missions validées utilisées pour la progression",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Nombre total de missions validées"
+      }
+    }
+  },
+  "gardenNextUnlock": "Prochain déblocage à {count} missions",
+  "@gardenNextUnlock": {
+    "description": "Indication du prochain palier pour débloquer un nouvel élément du jardin",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Nombre requis de missions validées pour le prochain déblocage"
+      }
+    }
+  },
+  "gardenElementSeedling": "Pousse",
+  "gardenElementFlower": "Fleur",
+  "gardenElementShrub": "Arbuste",
+  "gardenElementTree": "Arbre",
+  "gardenElementRiver": "Rivière",
+  "gardenElementAnimals": "Animaux",
+  "gardenElementLandscape": "Paysage",
   "editSheetTitle": "Modifier la préoccupation",
   "editSheetSaveButton": "Enregistrer",
   "editSheetDeleteButton": "Supprimer",

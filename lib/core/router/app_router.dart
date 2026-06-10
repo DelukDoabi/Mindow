@@ -4,6 +4,7 @@ import 'package:mindow/features/auth/account_screen.dart';
 import 'package:mindow/features/auth/auth_controller.dart';
 import 'package:mindow/features/auth/auth_repository.dart';
 import 'package:mindow/features/brain_dump/presentation/home_screen.dart';
+import 'package:mindow/features/gamification/presentation/garden_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_consent_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_context_screen.dart';
 import 'package:mindow/features/onboarding/onboarding_mind_volume_screen.dart';
@@ -24,6 +25,7 @@ abstract final class Routes {
   static const String onboardingConsent = '/onboarding/consent';
   static const String account = '/onboarding/account';
   static const String home = '/';
+  static const String garden = '/garden';
   static const String settings = '/settings';
 }
 
@@ -88,6 +90,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: Routes.home,
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: Routes.garden,
+        builder: (context, state) => const GardenScreen(),
       ),
       GoRoute(
         path: Routes.settings,

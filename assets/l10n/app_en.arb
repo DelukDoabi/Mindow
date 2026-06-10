@@ -328,6 +328,51 @@
   "analysisDeferredBody": "Your entries are saved. Sign in to start AI analysis.",
   "analysisDeferredCreateAccount": "Create my account",
   "analysisDeferredSignIn": "Sign in",
+  "gardenTitle": "Mental Garden",
+  "@gardenTitle": {
+    "description": "Title of the garden progression screen"
+  },
+  "gardenSubtitle": "Each validated mission helps your garden grow.",
+  "@gardenSubtitle": {
+    "description": "Subtitle explaining the progression concept on the garden screen"
+  },
+  "gardenCurrentElement": "Current unlock: {element}",
+  "@gardenCurrentElement": {
+    "description": "Current unlocked garden element label",
+    "placeholders": {
+      "element": {
+        "type": "String",
+        "description": "Localized label of the currently unlocked element"
+      }
+    }
+  },
+  "gardenCompletedMissions": "Validated missions: {count}",
+  "@gardenCompletedMissions": {
+    "description": "Count of validated missions used for progression",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Total number of validated missions"
+      }
+    }
+  },
+  "gardenNextUnlock": "Next unlock at {count} missions",
+  "@gardenNextUnlock": {
+    "description": "Hint showing the next threshold to unlock a new garden element",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Required number of validated missions for next unlock"
+      }
+    }
+  },
+  "gardenElementSeedling": "Seedling",
+  "gardenElementFlower": "Flower",
+  "gardenElementShrub": "Shrub",
+  "gardenElementTree": "Tree",
+  "gardenElementRiver": "River",
+  "gardenElementAnimals": "Animals",
+  "gardenElementLandscape": "Landscape",
   "editSheetTitle": "Edit preoccupation",
   "@editSheetTitle": {
     "description": "Title of the edit preoccupation bottom sheet"

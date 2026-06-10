@@ -14,7 +14,9 @@ import 'package:mindow/features/mental_load/mental_load_providers.dart';
 /// Loading / error states render a fixed-height placeholder so the layout
 /// does not shift once the data arrives.
 class StatPillRow extends ConsumerWidget {
-  const StatPillRow({super.key});
+  const StatPillRow({super.key, this.onTap});
+
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,25 +31,42 @@ class StatPillRow extends ConsumerWidget {
   }
 
   Widget _buildRow(int openCount, int kgFreed, AppLocalizations l10n) {
+    final row = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _StatPill(
+          value: '$openCount',
+          label: l10n.statPillOpenCountLabel,
+        ),
+        const SizedBox(width: AuroreSpacing.md),
+        _StatPill(
+          value: l10n.statPillKgFreedValue(kgFreed),
+          label: l10n.statPillKgFreedLabel,
+        ),
+      ],
+    );
+
+    final content = onTap == null
+        ? row
+        : Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(AuroreRadii.pill),
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: AuroreSpacing.xs),
+                child: row,
+              ),
+            ),
+          );
+
     return Semantics(
       label:
           '$openCount ${l10n.statPillOpenCountLabel}, '
           '${l10n.statPillKgFreedValue(kgFreed)} ${l10n.statPillKgFreedLabel}',
+      button: onTap != null,
       child: ExcludeSemantics(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _StatPill(
-              value: '$openCount',
-              label: l10n.statPillOpenCountLabel,
-            ),
-            const SizedBox(width: AuroreSpacing.md),
-            _StatPill(
-              value: l10n.statPillKgFreedValue(kgFreed),
-              label: l10n.statPillKgFreedLabel,
-            ),
-          ],
-        ),
+        child: content,
       ),
     );
   }

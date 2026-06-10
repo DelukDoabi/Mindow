@@ -608,6 +608,78 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get analysisDeferredSignIn;
 
+  /// Title of the garden progression screen
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Garden'**
+  String get gardenTitle;
+
+  /// Subtitle explaining the progression concept on the garden screen
+  ///
+  /// In en, this message translates to:
+  /// **'Each validated mission helps your garden grow.'**
+  String get gardenSubtitle;
+
+  /// Current unlocked garden element label
+  ///
+  /// In en, this message translates to:
+  /// **'Current unlock: {element}'**
+  String gardenCurrentElement(String element);
+
+  /// Count of validated missions used for progression
+  ///
+  /// In en, this message translates to:
+  /// **'Validated missions: {count}'**
+  String gardenCompletedMissions(int count);
+
+  /// Hint showing the next threshold to unlock a new garden element
+  ///
+  /// In en, this message translates to:
+  /// **'Next unlock at {count} missions'**
+  String gardenNextUnlock(int count);
+
+  /// No description provided for @gardenElementSeedling.
+  ///
+  /// In en, this message translates to:
+  /// **'Seedling'**
+  String get gardenElementSeedling;
+
+  /// No description provided for @gardenElementFlower.
+  ///
+  /// In en, this message translates to:
+  /// **'Flower'**
+  String get gardenElementFlower;
+
+  /// No description provided for @gardenElementShrub.
+  ///
+  /// In en, this message translates to:
+  /// **'Shrub'**
+  String get gardenElementShrub;
+
+  /// No description provided for @gardenElementTree.
+  ///
+  /// In en, this message translates to:
+  /// **'Tree'**
+  String get gardenElementTree;
+
+  /// No description provided for @gardenElementRiver.
+  ///
+  /// In en, this message translates to:
+  /// **'River'**
+  String get gardenElementRiver;
+
+  /// No description provided for @gardenElementAnimals.
+  ///
+  /// In en, this message translates to:
+  /// **'Animals'**
+  String get gardenElementAnimals;
+
+  /// No description provided for @gardenElementLandscape.
+  ///
+  /// In en, this message translates to:
+  /// **'Landscape'**
+  String get gardenElementLandscape;
+
   /// Title of the edit preoccupation bottom sheet
   ///
   /// In en, this message translates to:

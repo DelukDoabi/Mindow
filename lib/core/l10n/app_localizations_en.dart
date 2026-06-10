@@ -279,6 +279,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analysisDeferredSignIn => 'Sign in';
 
   @override
+  String get gardenTitle => 'Mental Garden';
+
+  @override
+  String get gardenSubtitle => 'Each validated mission helps your garden grow.';
+
+  @override
+  String gardenCurrentElement(String element) {
+    return 'Current unlock: $element';
+  }
+
+  @override
+  String gardenCompletedMissions(int count) {
+    return 'Validated missions: $count';
+  }
+
+  @override
+  String gardenNextUnlock(int count) {
+    return 'Next unlock at $count missions';
+  }
+
+  @override
+  String get gardenElementSeedling => 'Seedling';
+
+  @override
+  String get gardenElementFlower => 'Flower';
+
+  @override
+  String get gardenElementShrub => 'Shrub';
+
+  @override
+  String get gardenElementTree => 'Tree';
+
+  @override
+  String get gardenElementRiver => 'River';
+
+  @override
+  String get gardenElementAnimals => 'Animals';
+
+  @override
+  String get gardenElementLandscape => 'Landscape';
+
+  @override
   String get editSheetTitle => 'Edit preoccupation';
 
   @override
