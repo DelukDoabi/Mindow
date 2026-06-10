@@ -1,13 +1,7 @@
 // AI Analysis Edge Function with crisis-gate (FR-6, NFR-8).
 //
-// Provider auto-detection — the key present in the Edge runtime determines
-// which provider (and its endpoint) is used. Gemini is preferred over Groq
-// when both keys are set. The API key NEVER leaves the Edge runtime (OWASP).
-//
-// Supported providers (checked in order):
-//   1. Gemini  — GEMINI_API_KEY required; GEMINI_BASE_URL + GEMINI_MODEL optional
-//   2. Groq    — GROQ_API_KEY required; GROQ_MODEL optional
-//   3. Custom  — AI_API_KEY + AI_BASE_URL + AI_MODEL required
+// Provider: Groq — GROQ_API_KEY Edge secret required; GROQ_MODEL optional.
+// The API key NEVER leaves the Edge runtime (OWASP).
 //
 // Request:  { "content": string, "language": "fr" | "en" }
 // Response: { "is_crisis": true }
@@ -20,46 +14,15 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
 
 // ---------------------------------------------------------------------------
-// Provider resolution — key presence drives provider selection.
-// The key and its matching endpoint are always resolved together.
+// Groq configuration
 // ---------------------------------------------------------------------------
 
-const _geminiKey = Deno.env.get('GEMINI_API_KEY');
-const _groqKey   = Deno.env.get('GROQ_API_KEY');
-const _customKey = Deno.env.get('AI_API_KEY');
+const AI_API_KEY = Deno.env.get('GROQ_API_KEY');
+const MODEL      = Deno.env.get('GROQ_MODEL') ?? 'llama-3.3-70b-versatile';
+const CHAT_URL   = 'https://api.groq.com/openai/v1/chat/completions';
+const WEIGHT_MODEL_VERSION = `groq-${MODEL}-2026-06`;
 
-let AI_API_KEY:    string | undefined;
-let BASE_URL:      string;
-let MODEL:         string;
-let PROVIDER_NAME: string;
-
-if (_geminiKey) {
-  AI_API_KEY    = _geminiKey;
-  BASE_URL      = Deno.env.get('GEMINI_BASE_URL')
-                  ?? 'https://generativelanguage.googleapis.com/v1beta/openai';
-  MODEL         = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.0-flash';
-  PROVIDER_NAME = 'gemini';
-} else if (_groqKey) {
-  AI_API_KEY    = _groqKey;
-  BASE_URL      = 'https://api.groq.com/openai/v1';
-  MODEL         = Deno.env.get('GROQ_MODEL') ?? 'llama-3.3-70b-versatile';
-  PROVIDER_NAME = 'groq';
-} else if (_customKey) {
-  AI_API_KEY    = _customKey;
-  BASE_URL      = Deno.env.get('AI_BASE_URL') ?? 'https://api.openai.com/v1';
-  MODEL         = Deno.env.get('AI_MODEL')    ?? 'gpt-4o-mini';
-  PROVIDER_NAME = 'custom';
-} else {
-  AI_API_KEY    = undefined;
-  BASE_URL      = '';
-  MODEL         = '';
-  PROVIDER_NAME = 'none';
-}
-
-const CHAT_URL            = BASE_URL ? `${BASE_URL}/chat/completions` : '';
-const WEIGHT_MODEL_VERSION = `${PROVIDER_NAME}-${MODEL}-2026-06`;
-
-console.log(`[ai-analyze] provider=${PROVIDER_NAME} model=${MODEL} url=${CHAT_URL}`);
+console.log(`[ai-analyze] model=${MODEL}`);
 
 // ---------------------------------------------------------------------------
 // Domain constants
@@ -268,10 +231,7 @@ Deno.serve(async (req) => {
 
   // --- API key guard ---
   if (!AI_API_KEY) {
-    console.error(
-      '[ai-analyze] No AI API key found. ' +
-      'Set GEMINI_API_KEY, GROQ_API_KEY, or AI_API_KEY as an Edge Function secret.',
-    );
+    console.error('[ai-analyze] GROQ_API_KEY secret is not set.');
     return jsonResponse({ error: 'AI unavailable' }, 503);
   }
 
