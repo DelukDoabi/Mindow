@@ -58,3 +58,6 @@ jobs:
 
       - name: Deploy ai-analyze
         run: supabase functions deploy ai-analyze --project-ref "$SUPABASE_PROJECT_ID"
+
+      - name: Deploy mission-generate
+        run: supabase functions deploy mission-generate --project-ref "$SUPABASE_PROJECT_ID"

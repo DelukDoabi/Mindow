@@ -13,6 +13,9 @@ import 'package:mindow/core/sync/sync_providers.dart';
 import 'package:mindow/features/brain_dump/presentation/home_screen.dart';
 import 'package:mindow/features/mental_load/domain/weekly_progression_projection.dart';
 import 'package:mindow/features/mental_load/mental_load_providers.dart';
+import 'package:mindow/features/missions/domain/daily_mission.dart';
+import 'package:mindow/features/missions/missions_providers.dart';
+import 'package:mindow/features/missions/missions_repository.dart';
 
 /// A no-op [AiClient] so the screen's fire-and-forget analysis trigger never
 /// reaches the real Supabase transport in widget tests. Consent is off in these
@@ -54,7 +57,13 @@ void main() {
     }
   });
 
-  Future<void> pumpHome(WidgetTester tester) async {
+  Future<void> pumpHome(
+    WidgetTester tester, {
+    DailyMissionResult mission = const DailyMissionResult(
+      missionDate: '2026-06-10',
+      mission: null,
+    ),
+  }) async {
     // The default test viewport (800×600) is too short for the full Home
     // layout (hero + backpack + stat pills + list + capture bar). Use a
     // taller viewport that reflects real phone proportions.
@@ -84,6 +93,7 @@ void main() {
               WeeklyProgressionProjection(openCount: 0, kgFreedThisWeek: 0),
             ),
           ),
+          todayMissionProvider.overrideWithValue(AsyncValue.data(mission)),
         ],
         child: MaterialApp.router(
           routerConfig: router,
@@ -174,5 +184,36 @@ void main() {
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
     expect(button.onPressed, isNull);
     expect(box.length, 0);
+  });
+
+  testWidgets('renders mission card when a mission exists', (tester) async {
+    await pumpHome(
+      tester,
+      mission: DailyMissionResult(
+        missionDate: '2026-06-10',
+        mission: DailyMission(
+          id: 'm1',
+          preoccupationId: 'p1',
+          preoccupationContent: 'Appeler le dentiste',
+          missionDate: '2026-06-10',
+          estimatedKgGain: 6,
+          estimatedDurationMinutes: 15,
+          createdAt: DateTime.utc(2026, 6, 10),
+        ),
+      ),
+    );
+
+    expect(find.text('Mission du jour'), findsOneWidget);
+    expect(find.text('Appeler le dentiste'), findsOneWidget);
+    expect(find.text('Durée estimée : 15 min'), findsOneWidget);
+    expect(find.text('Soulagement estimé : 6 kg'), findsOneWidget);
+  });
+
+  testWidgets('renders gentle mission empty state when no mission exists', (
+    tester,
+  ) async {
+    await pumpHome(tester);
+
+    expect(find.text("Rien d'urgent aujourd'hui. Profite."), findsOneWidget);
   });
 }

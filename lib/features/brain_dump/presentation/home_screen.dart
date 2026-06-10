@@ -15,6 +15,8 @@ import 'package:mindow/features/brain_dump/presentation/edit_preoccupation_sheet
 import 'package:mindow/features/mental_load/presentation/backpack_widget.dart';
 import 'package:mindow/features/mental_load/presentation/mental_load_hero.dart';
 import 'package:mindow/features/mental_load/presentation/stat_pill_row.dart';
+import 'package:mindow/features/missions/missions_providers.dart';
+import 'package:mindow/features/missions/missions_repository.dart';
 
 /// The Mental Backpack home: the single place a user sets a worry down.
 ///
@@ -93,6 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
     final preoccupations = ref.watch(openPreoccupationsProvider);
+    final todayMission = ref.watch(todayMissionProvider);
 
     ref.listen<List<String>>(crisisAlertsProvider, (previous, next) {
       final previousIds = previous ?? const <String>[];
@@ -141,6 +144,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: AuroreSpacing.md),
               const StatPillRow(),
               const SizedBox(height: AuroreSpacing.lg),
+              _DailyMissionSection(mission: todayMission),
+              const SizedBox(height: AuroreSpacing.lg),
               Expanded(
                 child: preoccupations.when(
                   data: (items) => items.isEmpty
@@ -177,6 +182,94 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Text(l10n.captureSubmitButton),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DailyMissionSection extends StatelessWidget {
+  const _DailyMissionSection({required this.mission});
+
+  final AsyncValue<DailyMissionResult> mission;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final textTheme = Theme.of(context).textTheme;
+
+    return mission.when(
+      loading: () => const SizedBox(height: 88),
+      error: (_, _) => _buildEmptyCard(context, l10n, textTheme),
+      data: (result) {
+        final dailyMission = result.mission;
+        if (dailyMission == null) {
+          return _buildEmptyCard(context, l10n, textTheme);
+        }
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            color: AuroreColors.glass,
+            borderRadius: BorderRadius.circular(AuroreRadii.md),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(AuroreSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.dailyMissionTitle,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: AuroreSpacing.sm),
+                Text(
+                  dailyMission.preoccupationContent,
+                  style: textTheme.bodyLarge,
+                ),
+                const SizedBox(height: AuroreSpacing.md),
+                Text(
+                  l10n.dailyMissionEstimatedDuration(
+                    dailyMission.estimatedDurationMinutes,
+                  ),
+                  style: textTheme.labelMedium?.copyWith(
+                    color: AuroreColors.inkMuted,
+                  ),
+                ),
+                const SizedBox(height: AuroreSpacing.xs),
+                Text(
+                  l10n.dailyMissionEstimatedKgGain(
+                    dailyMission.estimatedKgGain,
+                  ),
+                  style: textTheme.labelMedium?.copyWith(
+                    color: AuroreColors.inkMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyCard(
+    BuildContext context,
+    AppLocalizations l10n,
+    TextTheme textTheme,
+  ) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AuroreColors.glass,
+        borderRadius: BorderRadius.circular(AuroreRadii.md),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AuroreSpacing.lg),
+        child: Text(
+          l10n.dailyMissionEmptyState,
+          style: textTheme.bodyLarge?.copyWith(
+            color: AuroreColors.inkMuted,
           ),
         ),
       ),

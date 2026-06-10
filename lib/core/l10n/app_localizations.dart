@@ -691,6 +691,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'freed this week'**
   String get statPillKgFreedLabel;
+
+  /// Title displayed above the single recommended mission card.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily mission'**
+  String get dailyMissionTitle;
+
+  /// Gentle empty state shown when no daily mission can be generated.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing urgent today. Enjoy.'**
+  String get dailyMissionEmptyState;
+
+  /// Estimated mission duration line in the mission card.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated duration: {minutes} min'**
+  String dailyMissionEstimatedDuration(int minutes);
+
+  /// Estimated kilograms of relief shown in the mission card.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated relief: {kg} kg'**
+  String dailyMissionEstimatedKgGain(int kg);
 }
 
 class _AppLocalizationsDelegate

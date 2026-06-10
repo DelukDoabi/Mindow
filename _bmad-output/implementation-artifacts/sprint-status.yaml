@@ -66,7 +66,7 @@ development_status:
 
   # Epic 3: Daily Mission, Validation & History
   epic-3: in-progress
-  3-1-generate-the-daily-mission: ready-for-dev
+  3-1-generate-the-daily-mission: done
   3-2-act-on-the-daily-mission: backlog
   3-3-validate-a-completed-mission: backlog
   3-4-view-victory-history: backlog

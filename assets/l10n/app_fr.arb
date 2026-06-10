@@ -146,5 +146,33 @@
   "statPillKgFreedLabel": "libérés cette semaine",
   "@statPillKgFreedLabel": {
     "description": "Muted label below the kg-freed this week stat pill."
+  },
+  "dailyMissionTitle": "Mission du jour",
+  "@dailyMissionTitle": {
+    "description": "Title displayed above the single recommended mission card."
+  },
+  "dailyMissionEmptyState": "Rien d'urgent aujourd'hui. Profite.",
+  "@dailyMissionEmptyState": {
+    "description": "Gentle empty state shown when no daily mission can be generated."
+  },
+  "dailyMissionEstimatedDuration": "Durée estimée : {minutes} min",
+  "@dailyMissionEstimatedDuration": {
+    "description": "Estimated mission duration line in the mission card.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "description": "Estimated mission duration in minutes."
+      }
+    }
+  },
+  "dailyMissionEstimatedKgGain": "Soulagement estimé : {kg} kg",
+  "@dailyMissionEstimatedKgGain": {
+    "description": "Estimated kilograms of relief shown in the mission card.",
+    "placeholders": {
+      "kg": {
+        "type": "int",
+        "description": "Estimated kilograms that could be relieved by completing the mission."
+      }
+    }
   }
 }

@@ -327,4 +327,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get statPillKgFreedLabel => 'libérés cette semaine';
+
+  @override
+  String get dailyMissionTitle => 'Mission du jour';
+
+  @override
+  String get dailyMissionEmptyState => 'Rien d\'urgent aujourd\'hui. Profite.';
+
+  @override
+  String dailyMissionEstimatedDuration(int minutes) {
+    return 'Durée estimée : $minutes min';
+  }
+
+  @override
+  String dailyMissionEstimatedKgGain(int kg) {
+    return 'Soulagement estimé : $kg kg';
+  }
 }
