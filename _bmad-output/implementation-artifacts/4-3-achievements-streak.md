@@ -4,7 +4,7 @@ baseline_commit: 2085a57
 
 # Story 4.3: Achievements & Streak
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -149,28 +149,28 @@ Below the existing level card, add:
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1 — Achievement domain model (AC: #1, #3)**
-  - [ ] Create `lib/features/gamification/domain/achievement_state.dart`
-  - [ ] Define `Achievement` enum (4 values: `firstVictory`, `tenKgFreed`, `hundredPreoccupations`, `thirtyDayStreak`)
-  - [ ] Define immutable `AchievementState` class with: `unlockedAchievements`, `currentStreak`, `totalValidatedMissions`, `totalKgFreed`, `totalCapturedPreoccupations`, `isUnlocked()` helper
-  - [ ] Implement `AchievementState.fromInputs({validatedEvents, capturedCount})` — pure deterministic factory: dedup validated events by `missionValidationKey`, sum kgFreed, compute streak, evaluate all 4 unlock conditions
-  - [ ] Implement `_computeStreak(Set<String> missionDates)` top-level function — sort descending, check today-or-yesterday anchor, count consecutive days backward
+- [x] **Task 1 — Achievement domain model (AC: #1, #3)**
+  - [x] Create `lib/features/gamification/domain/achievement_state.dart`
+  - [x] Define `Achievement` enum (4 values: `firstVictory`, `tenKgFreed`, `hundredPreoccupations`, `thirtyDayStreak`)
+  - [x] Define immutable `AchievementState` class with: `unlockedAchievements`, `currentStreak`, `totalValidatedMissions`, `totalKgFreed`, `totalCapturedPreoccupations`, `isUnlocked()` helper
+  - [x] Implement `AchievementState.fromInputs({validatedEvents, capturedCount})` — pure deterministic factory: dedup validated events by `missionValidationKey`, sum kgFreed, compute streak, evaluate all 4 unlock conditions
+  - [x] Implement `_computeStreak(Set<String> missionDates)` top-level function — sort descending, check today-or-yesterday anchor, count consecutive days backward
 
-- [ ] **Task 2 — Achievement projection providers (AC: #3)**
-  - [ ] Create `lib/features/gamification/achievement_providers.dart`
-  - [ ] Add `capturedPreoccupationsCountProvider` — `Provider<int>` watching `projectionRevisionProvider`, replays all events from `eventStoreProvider`, folds only `PreoccupationCapturedEvent` into `Set<String>` (unique aggregateIds), returns `set.length`
-  - [ ] Add `achievementStateProvider` — `Provider<AchievementState>` deriving from `missionValidatedEventsProvider` + `capturedPreoccupationsCountProvider`
+- [x] **Task 2 — Achievement projection providers (AC: #3)**
+  - [x] Create `lib/features/gamification/achievement_providers.dart`
+  - [x] Add `capturedPreoccupationsCountProvider` — `Provider<int>` watching `projectionRevisionProvider`, replays all events from `eventStoreProvider`, folds only `PreoccupationCapturedEvent` into `Set<String>` (unique aggregateIds), returns `set.length`
+  - [x] Add `achievementStateProvider` — `Provider<AchievementState>` deriving from `missionValidatedEventsProvider` + `capturedPreoccupationsCountProvider`
 
-- [ ] **Task 3 — GardenScreen UI update (AC: #4)**
-  - [ ] Read `lib/features/gamification/presentation/garden_screen.dart` fully before editing
-  - [ ] Add `achievementStateProvider` watch to `GardenScreen.build`
-  - [ ] Add streak section below the level card: display `l10n.achievementsStreakLabel(achievementState.currentStreak)`
-  - [ ] Add achievements section below streak: title row + 4 achievement cards in a `Column`
-  - [ ] Each card: use `DecoratedBox` with `AuroreColors.glass` background (matching existing style), display achievement title + description + locked/unlocked status label; locked cards render text in `AuroreColors.inkMuted`
-  - [ ] Add `_achievementTitle(l10n, Achievement)` and `_achievementDescription(l10n, Achievement)` private helpers (pattern mirrors `_levelTierLabel` / `_gardenElementLabel`)
+- [x] **Task 3 — GardenScreen UI update (AC: #4)**
+  - [x] Read `lib/features/gamification/presentation/garden_screen.dart` fully before editing
+  - [x] Add `achievementStateProvider` watch to `GardenScreen.build`
+  - [x] Add streak section below the level card: display `l10n.achievementsStreakLabel(achievementState.currentStreak)`
+  - [x] Add achievements section below streak: title row + 4 achievement cards in a `Column`
+  - [x] Each card: use `DecoratedBox` with `AuroreColors.glass` background (matching existing style), display achievement title + description + locked/unlocked status label; locked cards render text in `AuroreColors.inkMuted`
+  - [x] Add `_achievementTitle(l10n, Achievement)` and `_achievementDescription(l10n, Achievement)` private helpers (pattern mirrors `_levelTierLabel` / `_gardenElementLabel`)
 
-- [ ] **Task 4 — Localization (FR/EN)**
-  - [ ] Add to `assets/l10n/app_fr.arb`:
+- [x] **Task 4 — Localization (FR/EN)**
+  - [x] Add to `assets/l10n/app_fr.arb`:
     - `achievementsTitle`: "Accomplissements"
     - `achievementsStreakLabel` (int placeholder `count`): "Série en cours : {count} jour(s)"
     - `achievementFirstVictoryTitle`: "Première victoire"
@@ -183,11 +183,11 @@ Below the existing level card, add:
     - `achievementThirtyDayStreakDesc`: "Valide une mission chaque jour pendant 30 jours d'affilée"
     - `achievementUnlocked`: "Débloqué"
     - `achievementLocked`: "Pas encore débloqué"
-  - [ ] Add matching entries to `assets/l10n/app_en.arb` (with `@` descriptors)
-  - [ ] Run `flutter gen-l10n` to regenerate `lib/core/l10n/app_localizations*.dart`
+  - [x] Add matching entries to `assets/l10n/app_en.arb` (with `@` descriptors)
+  - [x] Run `flutter gen-l10n` to regenerate `lib/core/l10n/app_localizations*.dart`
 
-- [ ] **Task 5 — Tests**
-  - [ ] Create `test/features/gamification/domain/achievement_state_test.dart`:
+- [x] **Task 5 — Tests**
+  - [x] Create `test/features/gamification/domain/achievement_state_test.dart`:
     - Streak 0 with empty events
     - Streak 1 with one event dated today
     - Streak 1 with one event dated yesterday (streak still active, "not yet today" is fine)
@@ -199,11 +199,11 @@ Below the existing level card, add:
     - `tenKgFreed`: dedup — same (missionId, missionDate) only counted once
     - `hundredPreoccupations`: unlocks at 100 unique capturedCount, not at 99
     - `thirtyDayStreak`: unlocks at streak ≥ 30, not at 29
-  - [ ] Create `test/features/gamification/achievement_projection_test.dart`:
+  - [x] Create `test/features/gamification/achievement_projection_test.dart`:
     - `capturedPreoccupationsCountProvider` counts unique aggregateIds from `preoccupation.captured` only (ignores other event types)
     - `achievementStateProvider` derives correctly from both validated and captured inputs
     - Idempotent dedup for validated events: duplicate `(missionId, missionDate)` pairs do not double-count kgFreed
-  - [ ] Update `test/features/gamification/presentation/garden_screen_test.dart`:
+  - [x] Update `test/features/gamification/presentation/garden_screen_test.dart`:
     - Override `achievementStateProvider` with a stub state; verify streak section renders
     - Verify achievements section shows at least the achievements title
     - Ensure existing 4.1 garden and 4.2 level assertions still pass (non-regression)
