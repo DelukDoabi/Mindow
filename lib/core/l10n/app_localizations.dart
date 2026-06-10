@@ -680,6 +680,48 @@ abstract class AppLocalizations {
   /// **'Landscape'**
   String get gardenElementLandscape;
 
+  /// Current level label shown on the garden progression card
+  ///
+  /// In en, this message translates to:
+  /// **'Current level: {level}'**
+  String levelCurrentTier(String level);
+
+  /// Hint showing the mission count needed for next level
+  ///
+  /// In en, this message translates to:
+  /// **'Next level at {count} missions'**
+  String levelNextUnlock(int count);
+
+  /// No description provided for @levelTierExplorateur.
+  ///
+  /// In en, this message translates to:
+  /// **'Explorer'**
+  String get levelTierExplorateur;
+
+  /// No description provided for @levelTierAllegeur.
+  ///
+  /// In en, this message translates to:
+  /// **'Reliever'**
+  String get levelTierAllegeur;
+
+  /// No description provided for @levelTierEspritClair.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Mind'**
+  String get levelTierEspritClair;
+
+  /// No description provided for @levelTierEspritLeger.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mind'**
+  String get levelTierEspritLeger;
+
+  /// No description provided for @levelTierMaitreDuCalme.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm Master'**
+  String get levelTierMaitreDuCalme;
+
   /// Title of the edit preoccupation bottom sheet
   ///
   /// In en, this message translates to:

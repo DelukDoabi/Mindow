@@ -324,6 +324,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get gardenElementLandscape => 'Paysage';
 
   @override
+  String levelCurrentTier(String level) {
+    return 'Niveau actuel : $level';
+  }
+
+  @override
+  String levelNextUnlock(int count) {
+    return 'Prochain niveau à $count missions';
+  }
+
+  @override
+  String get levelTierExplorateur => 'Explorateur';
+
+  @override
+  String get levelTierAllegeur => 'Allégeur';
+
+  @override
+  String get levelTierEspritClair => 'Esprit Clair';
+
+  @override
+  String get levelTierEspritLeger => 'Esprit Léger';
+
+  @override
+  String get levelTierMaitreDuCalme => 'Maître du Calme';
+
+  @override
   String get editSheetTitle => 'Modifier la préoccupation';
 
   @override

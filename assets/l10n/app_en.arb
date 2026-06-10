@@ -373,6 +373,31 @@
   "gardenElementRiver": "River",
   "gardenElementAnimals": "Animals",
   "gardenElementLandscape": "Landscape",
+  "levelCurrentTier": "Current level: {level}",
+  "@levelCurrentTier": {
+    "description": "Current level label shown on the garden progression card",
+    "placeholders": {
+      "level": {
+        "type": "String",
+        "description": "Localized current level name"
+      }
+    }
+  },
+  "levelNextUnlock": "Next level at {count} missions",
+  "@levelNextUnlock": {
+    "description": "Hint showing the mission count needed for next level",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Required number of missions for the next level"
+      }
+    }
+  },
+  "levelTierExplorateur": "Explorer",
+  "levelTierAllegeur": "Reliever",
+  "levelTierEspritClair": "Clear Mind",
+  "levelTierEspritLeger": "Light Mind",
+  "levelTierMaitreDuCalme": "Calm Master",
   "editSheetTitle": "Edit preoccupation",
   "@editSheetTitle": {
     "description": "Title of the edit preoccupation bottom sheet"

@@ -6,10 +6,10 @@ import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/gamification/domain/garden_state.dart';
 import 'package:mindow/features/missions/domain/mission_validated_event.dart';
 
-final gardenStateProvider = Provider<GardenState>((ref) {
+final missionValidatedEventsProvider = Provider<List<MissionValidatedEvent>>((ref) {
   ref.watch(projectionRevisionProvider);
 
-  final validatedEvents = const ReplayEngine().replay<List<MissionValidatedEvent>>(
+  return const ReplayEngine().replay<List<MissionValidatedEvent>>(
     initialState: <MissionValidatedEvent>[],
     envelopes: ref
         .watch(eventStoreProvider)
@@ -21,6 +21,9 @@ final gardenStateProvider = Provider<GardenState>((ref) {
       return <MissionValidatedEvent>[...state, event];
     },
   );
+});
 
+final gardenStateProvider = Provider<GardenState>((ref) {
+  final validatedEvents = ref.watch(missionValidatedEventsProvider);
   return gardenStateFromMissionValidatedEvents(validatedEvents);
 });

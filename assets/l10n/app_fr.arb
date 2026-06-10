@@ -124,6 +124,31 @@
   "gardenElementRiver": "Rivière",
   "gardenElementAnimals": "Animaux",
   "gardenElementLandscape": "Paysage",
+  "levelCurrentTier": "Niveau actuel : {level}",
+  "@levelCurrentTier": {
+    "description": "Libellé du niveau actuel affiché sur la carte de progression du jardin",
+    "placeholders": {
+      "level": {
+        "type": "String",
+        "description": "Nom localisé du niveau actuel"
+      }
+    }
+  },
+  "levelNextUnlock": "Prochain niveau à {count} missions",
+  "@levelNextUnlock": {
+    "description": "Indication du nombre de missions requis pour le niveau suivant",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Nombre requis de missions pour le prochain niveau"
+      }
+    }
+  },
+  "levelTierExplorateur": "Explorateur",
+  "levelTierAllegeur": "Allégeur",
+  "levelTierEspritClair": "Esprit Clair",
+  "levelTierEspritLeger": "Esprit Léger",
+  "levelTierMaitreDuCalme": "Maître du Calme",
   "editSheetTitle": "Modifier la préoccupation",
   "editSheetSaveButton": "Enregistrer",
   "editSheetDeleteButton": "Supprimer",

@@ -5,7 +5,9 @@ import 'package:mindow/core/design_system/aurore_spacing.dart';
 import 'package:mindow/core/design_system/widgets/aurore_canvas.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/features/gamification/domain/garden_state.dart';
+import 'package:mindow/features/gamification/domain/level_state.dart';
 import 'package:mindow/features/gamification/garden_providers.dart';
+import 'package:mindow/features/gamification/level_providers.dart';
 
 class GardenScreen extends ConsumerWidget {
   const GardenScreen({super.key});
@@ -13,7 +15,8 @@ class GardenScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final state = ref.watch(gardenStateProvider);
+    final gardenState = ref.watch(gardenStateProvider);
+    final levelState = ref.watch(levelStateProvider);
     final textTheme = Theme.of(context).textTheme;
 
     return AuroreCanvas(
@@ -47,7 +50,7 @@ class GardenScreen extends ConsumerWidget {
                     children: [
                       Text(
                         l10n.gardenCurrentElement(
-                          _gardenElementLabel(l10n, state.currentElement),
+                          _gardenElementLabel(l10n, gardenState.currentElement),
                         ),
                         style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
@@ -55,13 +58,31 @@ class GardenScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: AuroreSpacing.xs),
                       Text(
-                        l10n.gardenCompletedMissions(state.completedMissions),
+                        l10n.gardenCompletedMissions(gardenState.completedMissions),
                         style: textTheme.bodyMedium,
                       ),
-                      if (state.nextUnlockAt > 0) ...[
+                      if (gardenState.nextUnlockAt > 0) ...[
                         const SizedBox(height: AuroreSpacing.xs),
                         Text(
-                          l10n.gardenNextUnlock(state.nextUnlockAt),
+                          l10n.gardenNextUnlock(gardenState.nextUnlockAt),
+                          style: textTheme.bodySmall?.copyWith(
+                            color: AuroreColors.inkMuted,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: AuroreSpacing.md),
+                      Text(
+                        l10n.levelCurrentTier(
+                          _levelTierLabel(l10n, levelState.currentTier),
+                        ),
+                        style: textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if (levelState.nextUnlockAt > 0) ...[
+                        const SizedBox(height: AuroreSpacing.xs),
+                        Text(
+                          l10n.levelNextUnlock(levelState.nextUnlockAt),
                           style: textTheme.bodySmall?.copyWith(
                             color: AuroreColors.inkMuted,
                           ),
@@ -77,6 +98,16 @@ class GardenScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+String _levelTierLabel(AppLocalizations l10n, LevelTier tier) {
+  return switch (tier) {
+    LevelTier.explorateur => l10n.levelTierExplorateur,
+    LevelTier.allegeur => l10n.levelTierAllegeur,
+    LevelTier.espritClair => l10n.levelTierEspritClair,
+    LevelTier.espritLeger => l10n.levelTierEspritLeger,
+    LevelTier.maitreDuCalme => l10n.levelTierMaitreDuCalme,
+  };
 }
 
 String _gardenElementLabel(AppLocalizations l10n, GardenElement element) {
