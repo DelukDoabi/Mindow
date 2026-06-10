@@ -65,7 +65,7 @@ development_status:
   epic-2-retrospective: optional
 
   # Epic 3: Daily Mission, Validation & History
-  epic-3: in-progress
+  epic-3: done
   3-1-generate-the-daily-mission: done
   3-2-act-on-the-daily-mission: done
   3-3-validate-a-completed-mission: done
@@ -76,7 +76,7 @@ development_status:
   epic-4: in-progress
   4-1-mental-garden-growth: review
   4-2-level-progression: review
-  4-3-achievements-streak: backlog
+  4-3-achievements-streak: ready-for-dev
   epic-4-retrospective: optional
 
   # Epic 5: Engagement Notifications
