@@ -81,7 +81,7 @@ development_status:
 
   # Epic 5: Engagement Notifications
   epic-5: in-progress
-  5-1-notification-permission-fcm-setup: in-progress
+  5-1-notification-permission-fcm-setup: review
   5-2-engagement-notification-types: backlog
   5-3-notification-preferences: backlog
   epic-5-retrospective: optional
