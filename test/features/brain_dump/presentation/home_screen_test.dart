@@ -207,6 +207,85 @@ void main() {
     expect(find.text('Appeler le dentiste'), findsOneWidget);
     expect(find.text('Durée estimée : 15 min'), findsOneWidget);
     expect(find.text('Soulagement estimé : 6 kg'), findsOneWidget);
+    expect(find.text('Commencer'), findsOneWidget);
+    expect(find.text('Plus tard'), findsOneWidget);
+    expect(find.text("C'est fait ✓"), findsOneWidget);
+  });
+
+  testWidgets('start action opens mission context sheet', (tester) async {
+    await pumpHome(
+      tester,
+      mission: DailyMissionResult(
+        missionDate: '2026-06-10',
+        mission: DailyMission(
+          id: 'm1',
+          preoccupationId: 'p1',
+          preoccupationContent: 'Appeler le dentiste',
+          missionDate: '2026-06-10',
+          estimatedKgGain: 6,
+          estimatedDurationMinutes: 15,
+          createdAt: DateTime.utc(2026, 6, 10),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Commencer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ta mission du jour'), findsOneWidget);
+    expect(find.text('Estime: 15 min'), findsOneWidget);
+  });
+
+  testWidgets('defer action hides current mission and shows feedback', (
+    tester,
+  ) async {
+    await pumpHome(
+      tester,
+      mission: DailyMissionResult(
+        missionDate: '2026-06-10',
+        mission: DailyMission(
+          id: 'm1',
+          preoccupationId: 'p1',
+          preoccupationContent: 'Appeler le dentiste',
+          missionDate: '2026-06-10',
+          estimatedKgGain: 6,
+          estimatedDurationMinutes: 15,
+          createdAt: DateTime.utc(2026, 6, 10),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Plus tard'));
+    await tester.pump();
+
+    expect(
+      find.text('Pas de souci. On te reproposera quelque chose plus tard.'),
+      findsOneWidget,
+    );
+    expect(find.text("Rien d'urgent aujourd'hui. Profite."), findsOneWidget);
+  });
+
+  testWidgets('done action triggers validation feedback', (tester) async {
+    await pumpHome(
+      tester,
+      mission: DailyMissionResult(
+        missionDate: '2026-06-10',
+        mission: DailyMission(
+          id: 'm1',
+          preoccupationId: 'p1',
+          preoccupationContent: 'Appeler le dentiste',
+          missionDate: '2026-06-10',
+          estimatedKgGain: 6,
+          estimatedDurationMinutes: 15,
+          createdAt: DateTime.utc(2026, 6, 10),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text("C'est fait ✓"));
+    await tester.pump();
+
+    expect(find.text('Parfait. On passe a la validation.'), findsOneWidget);
   });
 
   testWidgets('renders gentle mission empty state when no mission exists', (

@@ -189,13 +189,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class _DailyMissionSection extends StatelessWidget {
+class _DailyMissionSection extends ConsumerWidget {
   const _DailyMissionSection({required this.mission});
 
   final AsyncValue<DailyMissionResult> mission;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
 
@@ -207,6 +207,10 @@ class _DailyMissionSection extends StatelessWidget {
         if (dailyMission == null) {
           return _buildEmptyCard(context, l10n, textTheme);
         }
+        if (isMissionDeferred(ref, dailyMission)) {
+          return _buildEmptyCard(context, l10n, textTheme);
+        }
+
         return DecoratedBox(
           decoration: BoxDecoration(
             color: AuroreColors.glass,
@@ -246,6 +250,58 @@ class _DailyMissionSection extends StatelessWidget {
                     color: AuroreColors.inkMuted,
                   ),
                 ),
+                const SizedBox(height: AuroreSpacing.md),
+                Row(
+                  children: [
+                    OutlinedButton(
+                      onPressed: () {
+                        unawaited(
+                          showModalBottomSheet<void>(
+                            context: context,
+                            builder: (_) => _MissionContextSheet(
+                              content: dailyMission.preoccupationContent,
+                              title: l10n.dailyMissionContextTitle,
+                              subtitle: l10n.dailyMissionContextSubtitle(
+                                dailyMission.estimatedDurationMinutes,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text(l10n.dailyMissionStartAction),
+                    ),
+                    const SizedBox(width: AuroreSpacing.sm),
+                    TextButton(
+                      onPressed: () {
+                        deferMission(ref, dailyMission);
+                        ScaffoldMessenger.of(context)
+                          ..clearSnackBars()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.dailyMissionDeferredNote),
+                            ),
+                          );
+                      },
+                      child: Text(l10n.dailyMissionDeferAction),
+                    ),
+                    const Spacer(),
+                    FilledButton(
+                      onPressed: () {
+                        requestMissionValidation(ref, dailyMission);
+                        ScaffoldMessenger.of(context)
+                          ..clearSnackBars()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                l10n.dailyMissionValidationTriggered,
+                              ),
+                            ),
+                          );
+                      },
+                      child: Text(l10n.dailyMissionDoneAction),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -271,6 +327,44 @@ class _DailyMissionSection extends StatelessWidget {
           style: textTheme.bodyLarge?.copyWith(
             color: AuroreColors.inkMuted,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MissionContextSheet extends StatelessWidget {
+  const _MissionContextSheet({
+    required this.title,
+    required this.subtitle,
+    required this.content,
+  });
+
+  final String title;
+  final String subtitle;
+  final String content;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(AuroreSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: AuroreSpacing.sm),
+            Text(subtitle, style: textTheme.labelMedium),
+            const SizedBox(height: AuroreSpacing.lg),
+            Text(content, style: textTheme.bodyLarge),
+          ],
         ),
       ),
     );

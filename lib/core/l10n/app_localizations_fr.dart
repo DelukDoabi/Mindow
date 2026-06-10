@@ -343,4 +343,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String dailyMissionEstimatedKgGain(int kg) {
     return 'Soulagement estimé : $kg kg';
   }
+
+  @override
+  String get dailyMissionStartAction => 'Commencer';
+
+  @override
+  String get dailyMissionDeferAction => 'Plus tard';
+
+  @override
+  String get dailyMissionDoneAction => 'C\'est fait ✓';
+
+  @override
+  String get dailyMissionDeferredNote =>
+      'Pas de souci. On te reproposera quelque chose plus tard.';
+
+  @override
+  String get dailyMissionValidationTriggered =>
+      'Parfait. On passe a la validation.';
+
+  @override
+  String get dailyMissionContextTitle => 'Ta mission du jour';
+
+  @override
+  String dailyMissionContextSubtitle(int minutes) {
+    return 'Estime: $minutes min';
+  }
 }

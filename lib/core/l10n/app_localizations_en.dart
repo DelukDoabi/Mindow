@@ -341,4 +341,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String dailyMissionEstimatedKgGain(int kg) {
     return 'Estimated relief: $kg kg';
   }
+
+  @override
+  String get dailyMissionStartAction => 'Start';
+
+  @override
+  String get dailyMissionDeferAction => 'Later';
+
+  @override
+  String get dailyMissionDoneAction => 'Done ✓';
+
+  @override
+  String get dailyMissionDeferredNote =>
+      'No worries. We\'ll suggest something again later.';
+
+  @override
+  String get dailyMissionValidationTriggered => 'Great. Moving to validation.';
+
+  @override
+  String get dailyMissionContextTitle => 'Your mission today';
+
+  @override
+  String dailyMissionContextSubtitle(int minutes) {
+    return 'Estimate: $minutes min';
+  }
 }

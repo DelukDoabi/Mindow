@@ -441,5 +441,39 @@
         "description": "Estimated kilograms that could be relieved by completing the mission."
       }
     }
+  },
+  "dailyMissionStartAction": "Start",
+  "@dailyMissionStartAction": {
+    "description": "Secondary action to start the daily mission context."
+  },
+  "dailyMissionDeferAction": "Later",
+  "@dailyMissionDeferAction": {
+    "description": "Secondary penalty-free action to defer the daily mission."
+  },
+  "dailyMissionDoneAction": "Done ✓",
+  "@dailyMissionDoneAction": {
+    "description": "Primary action on the mission card to trigger validation."
+  },
+  "dailyMissionDeferredNote": "No worries. We'll suggest something again later.",
+  "@dailyMissionDeferredNote": {
+    "description": "Friendly feedback shown after deferring a daily mission."
+  },
+  "dailyMissionValidationTriggered": "Great. Moving to validation.",
+  "@dailyMissionValidationTriggered": {
+    "description": "Feedback shown after tapping done on the daily mission card."
+  },
+  "dailyMissionContextTitle": "Your mission today",
+  "@dailyMissionContextTitle": {
+    "description": "Bottom sheet title shown when the user taps Start on the mission card."
+  },
+  "dailyMissionContextSubtitle": "Estimate: {minutes} min",
+  "@dailyMissionContextSubtitle": {
+    "description": "Bottom sheet subtitle showing estimated mission duration.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "description": "Estimated mission duration in minutes."
+      }
+    }
   }
 }

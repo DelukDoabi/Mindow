@@ -715,6 +715,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Estimated relief: {kg} kg'**
   String dailyMissionEstimatedKgGain(int kg);
+
+  /// Secondary action to start the daily mission context.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get dailyMissionStartAction;
+
+  /// Secondary penalty-free action to defer the daily mission.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get dailyMissionDeferAction;
+
+  /// Primary action on the mission card to trigger validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Done ✓'**
+  String get dailyMissionDoneAction;
+
+  /// Friendly feedback shown after deferring a daily mission.
+  ///
+  /// In en, this message translates to:
+  /// **'No worries. We\'ll suggest something again later.'**
+  String get dailyMissionDeferredNote;
+
+  /// Feedback shown after tapping done on the daily mission card.
+  ///
+  /// In en, this message translates to:
+  /// **'Great. Moving to validation.'**
+  String get dailyMissionValidationTriggered;
+
+  /// Bottom sheet title shown when the user taps Start on the mission card.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mission today'**
+  String get dailyMissionContextTitle;
+
+  /// Bottom sheet subtitle showing estimated mission duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate: {minutes} min'**
+  String dailyMissionContextSubtitle(int minutes);
 }
 
 class _AppLocalizationsDelegate
