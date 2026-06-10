@@ -84,3 +84,11 @@ final onboardingCompleteProvider = Provider<bool>(
     'onboardingCompleteProvider seeded in bootstrap',
   ),
 );
+
+/// Whether AI consent is currently granted on this device.
+///
+/// This is consumed by Home to explain deferred analysis when capture is
+/// available but authentication is still missing.
+final aiConsentGrantedProvider = FutureProvider<bool>(
+  (ref) => ref.read(onboardingRepositoryProvider).isAiConsentGranted(),
+);

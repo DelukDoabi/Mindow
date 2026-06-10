@@ -324,6 +324,10 @@
   "@analysisNoConsentNote": {
     "description": "Note shown when AI analysis is skipped because consent is off"
   },
+  "analysisDeferredTitle": "AI analysis is waiting",
+  "analysisDeferredBody": "Your entries are saved. Sign in to start AI analysis.",
+  "analysisDeferredCreateAccount": "Create my account",
+  "analysisDeferredSignIn": "Sign in",
   "editSheetTitle": "Edit preoccupation",
   "@editSheetTitle": {
     "description": "Title of the edit preoccupation bottom sheet"

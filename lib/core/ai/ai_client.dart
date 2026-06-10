@@ -75,6 +75,7 @@ class AiClient {
     required String content,
     required String languageCode,
   }) async {
+    final session = _supabase.auth.currentSession;
     final FunctionResponse response;
     try {
       response = await _supabase.functions.invoke(
@@ -83,6 +84,11 @@ class AiClient {
           'content': content,
           'language': languageCode,
         },
+        headers: session == null
+            ? null
+            : <String, String>{
+                'Authorization': 'Bearer ${session.accessToken}',
+              },
       );
     } on FunctionException catch (_) {
       // Never leak the transport exception; map onto the domain taxonomy.

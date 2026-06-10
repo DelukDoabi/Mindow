@@ -8,6 +8,7 @@ import 'package:mindow/features/brain_dump/domain/preoccupation_captured_event.d
 import 'package:mindow/features/brain_dump/domain/preoccupation_deleted_event.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation_updated_event.dart';
 import 'package:mindow/features/brain_dump/domain/weight_assigned_event.dart';
+import 'package:mindow/features/auth/auth_repository.dart';
 import 'package:mindow/features/missions/domain/mission_validated_event.dart';
 import 'package:mindow/features/onboarding/onboarding_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -91,6 +92,8 @@ AnalysisService analysisService(Ref ref) => AnalysisService(
   aiClient: ref.watch(aiClientProvider),
   onboardingRepository: ref.watch(onboardingRepositoryProvider),
   syncQueue: ref.watch(syncQueueProvider),
+  isAuthenticated: () =>
+      ref.read(authRepositoryProvider).currentSnapshot.isSignedIn,
   readPending: () => ref
       .read(brainDumpRepositoryProvider)
       .getOpenPreoccupations()

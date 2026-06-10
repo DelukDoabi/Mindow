@@ -8,6 +8,7 @@ import 'package:mindow/core/design_system/aurore_spacing.dart';
 import 'package:mindow/core/design_system/widgets/aurore_canvas.dart';
 import 'package:mindow/core/l10n/app_localizations.dart';
 import 'package:mindow/core/router/app_router.dart';
+import 'package:mindow/features/auth/auth_repository.dart';
 import 'package:mindow/features/brain_dump/brain_dump_providers.dart';
 import 'package:mindow/features/brain_dump/domain/preoccupation.dart';
 import 'package:mindow/features/brain_dump/presentation/crisis_support_view.dart';
@@ -17,6 +18,7 @@ import 'package:mindow/features/mental_load/presentation/mental_load_hero.dart';
 import 'package:mindow/features/mental_load/presentation/stat_pill_row.dart';
 import 'package:mindow/features/missions/missions_providers.dart';
 import 'package:mindow/features/missions/missions_repository.dart';
+import 'package:mindow/features/onboarding/onboarding_repository.dart';
 
 /// The Mental Backpack home: the single place a user sets a worry down.
 ///
@@ -131,6 +133,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final preoccupations = ref.watch(openPreoccupationsProvider);
     final todayMission = ref.watch(todayMissionProvider);
     final victories = ref.watch(missionVictoriesProvider);
+    var isSignedIn = false;
+    try {
+      isSignedIn = ref.watch(authRepositoryProvider).currentSnapshot.isSignedIn;
+    } catch (_) {
+      // Home must keep rendering in tests/UI-only contexts where auth/env
+      // providers are intentionally not wired.
+      isSignedIn = false;
+    }
+    final aiConsentGranted = ref.watch(aiConsentGrantedProvider);
 
     ref.listen<List<String>>(crisisAlertsProvider, (previous, next) {
       final previousIds = previous ?? const <String>[];
@@ -183,6 +194,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const SizedBox(height: AuroreSpacing.md),
               const StatPillRow(),
+              const SizedBox(height: AuroreSpacing.md),
+              aiConsentGranted.maybeWhen(
+                data: (granted) => granted && !isSignedIn
+                    ? _AnalysisDeferredBanner(
+                        title: l10n.analysisDeferredTitle,
+                        body: l10n.analysisDeferredBody,
+                        createAccountLabel: l10n.analysisDeferredCreateAccount,
+                        signInLabel: l10n.analysisDeferredSignIn,
+                      )
+                    : const SizedBox.shrink(),
+                orElse: () => const SizedBox.shrink(),
+              ),
               const SizedBox(height: AuroreSpacing.lg),
               _DailyMissionSection(mission: todayMission),
               const SizedBox(height: AuroreSpacing.sm),
@@ -225,6 +248,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnalysisDeferredBanner extends StatelessWidget {
+  const _AnalysisDeferredBanner({
+    required this.title,
+    required this.body,
+    required this.createAccountLabel,
+    required this.signInLabel,
+  });
+
+  final String title;
+  final String body;
+  final String createAccountLabel;
+  final String signInLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AuroreColors.glass,
+        borderRadius: BorderRadius.circular(AuroreRadii.md),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AuroreSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: AuroreSpacing.xs),
+            Text(
+              body,
+              style: textTheme.bodyMedium?.copyWith(
+                color: AuroreColors.inkMuted,
+              ),
+            ),
+            const SizedBox(height: AuroreSpacing.sm),
+            Wrap(
+              spacing: AuroreSpacing.sm,
+              runSpacing: AuroreSpacing.xs,
+              children: [
+                FilledButton(
+                  onPressed: () => context.go(Routes.account),
+                  child: Text(createAccountLabel),
+                ),
+                OutlinedButton(
+                  onPressed: () => context.go(Routes.account),
+                  child: Text(signInLabel),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

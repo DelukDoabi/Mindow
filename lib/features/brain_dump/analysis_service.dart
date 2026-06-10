@@ -25,6 +25,9 @@ enum AnalysisOutcome {
   /// error (AC3).
   skippedNoConsent,
 
+  /// The user is not authenticated yet; analysis is deferred.
+  skippedNoAuth,
+
   /// AI failed past the retry budget; a neutral fallback weight was emitted.
   fallback,
 
@@ -57,6 +60,7 @@ class AnalysisService {
     required OnboardingRepository onboardingRepository,
     required SyncQueue syncQueue,
     required List<Preoccupation> Function() readPending,
+    bool Function() isAuthenticated = _alwaysAuthenticated,
     void Function(String id)? onCrisis,
     void Function()? onProjectionChanged,
     String languageCode = 'fr',
@@ -68,6 +72,7 @@ class AnalysisService {
        _onboarding = onboardingRepository,
        _syncQueue = syncQueue,
        _readPending = readPending,
+      _isAuthenticated = isAuthenticated,
        _onCrisis = onCrisis,
        _onProjectionChanged = onProjectionChanged,
        _languageCode = languageCode,
@@ -80,6 +85,7 @@ class AnalysisService {
   final OnboardingRepository _onboarding;
   final SyncQueue _syncQueue;
   final List<Preoccupation> Function() _readPending;
+  final bool Function() _isAuthenticated;
   final void Function(String id)? _onCrisis;
   final void Function()? _onProjectionChanged;
   final String _languageCode;
@@ -98,6 +104,7 @@ class AnalysisService {
   /// analyzed fire-and-forget so one slow round-trip never blocks the others.
   Future<void> analyzePendingPreoccupations() async {
     if (!await _onboarding.isAiConsentGranted()) return;
+    if (!_isAuthenticated()) return;
     for (final preoccupation in _readPending()) {
       if (_inFlight.contains(preoccupation.id)) continue;
       // Intentionally not awaited: independent items analyze in parallel.
@@ -121,6 +128,9 @@ class AnalysisService {
     if (_inFlight.contains(id)) return AnalysisOutcome.skippedInFlight;
     if (!await _onboarding.isAiConsentGranted()) {
       return AnalysisOutcome.skippedNoConsent;
+    }
+    if (!_isAuthenticated()) {
+      return AnalysisOutcome.skippedNoAuth;
     }
 
     _inFlight.add(id);
@@ -198,3 +208,5 @@ class AnalysisService {
     _onProjectionChanged?.call();
   }
 }
+
+bool _alwaysAuthenticated() => true;

@@ -9,10 +9,9 @@
 // `{ category, mental_weight_kg, effort_score, estimated_duration_minutes }`,
 // with `weight_model_version` stamped server-side so weights stay comparable.
 //
-// Provider: Google Gemini Flash, reached through its OpenAI-compatible Chat
-// Completions endpoint so the request/response shape matches the rest of the
-// code. The model and base URL are env-overridable, so the provider can be
-// swapped (any OpenAI-compatible API) without touching this file.
+// Provider: Configurable OpenAI-compatible API (Groq, Gemini, etc).
+// The model API key lives ONLY here in the Edge runtime (AC1) - the client
+// never sees it. The provider, model and base URL are env-overridable.
 //
 // Request:  { "content": string, "language": "fr" | "en" }
 // Response: { "is_crisis": true }
@@ -20,22 +19,43 @@
 //             "estimated_duration_minutes", "weight_model_version" }
 //
 // Deploy: `supabase functions deploy ai-analyze` (CI only on this network).
-// Requires the `GEMINI_API_KEY` Edge secret.
+// Requires either `GROQ_API_KEY`, `GEMINI_API_KEY` or custom `AI_API_KEY` Edge secret.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
 
-// Gemini reached via its OpenAI-compatible surface. Base URL and model are
-// env-overridable so the provider/model can change without a code edit.
-const MODEL = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.0-flash';
-const BASE_URL =
-  Deno.env.get('GEMINI_BASE_URL') ??
-  'https://generativelanguage.googleapis.com/v1beta/openai';
+// Detect provider from env variables. Groq takes precedence, then Gemini, then custom.
+const AI_API_KEY =
+  Deno.env.get('GROQ_API_KEY') ??
+  Deno.env.get('GEMINI_API_KEY') ??
+  Deno.env.get('AI_API_KEY');
+
+const AI_PROVIDER = Deno.env.get('AI_PROVIDER') ?? 'groq';
+
+// Default model depends on provider
+const DEFAULT_MODEL =
+  AI_PROVIDER === 'groq'
+    ? 'mixtral-8x7b-32768'
+    : AI_PROVIDER === 'gemini'
+      ? 'gemini-2.0-flash'
+      : 'gpt-3.5-turbo';
+
+const DEFAULT_BASE_URL =
+  AI_PROVIDER === 'groq'
+    ? 'https://api.groq.com/openai/v1'
+    : AI_PROVIDER === 'gemini'
+      ? 'https://generativelanguage.googleapis.com/v1beta/openai'
+      : 'https://api.openai.com/v1';
+
+const MODEL = Deno.env.get('AI_MODEL') ?? DEFAULT_MODEL;
+const BASE_URL = Deno.env.get('AI_BASE_URL') ?? DEFAULT_BASE_URL;
 const CHAT_URL = `${BASE_URL}/chat/completions`;
 
+console.log(`[ai-analyze] Using provider: ${AI_PROVIDER}, model: ${MODEL}`);
+
 // Stamped onto every model-produced weight so the North Star stays comparable
-// as the prompt/model evolves (architecture principle 3). Tracks the model.
-const WEIGHT_MODEL_VERSION = `${MODEL}-2026-06`;
+// as the prompt/model evolves (architecture principle 3). Tracks the provider and model.
+const WEIGHT_MODEL_VERSION = `${AI_PROVIDER}-${MODEL}-2026-06`;
 
 // The fixed nine Categories (prd.md Glossary / §8.3). The model MUST pick one.
 const CATEGORIES = [
@@ -96,54 +116,66 @@ async function callModel(
   let lastError: Error = new Error('callModel: no attempt made');
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const response = await fetch(CHAT_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        temperature: 0,
-        response_format: { type: 'json_object' },
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userContent },
-        ],
-      }),
-    });
+    try {
+      console.log(`[ai-analyze] callModel attempt ${attempt + 1}/${maxAttempts}, URL: ${CHAT_URL}`);
+      const response = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          temperature: 0,
+          response_format: { type: 'json_object' },
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userContent },
+          ],
+        }),
+      });
 
-    if (response.status === 429) {
-      // Honour Retry-After if provided, otherwise double the base delay.
-      const retryAfter = response.headers.get('Retry-After');
-      const delayMs = retryAfter
-        ? parseInt(retryAfter, 10) * 1000
-        : 1000 * Math.pow(2, attempt);
-      console.warn(`[ai-analyze] 429 on attempt ${attempt + 1}, retrying in ${delayMs}ms`);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-      lastError = new Error(`Model error ${response.status}`);
-      continue;
-    }
+      console.log(`[ai-analyze] Model response status: ${response.status}`);
 
-    if (!response.ok) {
-      // Log the full Gemini error body so it appears in Supabase Function Logs
-      // and makes it easy to distinguish auth failures (401), quota errors (429
-      // that slipped through), model-not-found (404), etc. from generic 5xx.
-      let errorBody = '<unreadable>';
-      try {
-        errorBody = await response.text();
-      } catch {
-        // ignore secondary read failure
+      if (response.status === 429) {
+        // Honour Retry-After if provided, otherwise double the base delay.
+        const retryAfter = response.headers.get('Retry-After');
+        const delayMs = retryAfter
+          ? parseInt(retryAfter, 10) * 1000
+          : 1000 * Math.pow(2, attempt);
+        console.warn(`[ai-analyze] 429 on attempt ${attempt + 1}, retrying in ${delayMs}ms`);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        lastError = new Error(`Model error ${response.status}`);
+        continue;
       }
-      throw new Error(`Model error ${response.status}: ${errorBody}`);
-    }
 
-    const data = await response.json();
-    const raw = data?.choices?.[0]?.message?.content;
-    if (typeof raw !== 'string') {
-      throw new Error('Model returned no content');
+      if (!response.ok) {
+        // Log the full error body so it appears in Supabase Function Logs
+        // and makes it easy to distinguish auth failures (401), quota errors (429
+        // that slipped through), model-not-found (404), etc. from generic 5xx.
+        let errorBody = '<unreadable>';
+        try {
+          errorBody = await response.text();
+        } catch {
+          // ignore secondary read failure
+        }
+        const errorMsg = `Model error ${response.status}: ${errorBody}`;
+        console.error(`[ai-analyze] ${errorMsg}`);
+        throw new Error(errorMsg);
+      }
+
+      const data = await response.json();
+      const raw = data?.choices?.[0]?.message?.content;
+      if (typeof raw !== 'string') {
+        throw new Error('Model returned no content');
+      }
+      return JSON.parse(raw) as Record<string, unknown>;
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      if (attempt === maxAttempts - 1) {
+        throw lastError;
+      }
     }
-    return JSON.parse(raw) as Record<string, unknown>;
   }
 
   throw lastError;
@@ -245,25 +277,29 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Missing content' }, 400);
   }
 
-  const apiKey = Deno.env.get('GEMINI_API_KEY');
+  const apiKey = AI_API_KEY;
   if (!apiKey) {
+    console.error('[ai-analyze] No API key configured. Check GROQ_API_KEY, GEMINI_API_KEY, or AI_API_KEY env variables.');
     return jsonResponse({ error: 'AI unavailable' }, 503);
   }
 
   try {
     // CRISIS-GATE FIRST: pre-filter, then dedicated LLM confirmation.
     if (preFilterFlags(content)) {
+      console.log('[ai-analyze] Crisis pre-filter triggered, confirming with LLM...');
       if (await confirmCrisis(apiKey, content, language)) {
         return jsonResponse({ is_crisis: true });
       }
     }
 
     // Not a crisis: weigh it.
+    console.log('[ai-analyze] Analyzing weight...');
     return jsonResponse(await weigh(apiKey, content, language));
   } catch (err) {
     // Log the provider error server-side (visible in Supabase Function Logs)
     // without leaking internals to the client (AC5).
-    console.error('[ai-analyze] provider error:', err);
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error('[ai-analyze] provider error:', errorMsg);
     return jsonResponse({ error: 'Analysis failed' }, 502);
   }
 });

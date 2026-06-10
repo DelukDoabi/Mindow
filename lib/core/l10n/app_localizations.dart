@@ -584,6 +584,30 @@ abstract class AppLocalizations {
   /// **'Analysis is paused until you turn on AI.'**
   String get analysisNoConsentNote;
 
+  /// No description provided for @analysisDeferredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis is waiting'**
+  String get analysisDeferredTitle;
+
+  /// No description provided for @analysisDeferredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your entries are saved. Sign in to start AI analysis.'**
+  String get analysisDeferredBody;
+
+  /// No description provided for @analysisDeferredCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create my account'**
+  String get analysisDeferredCreateAccount;
+
+  /// No description provided for @analysisDeferredSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get analysisDeferredSignIn;
+
   /// Title of the edit preoccupation bottom sheet
   ///
   /// In en, this message translates to:

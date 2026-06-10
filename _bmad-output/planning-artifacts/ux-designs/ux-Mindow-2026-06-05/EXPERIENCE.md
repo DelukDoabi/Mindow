@@ -2,7 +2,7 @@
 name: Mindow
 status: final
 created: 2026-06-05
-updated: 2026-06-05
+updated: 2026-06-10
 sources:
   - ../../prds/prd-Mindow-2026-06-05/prd.md
 ---
@@ -62,6 +62,7 @@ Behavioral. Visual specs live in `DESIGN.md.Components`.
 | Mission card | Daily Mission | One mission per day. Primary "C'est fait ✓" releases its weight; "Plus tard" defers with no penalty. |
 | Step row | Decomposition | Tap toggles done; completing fills marker + dims row + subtracts step weight from item. |
 | Weight tag | Mission / item / step | Shows kilo estimate. Decorative-behavioral only; never an editable field in v1. |
+| Analysis deferred banner | Home | Visible when consent is granted but user is not authenticated. Copy: "Analyse IA en attente" + "Tes entrées sont sauvegardées. Connecte-toi pour lancer l'analyse IA." Primary CTA "Créer mon compte", secondary CTA "Me connecter". |
 | Premium badge / Paywall | Gated surfaces | Tapping a gated entry routes to Paywall, never a dead end. |
 | Progress dots | Onboarding | Reflect step position; non-interactive. |
 
@@ -73,6 +74,9 @@ Behavioral. Visual specs live in `DESIGN.md.Components`.
 | Empty backpack | Home | Backpack shown at 0 kg with gentle prompt: "Ton sac est léger. Dépose ce qui t'encombre." No emptiness shame. |
 | Cold open | Home | Show cached weight + last stats immediately. No blocking spinner. |
 | Offline | Any | Capture, edit, complete all work locally. No error banner; sync silently on next foreground. |
+| Consent granted + signed out | Home | Capture remains available. AI analysis does not start. Show deferred banner and auth CTAs. Never show technical 401 copy. |
+| Session expired | Home | Preserve local capture and pending entries. Show calm reconnect message: "Ta session a expiré. Tes entrées sont conservées." CTA "Me reconnecter pour continuer l'analyse". |
+| Re-auth success with pending entries | Home | Relaunch pending analysis in background with explicit feedback: "Parfait, on lance l'analyse de tes entrées…" |
 | No mission today | Daily Mission | "Rien d'urgent aujourd'hui. Profite." — absence framed as relief, not a gap. |
 | Deferred mission | Daily Mission | "Plus tard" returns to Home without guilt; weight unchanged, no streak broken. |
 | Premium gate hit | Decomposition / Couple | Route to Paywall with the specific value in context; back returns cleanly. |
@@ -85,8 +89,10 @@ Behavioral. Visual specs live in `DESIGN.md.Components`.
 - The signature feedback is **weight release**: on completion, the kg figure animates downward and the backpack subtly lightens/rises — the core reward.
 - Deposit is one gesture: type and submit; no mandatory fields, tags, due dates, or priorities.
 - Deferral ("Plus tard", "Pas le moment") is always one tap and always penalty-free.
+- AI analysis requires both conditions: explicit AI consent and authenticated user session. Missing either condition defers analysis with human copy and clear next action.
 - Honor **Reduce Motion**: replace the lightening animation with an immediate state change.
 - **Banned:** streaks-as-pressure, overdue badges, red counters, push re-engagement guilt, confetti gamification, carousels, blocking modals over capture.
+- **Banned:** technical transport language in user-facing surfaces ("401", "Unauthorized", "JWT", "token invalide").
 
 ## Accessibility Floor
 
@@ -150,3 +156,23 @@ Alternate: not now → **Plus tard** returns to Home, weight unchanged, no penal
 5. **Climax:** the invisible imbalance becomes visible and fair — the mental load is no longer silently hers alone.
 
 Gate: Couple Mode entry without Premium → Paywall framed on shared-visibility value; back returns to the tab cleanly.
+
+### Flow 5 — Consent given, account skipped, then guided recovery (Camille, web)
+
+1. Camille reaches AI consent and taps **J'accepte**.
+2. She lands on account creation but taps **Passer** to go directly Home.
+3. She deposits a preoccupation from Home.
+4. Capture succeeds immediately with neutral confirmation: *"Entrée enregistrée."*
+5. Home shows **Analyse IA en attente** banner with copy: *"Tes entrées sont sauvegardées. Connecte-toi pour lancer l'analyse IA."* and two CTAs: **Créer mon compte** / **Me connecter**.
+6. She chooses **Me connecter** and completes auth.
+7. **Climax:** pending entries start analysis automatically, and Home confirms: *"Parfait, on lance l'analyse de tes entrées…"* — no lost data, no technical error language, no guilt.
+
+Guardrail: in this flow, no user-facing message may include backend error details; all technical auth failures are translated into calm guidance.
+
+## Release Acceptance (Auth × Consent UX)
+
+1. If AI consent is granted and the user is signed out, Home never triggers AI analysis calls.
+2. If the user captures while signed out, capture still succeeds locally and the deferred-analysis banner appears.
+3. If auth succeeds afterward, deferred entries resume analysis automatically once per session transition.
+4. No user-facing string surfaces raw auth/network internals (401, Unauthorized, token).
+5. Session expiration keeps capture available and routes through the reconnect pattern without data loss.

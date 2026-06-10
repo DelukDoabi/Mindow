@@ -268,6 +268,19 @@ class AppLocalizationsFr extends AppLocalizations {
       'L\'analyse est en pause tant que tu n\'as pas activé l\'IA.';
 
   @override
+  String get analysisDeferredTitle => 'Analyse IA en attente';
+
+  @override
+  String get analysisDeferredBody =>
+      'Tes entrées sont sauvegardées. Connecte-toi pour lancer l\'analyse IA.';
+
+  @override
+  String get analysisDeferredCreateAccount => 'Créer mon compte';
+
+  @override
+  String get analysisDeferredSignIn => 'Me connecter';
+
+  @override
   String get editSheetTitle => 'Modifier la préoccupation';
 
   @override

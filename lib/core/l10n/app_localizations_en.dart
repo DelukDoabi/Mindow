@@ -266,6 +266,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Analysis is paused until you turn on AI.';
 
   @override
+  String get analysisDeferredTitle => 'AI analysis is waiting';
+
+  @override
+  String get analysisDeferredBody =>
+      'Your entries are saved. Sign in to start AI analysis.';
+
+  @override
+  String get analysisDeferredCreateAccount => 'Create my account';
+
+  @override
+  String get analysisDeferredSignIn => 'Sign in';
+
+  @override
   String get editSheetTitle => 'Edit preoccupation';
 
   @override
