@@ -52,7 +52,11 @@ jobs:
 
       - name: Set ai-analyze secrets
         # The Gemini key lives ONLY in the Edge runtime (never in the client).
-        run: supabase secrets set GEMINI_API_KEY="$GEMINI_API_KEY" --project-ref "$SUPABASE_PROJECT_ID"
+        # AI_PROVIDER must also be set so the function targets the Gemini endpoint
+        # (default fallback is 'groq', which would reject the Gemini key with 401).
+        run: |
+          supabase secrets set GEMINI_API_KEY="$GEMINI_API_KEY" --project-ref "$SUPABASE_PROJECT_ID"
+          supabase secrets set AI_PROVIDER=gemini --project-ref "$SUPABASE_PROJECT_ID"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
