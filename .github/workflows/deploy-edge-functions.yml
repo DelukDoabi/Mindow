@@ -50,15 +50,9 @@ jobs:
       - name: Deploy account-delete
         run: supabase functions deploy account-delete --project-ref "$SUPABASE_PROJECT_ID"
 
-      - name: Set ai-analyze secrets
-        # The Gemini key lives ONLY in the Edge runtime (never in the client).
-        # AI_PROVIDER must also be set so the function targets the Gemini endpoint
-        # (default fallback is 'groq', which would reject the Gemini key with 401).
-        run: |
-          supabase secrets set GEMINI_API_KEY="$GEMINI_API_KEY" --project-ref "$SUPABASE_PROJECT_ID"
-          supabase secrets set AI_PROVIDER=gemini --project-ref "$SUPABASE_PROJECT_ID"
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      # AI provider secrets (GEMINI_API_KEY / GROQ_API_KEY) are managed directly
+      # in Supabase dashboard and are NOT overwritten by CI.
+      # Provider auto-detection in index.ts reads whichever key is present.
 
       - name: Deploy ai-analyze
         run: supabase functions deploy ai-analyze --project-ref "$SUPABASE_PROJECT_ID"
