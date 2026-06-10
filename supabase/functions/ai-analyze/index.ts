@@ -207,11 +207,6 @@ async function confirmCrisis(content: string, language: string): Promise<boolean
   return result['is_crisis'] === true;
 }
 
-function clampInt(value: unknown, min: number, max: number, fallback: number): number {
-  const n = Math.round(Number(value));
-  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
-}
-
 // ---------------------------------------------------------------------------
 // Weighing
 // ---------------------------------------------------------------------------
