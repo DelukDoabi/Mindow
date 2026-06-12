@@ -52,9 +52,16 @@ jobs:
           FIREBASE_OPTIONS_B64: ${{ secrets.FIREBASE_OPTIONS_B64 }}
         run: echo "$FIREBASE_OPTIONS_B64" | base64 -d > lib/firebase_options.dart
 
+      - name: Inject google-services.json
+        env:
+          GOOGLE_SERVICES_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_B64 }}
+        run: echo "$GOOGLE_SERVICES_JSON_B64" | base64 -d > android/app/google-services.json
+
       # ── Validate required secrets are present ─────────────────────────────
       - name: Validate required secrets
         env:
+          FIREBASE_OPTIONS_B64: ${{ secrets.FIREBASE_OPTIONS_B64 }}
+          GOOGLE_SERVICES_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_B64 }}
           UPLOAD_KEYSTORE_B64: ${{ secrets.UPLOAD_KEYSTORE_B64 }}
           UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
@@ -62,6 +69,8 @@ jobs:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
         run: |
           missing=()
+          [ -z "$FIREBASE_OPTIONS_B64" ]       && missing+=("FIREBASE_OPTIONS_B64")
+          [ -z "$GOOGLE_SERVICES_JSON_B64" ]   && missing+=("GOOGLE_SERVICES_JSON_B64")
           [ -z "$UPLOAD_KEYSTORE_B64" ]        && missing+=("UPLOAD_KEYSTORE_B64")
           [ -z "$UPLOAD_KEYSTORE_PASSWORD" ]   && missing+=("UPLOAD_KEYSTORE_PASSWORD")
           [ -z "$UPLOAD_KEY_ALIAS" ]           && missing+=("UPLOAD_KEY_ALIAS")
