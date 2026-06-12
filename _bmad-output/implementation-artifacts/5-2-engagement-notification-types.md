@@ -4,7 +4,32 @@ baseline_commit: c441df4b
 
 # Story 5.2: Engagement notification types
 
-Status: ready-for-dev
+Status: review
+
+## Completion Notes
+
+All 8 ACs implemented and verified:
+- AC1–2: 4 notification types + tone-compliant copy in FR/EN in the Edge Function `MESSAGES` map
+- AC3: `_routeFor()` maps all 4 types → `'/'` (Home) via GoRouter injectable
+- AC4: foreground messages show SnackBar via `NotificationHandler` (injectable `foregroundMessageHandler` for testing)
+- AC5: `getInitialMessage` terminated-state routing implemented and tested
+- AC6: `send-notification` Edge Function calls FCM HTTP v1 via OAuth2 RS256 JWT flow
+- AC7: Service-role key guard (403 if missing/wrong)
+- AC8: Returns `{sent: false, reason: "no_token"}` when `user_fcm_tokens` has no entry
+
+**22 tests pass** (10 handler + 5 repository + 7 service).
+
+**Manual step required**: Add `FIREBASE_SERVICE_ACCOUNT_JSON` secret in Supabase Dashboard → Edge Functions → Secrets (Firebase Console → Project Settings → Service Accounts → Generate new private key).
+
+## Files Created / Modified
+
+| File | Action |
+|------|--------|
+| `supabase/functions/send-notification/index.ts` | Created — FCM HTTP v1 Edge Function |
+| `lib/features/notifications/notification_handler.dart` | Created — FCM Flutter handler (foreground/background/terminated) |
+| `lib/app/app.dart` | Modified — `ConsumerStatefulWidget`, wires `NotificationHandler.init` + `scaffoldMessengerKey` |
+| `test/features/notifications/notification_handler_test.dart` | Created — 10 pure unit tests |
+| `.github/workflows/deploy-edge-functions.yml` | Modified — added `send-notification` deploy step |
 
 ## Story
 

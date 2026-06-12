@@ -59,3 +59,10 @@ jobs:
 
       - name: Deploy mission-generate
         run: supabase functions deploy mission-generate --project-ref "$SUPABASE_PROJECT_ID"
+
+      # FIREBASE_SERVICE_ACCOUNT_JSON is managed directly in the Supabase
+      # Dashboard (Edge Functions → Secrets) and is NOT set by CI to avoid
+      # committing sensitive credentials. Add/update it manually before first
+      # send-notification invocation.
+      - name: Deploy send-notification
+        run: supabase functions deploy send-notification --project-ref "$SUPABASE_PROJECT_ID"
