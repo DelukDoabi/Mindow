@@ -32,7 +32,9 @@ So that releasing a new version is a single `git tag v1.0.0 && git push --tags` 
 ## Context & Constraints
 
 - **Story 9.1 prerequisite**: `build.gradle.kts` must have the `signingConfigs.release` block in place before this workflow runs.
-- **Story 9.2 prerequisite**: the prod Supabase project, Firebase config, and `PLAY_SERVICE_ACCOUNT_JSON` must be provisioned before the first tag-triggered deploy succeeds.
+- **Story 9.2 prerequisite**: `FIREBASE_SERVICE_ACCOUNT_JSON` and `GEMINI_API_KEY` must be
+  set as Supabase Edge Function secrets before the first tag-triggered deploy can serve real
+  users end-to-end. The CI workflow itself does not depend on these secrets directly.
 - **`r0adkll/upload-google-play@v1`** requires:
   - A Google Play service account with the "Release manager" role on the app
   - The service account JSON exported and stored as `PLAY_SERVICE_ACCOUNT_JSON` GitHub Actions secret

@@ -206,12 +206,16 @@ design being frozen.)
 
 ### Epic 9: Play Store Publication — Android MVP Release
 
-The app is signed with a production upload key, the production Supabase environment is
-provisioned and verified, a CI/CD pipeline builds and submits the signed AAB to Google
-Play automatically, the Play Store listing is complete and compliant, and the full user
-journey is validated on a real device from the internal track before public launch.
+The app is signed with a production upload key, the existing Supabase project is verified
+as production-ready (all Edge Functions deployed, secrets configured, RLS validated),
+a CI/CD pipeline builds and submits the signed AAB to Google Play automatically, the
+Play Store listing is complete and compliant, and the full user journey is validated on
+a real device from the internal track before public launch.
+**Note:** Supabase free tier = single project. The existing project (`knnnhrynruyyjofoxvet`)
+is used as production. Dev and prod share the same instance; data isolation is enforced
+by RLS (per `user_id`), which is the accepted MVP tradeoff.
 **NFRs covered:** NFR-4 (cross-platform parity), NFR-6 (reliability & observability),
-NFR-10 (GDPR — story 1-7 verified on prod), NFR-12 (app-store compliance)
+NFR-10 (GDPR — story 1-7 verified), NFR-12 (app-store compliance)
 **Prerequisites:** All Epic 1–5 stories `done`; Epic 1 Story 1-7 GDPR validated.
 
 ## Epic 1: Foundation, Onboarding & Account
@@ -680,10 +684,15 @@ So that the invisible load becomes visible and fair.
 ## Epic 9: Play Store Publication — Android MVP Release
 
 The app reaches real Android users: a production upload keystore signs every release build,
-a dedicated Supabase prod environment is provisioned and isolated from dev data, CI/CD
-automatically builds and submits the signed AAB to Google Play on every version tag, the
-Play Store listing is complete and compliant with Google's policies, and the end-to-end user
-journey is smoke-tested from the Play Store internal track before public launch.
+the existing Supabase project is verified as production-ready (all Edge Functions deployed,
+FCM + AI secrets configured, RLS validated), CI/CD automatically builds and submits the
+signed AAB to Google Play on every version tag, the Play Store listing is complete and
+compliant with Google's policies, and the end-to-end user journey is smoke-tested from the
+Play Store internal track before public launch.
+
+**Supabase constraint:** Free tier = 1 project. The existing project (`knnnhrynruyyjofoxvet`)
+serves as production. Dev and prod share the same instance; data isolation is enforced
+exclusively by RLS (`user_id`). This is the accepted MVP tradeoff.
 
 **Prerequisites:** All Epic 1–5 stories `done`.
 
@@ -708,29 +717,27 @@ So that every release build is signed with the production key and is uploadable 
 produces `build/app/outputs/bundle/prodRelease/app-prod-release.aab`
 **And** the debug signing key is NOT used for any production build
 
-### Story 9.2: Production Supabase environment provisioning
+### Story 9.2: Backend production readiness
 
 As a developer,
-I want a dedicated production Supabase project isolated from dev data,
-So that real user data never co-mingles with development data and all migrations are
-verified on prod before launch.
+I want the existing Supabase project verified and fully configured for production traffic,
+So that real users are served by a fully operational backend from day one.
+
+**Note:** Supabase free tier allows one project. The existing project (`knnnhrynruyyjofoxvet`)
+serves as both dev and production. Data isolation is guaranteed by RLS (per `user_id`).
 
 **Acceptance Criteria:**
 
-**Given** a new Supabase project created for production
-**When** all existing migrations under `supabase/migrations/` are applied via
-`supabase db push --project-ref {prod-ref}`
-**Then** every migration applies cleanly with no errors
-**And** all Edge Functions deploy successfully to the prod project via
-`supabase functions deploy --project-ref {prod-ref}`
-**And** `FIREBASE_SERVICE_ACCOUNT_JSON` is set as a secret in the prod Supabase Dashboard
+**Given** the existing Supabase project
+**When** all Edge Functions are deployed via the CI workflow
+**Then** every function (`account-export`, `account-delete`, `send-notification`,
+`ai-analyze`, `mission-generate`) is present and reachable on the project
+**And** `FIREBASE_SERVICE_ACCOUNT_JSON` is set as a secret in the Supabase Dashboard
 (Edge Functions → Secrets), enabling `send-notification` to authenticate to FCM
-**And** CI secrets `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
-`SUPABASE_PROJECT_ID` are updated to point to the prod project for the `main`-branch deploy jobs
-**And** RLS policies are verified: a test user's Preoccupations are not accessible by
-another user's JWT on the prod instance
-**And** the dev Supabase project is retained as-is for development; the two environments
-share no data
+**And** `GEMINI_API_KEY` is set as a secret in the Supabase Dashboard, enabling `ai-analyze`
+**And** RLS policies are verified: a test user's rows in `mental_items` are not accessible
+by another user's JWT
+**And** all existing migrations are confirmed applied (no pending migration files)
 
 ### Story 9.3: CI/CD Android release pipeline (tag-triggered)
 

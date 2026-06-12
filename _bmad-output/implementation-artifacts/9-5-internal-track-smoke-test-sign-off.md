@@ -18,14 +18,14 @@ So that I'm confident the production build works end-to-end before promoting to 
 1. The signed prod AAB (deployed via Story 9.3 pipeline) installs correctly on a physical Android device from the Play Store internal track.
 
 2. The **full core journey** completes without crash:
-   - Cold launch → onboarding → account creation (Supabase prod auth)
-   - Capture a Preoccupation → AI Analysis returns a weight (Edge Function reachable on prod)
+   - Cold launch → onboarding → account creation (Supabase — existing project)
+   - Capture a Preoccupation → AI Analysis returns a weight (Edge Function reachable)
    - Daily Mission generated → act on it → validate → weight-release animation plays
    - At least one notification received on the device within 2 minutes of the trigger
 
-3. **GDPR** (Story 1-7) verified on prod: requesting account deletion from Settings triggers the `account-delete` Edge Function and erases the test user's data from the prod database.
+3. **GDPR** (Story 1-7) verified: requesting account deletion from Settings triggers the `account-delete` Edge Function and erases the test user's data from the database.
 
-4. **Crisis gate** verified on prod: a preoccupation with explicit self-harm language routes to the support resource screen and does NOT generate a Mission.
+4. **Crisis gate** verified: a preoccupation with explicit self-harm language routes to the support resource screen and does NOT generate a Mission.
 
 5. **Sentry** captures at least one test event (manual `Sentry.captureMessage` call during QA).
 
@@ -66,19 +66,22 @@ So that I'm confident the production build works end-to-end before promoting to 
 ### Step 4: Smoke test the core journey
 
 - [ ] **Cold launch**: app opens, shows onboarding
-- [ ] **Account creation**: create a test account via Email (Supabase prod)
+- [ ] **Account creation**: create a test account via Email (Supabase — existing project)
 - [ ] **Capture**: submit a preoccupation → appears immediately in pending state
-- [ ] **AI Analysis**: wait for the AI to return a weight (kg appears, not "pending")
+- [ ] **AI Analysis**: wait for the AI to return a weight (kg appears, not "pending" — confirms
+  `ai-analyze` Edge Function is deployed and `GEMINI_API_KEY` secret is set)
 - [ ] **Daily Mission**: confirm the mission card appears on Home
 - [ ] **Validate mission**: tap "C'est fait ✓" → weight-release animation plays → kg decreases
-- [ ] **Notification**: manually call the `send-notification` Edge Function with the test user's FCM token (via Supabase Dashboard → Edge Functions → Invoke) → notification appears within 2 min
+- [ ] **Notification**: manually call the `send-notification` Edge Function with the test user's FCM token
+  (via Supabase Dashboard → Edge Functions → Invoke) → notification appears within 2 min
+  (confirms `FIREBASE_SERVICE_ACCOUNT_JSON` secret is set)
 
 ### Step 5: GDPR verification
 
 - [ ] Go to Settings → Account → Delete account
 - [ ] Confirm deletion dialog
 - [ ] Verify: app logs out and returns to onboarding
-- [ ] In Supabase prod Dashboard → Table Editor → `mental_items`: verify 0 rows for the deleted user
+- [ ] In Supabase Dashboard → Table Editor → `mental_items`: verify 0 rows for the deleted user
 
 ### Step 6: Crisis gate verification
 
