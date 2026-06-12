@@ -104,3 +104,12 @@ development_status:
   8-1-form-a-household: backlog
   8-2-share-split-preoccupations-collaboratively: backlog
   epic-8-retrospective: optional
+
+  # Epic 9: Play Store Publication — Android MVP Release
+  epic-9: backlog
+  9-1-android-release-signing-keystore-ci: backlog
+  9-2-production-supabase-environment: backlog
+  9-3-cicd-android-release-pipeline: backlog
+  9-4-play-store-listing-compliance: backlog
+  9-5-internal-track-smoke-test-sign-off: backlog
+  epic-9-retrospective: optional

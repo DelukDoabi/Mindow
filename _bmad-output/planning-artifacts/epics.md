@@ -204,6 +204,16 @@ making the invisible household load visible and fair. (Depends on OD-3 Couple Mo
 design being frozen.)
 **FRs covered:** FR-23, FR-24
 
+### Epic 9: Play Store Publication — Android MVP Release
+
+The app is signed with a production upload key, the production Supabase environment is
+provisioned and verified, a CI/CD pipeline builds and submits the signed AAB to Google
+Play automatically, the Play Store listing is complete and compliant, and the full user
+journey is validated on a real device from the internal track before public launch.
+**NFRs covered:** NFR-4 (cross-platform parity), NFR-6 (reliability & observability),
+NFR-10 (GDPR — story 1-7 verified on prod), NFR-12 (app-store compliance)
+**Prerequisites:** All Epic 1–5 stories `done`; Epic 1 Story 1-7 GDPR validated.
+
 ## Epic 1: Foundation, Onboarding & Account
 
 Users can install the app, understand the promise, consent to AI processing, and create an
@@ -666,3 +676,133 @@ So that the invisible load becomes visible and fair.
 **When** a member marks a Preoccupation shared
 **Then** it becomes visible to the other member (FR-24)
 **And** the system proposes an assignment/split of shared Preoccupations into collaborative Missions across members
+
+## Epic 9: Play Store Publication — Android MVP Release
+
+The app reaches real Android users: a production upload keystore signs every release build,
+a dedicated Supabase prod environment is provisioned and isolated from dev data, CI/CD
+automatically builds and submits the signed AAB to Google Play on every version tag, the
+Play Store listing is complete and compliant with Google's policies, and the end-to-end user
+journey is smoke-tested from the Play Store internal track before public launch.
+
+**Prerequisites:** All Epic 1–5 stories `done`.
+
+### Story 9.1: Android release signing & keystore CI integration
+
+As a developer,
+I want a production upload keystore wired into CI,
+So that every release build is signed with the production key and is uploadable to Google Play.
+
+**Acceptance Criteria:**
+
+**Given** a production upload keystore generated with
+`keytool -genkey -v -keystore mindow-upload-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias mindow`
+**When** the CI pipeline builds the `prodRelease` flavor
+**Then** `android/app/build.gradle.kts` uses a `signingConfigs.release` block that reads `storeFile`,
+`storePassword`, `keyAlias`, and `keyPassword` from `android/key.properties` (gitignored)
+**And** `android/key.properties` is populated from four GitHub Actions secrets:
+`UPLOAD_KEYSTORE_B64`, `UPLOAD_KEYSTORE_PASSWORD`, `UPLOAD_KEY_ALIAS`, `UPLOAD_KEY_PASSWORD`
+**And** the `buildTypes.release.signingConfig` no longer references `signingConfigs.debug`
+(the TODO comment is removed from `build.gradle.kts`)
+**And** `flutter build appbundle --flavor prod -t lib/main_prod.dart` exits 0 in CI and
+produces `build/app/outputs/bundle/prodRelease/app-prod-release.aab`
+**And** the debug signing key is NOT used for any production build
+
+### Story 9.2: Production Supabase environment provisioning
+
+As a developer,
+I want a dedicated production Supabase project isolated from dev data,
+So that real user data never co-mingles with development data and all migrations are
+verified on prod before launch.
+
+**Acceptance Criteria:**
+
+**Given** a new Supabase project created for production
+**When** all existing migrations under `supabase/migrations/` are applied via
+`supabase db push --project-ref {prod-ref}`
+**Then** every migration applies cleanly with no errors
+**And** all Edge Functions deploy successfully to the prod project via
+`supabase functions deploy --project-ref {prod-ref}`
+**And** `FIREBASE_SERVICE_ACCOUNT_JSON` is set as a secret in the prod Supabase Dashboard
+(Edge Functions → Secrets), enabling `send-notification` to authenticate to FCM
+**And** CI secrets `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
+`SUPABASE_PROJECT_ID` are updated to point to the prod project for the `main`-branch deploy jobs
+**And** RLS policies are verified: a test user's Preoccupations are not accessible by
+another user's JWT on the prod instance
+**And** the dev Supabase project is retained as-is for development; the two environments
+share no data
+
+### Story 9.3: CI/CD Android release pipeline (tag-triggered)
+
+As a developer,
+I want a GitHub Actions workflow that automatically builds and uploads a signed AAB to
+Google Play on every version tag,
+So that releasing a new version is a single `git tag v1.0.0 && git push --tags` command.
+
+**Acceptance Criteria:**
+
+**Given** a Git tag matching `v*.*.*` is pushed to `main`
+**When** the `deploy-android.yml` workflow triggers
+**Then** it checks out the code, installs Flutter, injects `FIREBASE_OPTIONS_B64`, and
+reconstructs `android/key.properties` from CI secrets
+**And** runs `flutter build appbundle --flavor prod -t lib/main_prod.dart --release`
+**And** uploads the resulting AAB to the Google Play **internal** track using the
+`r0adkll/upload-google-play` action with a service account JSON secret `PLAY_SERVICE_ACCOUNT_JSON`
+**And** the workflow fails fast if any required secret is missing or if the AAB build fails
+**And** the `versionCode` increments automatically (tied to the CI run number or a
+dedicated counter) so Play Store never rejects a duplicate version code
+**And** the existing `ci.yml` (analyze + test) remains unchanged and still runs on every push
+
+### Story 9.4: Play Store listing, content rating & compliance
+
+As a product owner,
+I want the Mindow app listing on Google Play to be complete, accurate, and compliant,
+So that the app passes the pre-launch review and is approved for public distribution.
+
+**Acceptance Criteria:**
+
+**Given** the Mindow app is created in Google Play Console under the `com.mindow.mindow`
+package name
+**When** the store listing is filled in
+**Then** the app title is «Mindow — Charge mentale» (≤30 chars), the short description
+(≤80 chars) and full description (≤4000 chars) are localized in French and English,
+and no prohibited terms are used
+**And** at least 2 phone screenshots (1080×1920 or 16:9) and 1 feature graphic (1024×500)
+are uploaded; screenshots show real in-app screens (backpack, mission, garden)
+**And** a hosted privacy policy URL is set (required by Google; document must cover AI
+processing disclosure and GDPR rights per NFR-9 and NFR-10)
+**And** the content rating questionnaire is completed and the app is rated appropriate
+for the intended audience
+**And** the data safety form is filled: Preoccupation content (sent to AI provider) is
+declared; FCM token (collected); account data (collected); all with correct data-handling
+and sharing disclosures
+**And** `targetSdk` in `build.gradle.kts` meets the current Google Play minimum (≥API 34)
+**And** the app category is set to «Santé et remise en forme» or «Productivité»
+
+### Story 9.5: Internal track smoke test & production readiness sign-off
+
+As a developer,
+I want to validate the complete user journey on a real Android device installed from the
+Play Store internal track,
+So that I'm confident the production build works end-to-end before promoting to public.
+
+**Acceptance Criteria:**
+
+**Given** the signed prod AAB is deployed to the Play Store internal track (via Story 9.3)
+**When** I install the app on a physical Android device from the internal track
+**Then** the full core journey completes without crash:
+  - Cold launch → onboarding → account creation (Supabase prod auth)
+  - Capture a Preoccupation → AI Analysis returns a weight (Edge Function reachable on prod)
+  - Daily Mission generated → act on it → validate → weight-release animation plays
+  - At least one notification received on the device within 2 minutes of the trigger
+**And** GDPR Story 1-7 is verified on prod: requesting account deletion from Settings
+triggers the `account-delete` Edge Function and erases the test user's data from the
+prod database
+**And** the crisis-gate is verified on prod: a preoccupation with explicit self-harm language
+routes to the support resource screen and does NOT generate a Mission
+**And** Sentry captures at least one test event (manual `Sentry.captureMessage` call during
+QA, removed before public launch)
+**And** PostHog receives `onboarding_complete` and `first_preoccupation_captured` events
+on the prod instance
+**And** when all ACs above pass, the story is marked `done` and the internal track build
+is promoted to the **production** track in Google Play Console
