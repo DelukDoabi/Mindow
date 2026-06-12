@@ -106,10 +106,10 @@ development_status:
   epic-8-retrospective: optional
 
   # Epic 9: Play Store Publication — Android MVP Release
-  epic-9: backlog
-  9-1-android-release-signing-keystore-ci: backlog
-  9-2-production-supabase-environment: backlog
-  9-3-cicd-android-release-pipeline: backlog
-  9-4-play-store-listing-compliance: backlog
-  9-5-internal-track-smoke-test-sign-off: backlog
+  epic-9: in-progress
+  9-1-android-release-signing-keystore-ci: review
+  9-2-production-supabase-environment: ready-for-dev
+  9-3-cicd-android-release-pipeline: review
+  9-4-play-store-listing-compliance: ready-for-dev
+  9-5-internal-track-smoke-test-sign-off: ready-for-dev
   epic-9-retrospective: optional

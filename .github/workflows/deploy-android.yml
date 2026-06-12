@@ -1,0 +1,113 @@
+name: Deploy Android (Play Store)
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      track:
+        description: "Play Store track to upload to"
+        required: false
+        default: "internal"
+        type: choice
+        options:
+          - internal
+          - alpha
+          - beta
+          - production
+
+env:
+  FLUTTER_VERSION: "3.44.1"
+  JAVA_VERSION: "17"
+
+jobs:
+  build-and-deploy:
+    name: Build signed AAB & upload to Play Store
+    runs-on: ubuntu-latest
+    environment: Mindow
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Java ──────────────────────────────────────────────────────────────
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+
+      # ── Flutter ───────────────────────────────────────────────────────────
+      - name: Set up Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      # ── Secrets: Firebase options ─────────────────────────────────────────
+      - name: Inject Firebase options
+        env:
+          FIREBASE_OPTIONS_B64: ${{ secrets.FIREBASE_OPTIONS_B64 }}
+        run: echo "$FIREBASE_OPTIONS_B64" | base64 -d > lib/firebase_options.dart
+
+      # ── Secrets: Android upload keystore ─────────────────────────────────
+      - name: Reconstruct upload keystore
+        env:
+          UPLOAD_KEYSTORE_B64: ${{ secrets.UPLOAD_KEYSTORE_B64 }}
+        run: |
+          echo "$UPLOAD_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/mindow-upload-key.jks"
+
+      - name: Write key.properties
+        env:
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          cat > android/key.properties <<EOF
+          storePassword=$UPLOAD_KEYSTORE_PASSWORD
+          keyPassword=$UPLOAD_KEY_PASSWORD
+          keyAlias=$UPLOAD_KEY_ALIAS
+          storeFile=$RUNNER_TEMP/mindow-upload-key.jks
+          EOF
+
+      # ── Flutter build pipeline ────────────────────────────────────────────
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build production AAB
+        run: |
+          # versionCode  = run_number (always incrementing, never collides)
+          # versionName  = tag name without leading 'v' (e.g. 1.0.0)
+          VERSION_NAME="${GITHUB_REF_NAME#v}"
+          flutter build appbundle \
+            --flavor prod \
+            -t lib/main_prod.dart \
+            --release \
+            --build-number "${{ github.run_number }}" \
+            --build-name "$VERSION_NAME"
+
+      # ── Play Store upload ─────────────────────────────────────────────────
+      - name: Upload AAB to Play Store (${{ github.event.inputs.track || 'internal' }} track)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.mindow.mindow
+          releaseFiles: build/app/outputs/bundle/prodRelease/app-prod-release.aab
+          track: ${{ github.event.inputs.track || 'internal' }}
+          status: completed
+
+      # ── Artefact (optional — keep the AAB for 7 days) ────────────────────
+      - name: Upload AAB artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mindow-prod-release-${{ github.run_number }}
+          path: build/app/outputs/bundle/prodRelease/app-prod-release.aab
+          retention-days: 7
