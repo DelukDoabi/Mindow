@@ -52,6 +52,28 @@ jobs:
           FIREBASE_OPTIONS_B64: ${{ secrets.FIREBASE_OPTIONS_B64 }}
         run: echo "$FIREBASE_OPTIONS_B64" | base64 -d > lib/firebase_options.dart
 
+      # ── Validate required secrets are present ─────────────────────────────
+      - name: Validate required secrets
+        env:
+          UPLOAD_KEYSTORE_B64: ${{ secrets.UPLOAD_KEYSTORE_B64 }}
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          missing=()
+          [ -z "$UPLOAD_KEYSTORE_B64" ]        && missing+=("UPLOAD_KEYSTORE_B64")
+          [ -z "$UPLOAD_KEYSTORE_PASSWORD" ]   && missing+=("UPLOAD_KEYSTORE_PASSWORD")
+          [ -z "$UPLOAD_KEY_ALIAS" ]           && missing+=("UPLOAD_KEY_ALIAS")
+          [ -z "$UPLOAD_KEY_PASSWORD" ]        && missing+=("UPLOAD_KEY_PASSWORD")
+          [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]  && missing+=("PLAY_SERVICE_ACCOUNT_JSON")
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing required secrets: ${missing[*]}"
+            echo "Add them in GitHub → Settings → Environments → Mindow → Secrets"
+            exit 1
+          fi
+          echo "All required secrets are present."
+
       # ── Secrets: Android upload keystore ─────────────────────────────────
       - name: Reconstruct upload keystore
         env:
