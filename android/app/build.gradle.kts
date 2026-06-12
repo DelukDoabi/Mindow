@@ -17,7 +17,9 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.mindow.mindow"
-    compileSdk = flutter.compileSdkVersion
+    // package_info_plus requires compileSdk >= 36; hardcode rather than rely on
+    // flutter.compileSdkVersion which resolves to 34 with Flutter 3.44.1.
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
