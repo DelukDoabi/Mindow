@@ -50,7 +50,9 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        // Hardcode targetSdk to 36 (flutter.targetSdkVersion resolves to 34 with Flutter 3.44.1,
+        // causing sentry_flutter AAR metadata check to fail; targetSdk must be >= compileSdk).
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
