@@ -7,6 +7,10 @@ allprojects {
 
 // Google Services plugin (required for firebase_messaging — Story 5.1)
 buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
     dependencies {
         classpath("com.google.gms:google-services:4.4.2")
     }
