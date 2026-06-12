@@ -119,8 +119,22 @@ jobs:
             --build-name "$VERSION_NAME"
 
       # ── Play Store upload ─────────────────────────────────────────────────
+      # secrets context is not available in step `if:` expressions — use an
+      # intermediate step to expose the secret presence as a boolean output.
+      - name: Check Play Store secret availability
+        id: play_check
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -n "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::PLAY_SERVICE_ACCOUNT_JSON is not set — AAB will be built and signed but NOT uploaded to Play Store."
+          fi
+
       - name: Upload AAB to Play Store (${{ github.event.inputs.track || 'internal' }} track)
-        if: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
+        if: steps.play_check.outputs.available == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
