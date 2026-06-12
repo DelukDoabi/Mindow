@@ -66,13 +66,15 @@ jobs:
           [ -z "$UPLOAD_KEYSTORE_PASSWORD" ]   && missing+=("UPLOAD_KEYSTORE_PASSWORD")
           [ -z "$UPLOAD_KEY_ALIAS" ]           && missing+=("UPLOAD_KEY_ALIAS")
           [ -z "$UPLOAD_KEY_PASSWORD" ]        && missing+=("UPLOAD_KEY_PASSWORD")
-          [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]  && missing+=("PLAY_SERVICE_ACCOUNT_JSON")
           if [ ${#missing[@]} -gt 0 ]; then
             echo "::error::Missing required secrets: ${missing[*]}"
             echo "Add them in GitHub → Settings → Environments → Mindow → Secrets"
             exit 1
           fi
-          echo "All required secrets are present."
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::warning::PLAY_SERVICE_ACCOUNT_JSON is not set — AAB will be built and signed but NOT uploaded to Play Store."
+          fi
+          echo "All signing secrets are present."
 
       # ── Secrets: Android upload keystore ─────────────────────────────────
       - name: Reconstruct upload keystore
@@ -118,6 +120,7 @@ jobs:
 
       # ── Play Store upload ─────────────────────────────────────────────────
       - name: Upload AAB to Play Store (${{ github.event.inputs.track || 'internal' }} track)
+        if: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
