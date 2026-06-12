@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -87,7 +86,7 @@ class NotificationHandler {
       _firebaseMessagingBackgroundHandler,
     );
 
-    final void Function(String) doNavigate =
+    final doNavigate =
         navigateOverride ?? (String route) => router!.go(route);
 
     final foregroundStream = onMessage ?? FirebaseMessaging.onMessage;
@@ -105,7 +104,7 @@ class NotificationHandler {
     // Background → user taps notification: navigate to destination (AC: #3, #5).
     await _backgroundOpenedSub?.cancel();
     _backgroundOpenedSub = openedStream.listen(
-      (RemoteMessage message) => doNavigate(_routeFor(message)),
+      (message) => doNavigate(_routeFor(message)),
     );
 
     // Terminated state → app opened via notification tap (AC: #5).
@@ -134,7 +133,7 @@ class NotificationHandler {
 
   /// Cancels active subscriptions. Call from [State.dispose] if needed.
   static void dispose() {
-    _foregroundSub?.cancel();
-    _backgroundOpenedSub?.cancel();
+    unawaited(_foregroundSub?.cancel() ?? Future<void>.value());
+    unawaited(_backgroundOpenedSub?.cancel() ?? Future<void>.value());
   }
 }

@@ -35,8 +35,7 @@ Future<void> _initHandler({
       getInitialMessage: initialMessage ?? () async => null,
       registerBackground: (_) {},
       navigateOverride: routes.add,
-      foregroundMessageHandler:
-          capturedForeground != null ? capturedForeground.add : null,
+      foregroundMessageHandler: capturedForeground?.add,
     );
 
 // ---------------------------------------------------------------------------
